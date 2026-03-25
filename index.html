@@ -11449,12 +11449,22 @@ function tTestSimInit() {
   tTestSimUpdate();
 }
 
-function generateNormalDistribution(mean, sd, n=10) {
-  // Box-Muller 변환으로 정규분포 샘플 생성
+function _seededRand(seed) {
+  // Mulberry32 PRNG — 결정적 난수 생성
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function generateNormalDistribution(mean, sd, n=10, seed) {
+  // Box-Muller 변환으로 정규분포 샘플 생성 (seeded PRNG)
+  var rand = seed != null ? _seededRand(seed) : Math.random.bind(Math);
   const samples = [];
   for(let i=0; i<n; i++) {
-    const u1 = Math.random(), u2 = Math.random();
-    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    const u1 = rand(), u2 = rand();
+    const z = Math.sqrt(-2 * Math.log(u1 || 1e-10)) * Math.cos(2 * Math.PI * u2);
     samples.push(Math.round(mean + z * sd));
   }
   return samples;
@@ -11492,9 +11502,9 @@ function tTestSimUpdate() {
   document.getElementById('ttValA').textContent = valA;
   document.getElementById('ttValB').textContent = valB;
 
-  // 각 그룹의 샘플 데이터 생성 (정규분포)
-  const groupA = generateNormalDistribution(valA, 8, 10);
-  const groupB = generateNormalDistribution(valB, 8, 10);
+  // 각 그룹의 샘플 데이터 생성 (정규분포, seeded for 재현성)
+  const groupA = generateNormalDistribution(valA, 8, 15, valA * 1000 + 7);
+  const groupB = generateNormalDistribution(valB, 8, 15, valB * 1000 + 13);
 
   // t검정 계산
   const result = calculateTTest(groupA, groupB);
@@ -11670,29 +11680,8 @@ function chiSimUpdate() {
             Math.pow(o11 - e11, 2) / e11;
   }
 
-  // p값 계산 (df=1인 카이제곱 분포의 근사)
-  // 간단한 근사: χ²이 작으면 p ≈ 1, χ²이 크면 p ≈ 0에 가까움
-  let p = 1.0;
-  if(chiSq < 0.1) p = 1.0;
-  else if(chiSq < 0.5) p = 0.9;
-  else if(chiSq < 1) p = 0.8;
-  else if(chiSq < 1.5) p = 0.7;
-  else if(chiSq < 2) p = 0.6;
-  else if(chiSq < 2.7) p = 0.5; // χ²(1) = 2.706 → p = 0.1
-  else if(chiSq < 3.8) p = 0.3;
-  else if(chiSq < 5.4) p = 0.2;
-  else if(chiSq < 6.6) p = 0.01;
-  else p = 0.001;
-
-  // 더 정확한 p값 근사 (카이제곱 CDF)
-  if(chiSq > 0) {
-    // chi-square df=1의 대략적 p값
-    const chipdf = Math.exp(-chiSq / 2) / Math.sqrt(2 * Math.PI * chiSq);
-    if(chiSq < 0.5) p = 1 - (2/Math.sqrt(Math.PI)) * (Math.sqrt(chiSq/2));
-    else if(chiSq < 2) p = Math.max(0.01, 1 - (chiSq / 3));
-    else if(chiSq < 5) p = Math.max(0.001, 1 - (chiSq / 8));
-    else p = Math.exp(-chiSq / 2);
-  }
+  // p값 계산 (df=1인 카이제곱 분포 — 정확 계산)
+  let p = (chiSq > 0 && grand > 0) ? (1 - _chiCDF(chiSq, 1)) : 1.0;
 
   // 표시 업데이트
   document.getElementById('chiChiSqVal').textContent = chiSq.toFixed(2);
@@ -11727,40 +11716,23 @@ function anovaSimUpdate() {
   document.getElementById('anovVal2').textContent = mean2;
   document.getElementById('anovVal3').textContent = mean3;
 
-  // 각 집단에서 8개의 랜덤 샘플 생성 (정규분포, SD ≈ 10)
-  const generateGroup = (mean, n = 8) => {
-    const values = [];
-    for(let i = 0; i < n; i++) {
-      // Box-Muller을 이용한 정규분포 생성
-      const u1 = Math.random();
-      const u2 = Math.random();
-      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-      const value = mean + z * 10;
-      values.push(Math.max(20, Math.min(100, Math.round(value))));
-    }
-    return values;
-  };
-
-  const group1 = generateGroup(mean1);
-  const group2 = generateGroup(mean2);
-  const group3 = generateGroup(mean3);
+  // 각 집단에서 10개의 샘플 생성 (정규분포, SD ≈ 10, seeded for 재현성)
+  const group1 = generateNormalDistribution(mean1, 10, 10, mean1 * 1000 + 3).map(v=>Math.max(20,Math.min(100,v)));
+  const group2 = generateNormalDistribution(mean2, 10, 10, mean2 * 1000 + 7).map(v=>Math.max(20,Math.min(100,v)));
+  const group3 = generateNormalDistribution(mean3, 10, 10, mean3 * 1000 + 11).map(v=>Math.max(20,Math.min(100,v)));
 
   // 전체 데이터와 평균 계산
   const allData = [...group1, ...group2, ...group3];
   const grandMean = allData.reduce((a, b) => a + b, 0) / allData.length;
 
   // ANOVA 계산
-  // 집단간 변동 (Between-group variance)
-  const msb = (
-    group1.reduce((s, v) => s + Math.pow(v - mean1, 2), 0) +
-    group2.reduce((s, v) => s + Math.pow(v - mean2, 2), 0) +
-    group3.reduce((s, v) => s + Math.pow(v - mean3, 2), 0)
-  ) / (3 - 1);
-
-  // 집단내 변동 (Within-group variance)
-  const ssb = group1.length * Math.pow(mean1 - grandMean, 2) +
-              group2.length * Math.pow(mean2 - grandMean, 2) +
-              group3.length * Math.pow(mean3 - grandMean, 2);
+  // 집단간 제곱합 (Between-group SS)
+  const m1g = group1.reduce((a,b)=>a+b,0)/group1.length;
+  const m2g = group2.reduce((a,b)=>a+b,0)/group2.length;
+  const m3g = group3.reduce((a,b)=>a+b,0)/group3.length;
+  const ssb = group1.length * Math.pow(m1g - grandMean, 2) +
+              group2.length * Math.pow(m2g - grandMean, 2) +
+              group3.length * Math.pow(m3g - grandMean, 2);
   const ssb_ms = ssb / (3 - 1);
 
   // 총 변동
@@ -11773,22 +11745,10 @@ function anovaSimUpdate() {
   // F값 계산
   const fValue = msw > 0 ? ssb_ms / msw : 0;
 
-  // p값 추정 (F 분포 근사)
-  let pValue = 1.0;
-  if(fValue < 0.1) pValue = 0.95;
-  else if(fValue < 0.5) pValue = 0.80;
-  else if(fValue < 1.0) pValue = 0.65;
-  else if(fValue < 1.5) pValue = 0.50;
-  else if(fValue < 2.5) pValue = 0.30;
-  else if(fValue < 4.0) pValue = 0.10;
-  else if(fValue < 6.0) pValue = 0.03;
-  else if(fValue < 10.0) pValue = 0.01;
-  else pValue = 0.001;
-
-  // 더 정확한 근사
-  if(fValue > 0.05) {
-    pValue = Math.max(0.001, Math.exp(-fValue / 2));
-  }
+  // p값 계산 (F 분포 — 정확 계산)
+  const df1 = 2; // k-1 = 3-1
+  const df2 = allData.length - 3; // N-k
+  let pValue = (fValue > 0 && df2 > 0) ? _fDistCDF(fValue, df1, df2) : 1.0;
 
   // 표시 업데이트
   document.getElementById('anovBetweenVal').textContent = (ssb_ms || 0).toFixed(1);
@@ -12638,8 +12598,11 @@ function _dStr(d){if(d>=0.8)return '큰';if(d>=0.5)return '중간 크기의';if(
 function _fDistCDF(f,d1,d2){if(f<=0)return 0;const x=d2/(d2+d1*f);return _betaInc(d2/2,d1/2,x);}
 function _chiCDF(x,k){if(x<=0)return 0;return _regGammaP(k/2,x/2);}
 function _regGammaP(a,x){
-  if(x<a+1){let sum=1/a,term=1/a;for(let n=1;n<200;n++){term*=x/(a+n);sum+=term;if(Math.abs(term)<1e-10)break;}return sum*Math.exp(-x+a*Math.log(x)-_lgamma(a));}
-  else{let f=1,c=1,d=0;for(let i=1;i<=200;i++){const an=i%2===1?Math.floor(i/2)+1-a:-Math.floor(i/2);const bn=i%2===1?x:1;d=bn+an*d;if(Math.abs(d)<1e-30)d=1e-30;d=1/d;c=bn+an/c;if(Math.abs(c)<1e-30)c=1e-30;f*=c*d;if(Math.abs(c*d-1)<1e-8)break;}return 1-Math.exp(-x+a*Math.log(x)-_lgamma(a))/f;}
+  if(x<=0)return 0;
+  // Series expansion (reliable for x < a+1 or small a)
+  if(x<a+1||a<1){let sum=1/a,term=1/a;for(let n=1;n<300;n++){term*=x/(a+n);sum+=term;if(Math.abs(term)<1e-12)break;}var r=sum*Math.exp(-x+a*Math.log(x)-_lgamma(a));return Math.min(1,Math.max(0,r));}
+  // Legendre CF for Q(a,x) = 1-P(a,x)
+  else{let b2=x+1-a,c2=1e30,d2=1/b2,f2=d2;for(let i=1;i<=300;i++){var ai=i*(a-i),bi=x+2*i+1-a;d2=bi+ai*d2;if(Math.abs(d2)<1e-30)d2=1e-30;d2=1/d2;c2=bi+ai/c2;if(Math.abs(c2)<1e-30)c2=1e-30;var delta=c2*d2;f2*=delta;if(Math.abs(delta-1)<1e-12)break;}return Math.min(1,Math.max(0,1-Math.exp(-x+a*Math.log(x)-_lgamma(a))*f2));}
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -14212,7 +14175,7 @@ function azRunANOVA(out) {
   let SSB=0;gNames.forEach(g=>{SSB+=groups[g].length*Math.pow(_mean(groups[g])-gm,2);});
   let SSW=0;gNames.forEach(g=>{const m=_mean(groups[g]);groups[g].forEach(v=>SSW+=Math.pow(v-m,2));});
   const dfB=k-1,dfW=N-k,MSB=SSB/dfB,MSW=SSW/dfW,F=MSW>0?MSB/MSW:0;
-  const pVal=1-_fDistCDF(F,dfB,dfW),sig=pVal<0.05,etaSq=SSB/(SSB+SSW);
+  const pVal=_fDistCDF(F,dfB,dfW),sig=pVal<0.05,etaSq=SSB/(SSB+SSW);
   const gStats=gNames.map(g=>({name:g,n:groups[g].length,mean:_mean(groups[g]),sd:_sd(groups[g])}));
   const maxG=gStats.reduce((a,b)=>a.mean>b.mean?a:b),minG=gStats.reduce((a,b)=>a.mean<b.mean?a:b);
   let statTbl='<table class="preview-tbl"><thead><tr><th>집단</th><th>n</th><th>평균</th><th>SD</th></tr></thead><tbody>';
@@ -16779,7 +16742,31 @@ const STAT_GLOSSARY = [
   { term:'귀무가설 (H₀)', short:'차이 없다는 가설', desc:'"차이가 없다" 또는 "효과가 없다"는 기본 가정입니다. 통계 검정은 이 가설을 기각할 근거가 있는지 판단합니다.', example:'H₀: 커피를 마셔도 집중력에 차이가 없다', category:'가설' },
   { term:'대립가설 (H₁)', short:'차이 있다는 가설', desc:'연구자가 입증하려는 가설입니다. "차이가 있다" 또는 "효과가 있다"는 주장입니다.', example:'H₁: 커피를 마시면 집중력이 올라간다', category:'가설' },
   { term:'자유도 (df)', short:'자유로운 값의 개수', desc:'통계량 계산에서 자유롭게 변할 수 있는 값의 수입니다. 보통 n-1 또는 그룹 수-1로 계산합니다.', example:'20명 t검정 → df = 18 (각 그룹 10명-1, 합산)', category:'검정' },
-  { term:'신뢰구간 (CI)', short:'참값이 있을 범위', desc:'모집단의 참값이 들어있을 것으로 추정하는 범위입니다. 95% 신뢰구간이면 "100번 중 95번은 이 범위 안에 참값이 있다"는 뜻입니다.', example:'평균 차이의 95% CI = [3.2, 12.8] → 참된 차이는 3.2~12.8 사이', category:'추정' }
+  { term:'신뢰구간 (CI)', short:'참값이 있을 범위', desc:'모집단의 참값이 들어있을 것으로 추정하는 범위입니다. 95% 신뢰구간이면 "100번 중 95번은 이 범위 안에 참값이 있다"는 뜻입니다.', example:'평균 차이의 95% CI = [3.2, 12.8] → 참된 차이는 3.2~12.8 사이', category:'추정' },
+  { term:'분산 (Variance)', short:'흩어짐의 제곱 합', desc:'각 데이터가 평균에서 떨어진 거리의 제곱 평균입니다. 표준편차를 제곱한 값(SD²)이며, 분산분석(ANOVA)의 핵심 개념입니다.', example:'점수 편차가 [-5, 0, 5]이면 분산 = (25+0+25)/2 = 25, SD = 5', category:'기초' },
+  { term:'정규분포 (Normal Distribution)', short:'종 모양 분포', desc:'평균을 중심으로 좌우 대칭인 종 모양 분포입니다. 대부분의 통계 검정은 데이터가 정규분포를 따른다고 가정합니다.', example:'키, 시험점수 등 자연현상의 많은 데이터가 정규분포에 가까움', category:'기초' },
+  { term:'표준오차 (SE)', short:'추정의 불확실성', desc:'표본 평균이 모집단 평균에서 얼마나 벗어날 수 있는지를 나타냅니다. SE = SD ÷ √n이므로 표본이 클수록 작아집니다.', example:'SD=10, n=100이면 SE=1 → 표본 평균이 모평균 ±1 안에 있을 가능성 높음', category:'기초' },
+  { term:'왜도 (Skewness)', short:'분포의 비대칭', desc:'데이터 분포가 좌우로 얼마나 치우쳐있는지를 나타냅니다. 양수면 오른쪽 꼬리가 길고, 음수면 왼쪽 꼬리가 깁니다.', example:'소득 분포는 오른쪽 꼬리가 길어 양의 왜도 → 소수의 고소득자 영향', category:'기초' },
+  { term:'첨도 (Kurtosis)', short:'분포의 뾰족함', desc:'데이터 분포가 정규분포보다 뾰족한지 납작한지를 나타냅니다. 3보다 크면 뾰족(극단값 많음), 작으면 납작합니다.', example:'첨도 = 5 → 정규분포보다 뾰족, 극단적인 값이 더 자주 나타남', category:'기초' },
+  { term:'도수분포표 (Frequency Table)', short:'빈도 정리표', desc:'각 값이나 범주가 몇 번 나타났는지를 정리한 표입니다. 데이터의 전체적인 패턴을 한눈에 파악할 수 있습니다.', example:'성적: A(5명), B(12명), C(8명), D(3명) → 도수분포표', category:'기초' },
+  { term:'검정력 (Statistical Power)', short:'차이 탐지 능력', desc:'실제로 차이가 있을 때 그것을 발견할 확률입니다. 보통 80% 이상이 권장됩니다. 표본이 크고 효과가 클수록 검정력이 높아집니다.', example:'검정력=0.6이면 → 진짜 차이가 있어도 40%는 놓침', category:'검정' },
+  { term:'1종 오류 (Type I Error)', short:'없는 차이를 있다고', desc:'실제로는 차이가 없는데 "있다"고 잘못 판단하는 오류입니다. 유의수준 α가 이 오류의 확률입니다.', example:'α=0.05면 → 차이가 없을 때 5%의 확률로 "있다"고 오판', category:'검정' },
+  { term:'2종 오류 (Type II Error)', short:'있는 차이를 놓침', desc:'실제로 차이가 있는데 "없다"고 놓치는 오류입니다. β로 표기하며, 검정력 = 1-β입니다.', example:'검정력이 0.7이면 β=0.3 → 30% 확률로 진짜 차이를 놓침', category:'검정' },
+  { term:'독립표본 t검정', short:'서로 다른 두 그룹 비교', desc:'서로 다른 두 그룹(예: 남/여, 실험/통제)의 평균 차이를 비교하는 검정입니다. 두 그룹이 독립적(서로 관련 없는 사람들)이어야 합니다.', example:'커피 마신 그룹(15명) vs 안 마신 그룹(15명)의 집중력 비교', category:'검정' },
+  { term:'대응표본 t검정 (Paired t-test)', short:'같은 사람 전후 비교', desc:'동일한 대상을 두 번 측정(사전-사후)하여 변화가 있는지 검정합니다. 각 개인의 차이값을 분석합니다.', example:'같은 학생 30명의 프로그램 참여 전후 불안점수 비교', category:'검정' },
+  { term:'분산분석 (ANOVA)', short:'3개+ 그룹 평균 비교', desc:'3개 이상 그룹의 평균이 같은지를 F값으로 검정합니다. "어딘가 다르다"는 것만 알려주며, 어디가 다른지는 사후검정이 필요합니다.', example:'수학A반, B반, C반의 시험성적이 다른지? → ANOVA로 확인', category:'검정' },
+  { term:'사후검정 (Post-hoc Test)', short:'어디가 다른지 찾기', desc:'ANOVA에서 유의미한 차이가 나왔을 때, 구체적으로 어느 그룹 간에 차이가 있는지를 확인하는 추가 검정입니다.', example:'Tukey HSD 결과: A-B (p=0.02✅), A-C (p=0.45❌), B-C (p=0.01✅)', category:'검정' },
+  { term:'에타제곱 (η²)', short:'ANOVA 효과크기', desc:'ANOVA에서 집단 간 차이가 전체 변동의 몇 %를 설명하는지를 나타냅니다. 0.01 작은, 0.06 중간, 0.14+ 큰 효과입니다.', example:'η² = 0.15 → 그룹 차이가 전체 점수 변동의 15%를 설명', category:'검정' },
+  { term:'크래머의 V (Cramér\'s V)', short:'범주형 연관 강도', desc:'카이제곱 검정에서 두 범주형 변수 간 연관의 강도를 0~1로 나타냅니다. 카이제곱은 "관련 있다/없다"만 알려주고, V는 "얼마나 강한 관련인지"를 알려줍니다.', example:'V = 0.35 → 중간 정도의 연관 (성별과 과목 선택 사이)', category:'검정' },
+  { term:'회귀분석 (Regression)', short:'예측 모형 만들기', desc:'한 변수(X)로 다른 변수(Y)를 예측하는 수학적 모형을 만듭니다. Y = a + bX 형태의 직선을 데이터에 가장 잘 맞게 그립니다.', example:'공부시간(X)으로 성적(Y) 예측: Y = 40 + 8.5X', category:'상관·회귀' },
+  { term:'다중회귀 (Multiple Regression)', short:'여러 변수로 예측', desc:'2개 이상의 독립변수로 종속변수를 예측합니다. 각 변수의 독립적인 영향을 분리하여 파악할 수 있습니다.', example:'성적 = 30 + 5(공부시간) + 3(수면시간) - 2(게임시간)', category:'상관·회귀' },
+  { term:'다중공선성 (Multicollinearity)', short:'예측변수 간 높은 상관', desc:'다중회귀에서 독립변수끼리 너무 높은 상관이 있으면 각 변수의 개별 효과를 신뢰할 수 없습니다. VIF > 10이면 문제입니다.', example:'공부시간과 학원시간의 상관이 r=0.95면 → 둘 다 넣으면 다중공선성', category:'상관·회귀' },
+  { term:'VIF (분산팽창인자)', short:'다중공선성 지표', desc:'각 독립변수가 다른 독립변수들과 얼마나 겹치는지를 수치로 나타냅니다. VIF=1이면 독립, 10 이상이면 심각한 다중공선성입니다.', example:'VIF=8.5 → 이 변수는 다른 변수들과 많이 겹침, 해석 주의', category:'상관·회귀' },
+  { term:'로지스틱 회귀 (Logistic Regression)', short:'예/아니오 예측', desc:'결과가 두 가지(합격/불합격, 성공/실패)인 경우 확률을 예측하는 회귀분석입니다. 일반 회귀와 달리 0~1 사이 확률을 출력합니다.', example:'출석률, GPA로 졸업 확률 예측 → P(졸업) = 0.87', category:'상관·회귀' },
+  { term:'오즈비 (Odds Ratio, OR)', short:'가능성 비교', desc:'로지스틱 회귀에서 독립변수가 1단위 증가할 때 결과가 발생할 "가능성(odds)"이 몇 배가 되는지를 나타냅니다.', example:'OR=2.5 → GPA 1점 오를 때 합격 가능성이 2.5배 증가', category:'상관·회귀' },
+  { term:'리커트 척도 (Likert Scale)', short:'동의 정도 측정', desc:'설문에서 "매우 반대(1)~매우 동의(5)" 같이 태도나 의견을 점수화하는 척도입니다. 사회과학 연구에서 가장 많이 사용됩니다.', example:'"학교생활이 만족스럽다" → ① 전혀 아니다 ... ⑤ 매우 그렇다', category:'측정' },
+  { term:'독립변수 / 종속변수', short:'원인 / 결과 변수', desc:'독립변수(X)는 영향을 주는 변수, 종속변수(Y)는 영향을 받는 변수입니다. "X가 Y에 영향을 미치는가?"를 검증합니다.', example:'공부시간(독립) → 성적(종속), 수면시간(독립) → 피로도(종속)', category:'기초' },
+  { term:'이상치 (Outlier)', short:'동떨어진 극단값', desc:'다른 데이터와 동떨어진 극단적인 값입니다. 평균, 상관계수 등에 큰 영향을 주므로 확인이 필요합니다.', example:'점수: 70, 75, 80, 82, 15 → 15가 이상치', category:'기초' }
 ];
 
 let glossaryOpen = false;
