@@ -4604,6 +4604,8 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
             <button class="tab-btn" onclick="azSwitchInput('table')" id="azTab-table">✏️ 직접 입력</button>
             <button class="tab-btn active" onclick="azSwitchInput('sample')" id="azTab-sample">🎯 예시로 연습</button>
             <button class="tab-btn" onclick="azSwitchInput('import')" id="azTab-import" style="border:1px dashed var(--accent);color:var(--accent)">📥 결과 가져오기</button>
+            <button class="tab-btn" onclick="azSaveData()" style="border:1px solid #FFB347;color:#FF8C00">💾 저장</button>
+            <button class="tab-btn" onclick="azShowLoadData()" style="border:1px solid #4CAF50;color:#2E7D32">📂 불러오기</button>
           </div>
 
           <!-- Mode: Paste -->
@@ -4867,11 +4869,20 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 
           <!-- Preview -->
           <div id="azPreviewArea" style="display:none">
-            <div style="margin-top:16px;font-size:13px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px">
-              📊 데이터 미리보기
-              <span id="azDataStats" style="font-weight:400;font-size:12px;color:var(--text2)"></span>
+            <div style="margin-top:16px;font-size:13px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:6px;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:6px">
+                📊 데이터 미리보기
+                <span id="azDataStats" style="font-weight:400;font-size:12px;color:var(--text2)"></span>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="azShowCleanPanel()" style="font-size:11px">🧹 데이터 클리닝</button>
             </div>
             <div style="overflow-x:auto;margin-top:8px"><table class="preview-tbl" id="azPreviewTbl"></table></div>
+          </div>
+
+          <!-- 데이터 클리닝 패널 -->
+          <div id="azCleanPanel" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border-radius:10px;border:2px solid #FF6B6B">
+            <div style="font-size:14px;font-weight:700;color:#C92A2A;margin-bottom:12px">🧹 데이터 클리닝</div>
+            <div id="azCleanContent" style="font-size:13px;color:var(--text)"></div>
           </div>
 
           <!-- 시나리오 가이드 패널 -->
@@ -4998,6 +5009,14 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               <div class="ab-desc" style="color:#5E35B1">월별 도서관 이용자 추세, 계절 패턴 — 시간 속의 규칙 발견</div>
               <div style="font-size:10px;color:#4527A0;margin-top:4px;font-style:italic">정식 이름: 시계열 분석 (Time Series Analysis)</div>
               <div style="font-size:10px;color:#7E57C2;margin-top:3px;font-weight:600">👥 최소 12개 시점, 이상적 24개+</div>
+            </div>
+            <div class="analysis-btn az-advanced" onclick="azSelectAnalysis('multivariate')" id="azAb-multivariate" style="border:2px solid #009688;background:linear-gradient(135deg,#E0F2F1,#B2DFDB);position:relative">
+              <div style="position:absolute;top:-10px;right:10px;background:linear-gradient(135deg,#009688,#00695C);color:white;font-size:10px;font-weight:800;padding:2px 10px;border-radius:10px;letter-spacing:0.5px">🔥 도전</div>
+              <div class="ab-icon">📊</div>
+              <div class="ab-title" style="color:#004D40">여러 변수의 관계를 한눈에 볼 수 있을까? <span class="diff-badge diff-adv">심화</span></div>
+              <div class="ab-desc" style="color:#00695C">상관관계 열지도, 산점도 행렬 — 다변량 패턴 시각화</div>
+              <div style="font-size:10px;color:#004D40;margin-top:4px;font-style:italic">정식 이름: 다변량 시각화 (Multivariate Visualization)</div>
+              <div style="font-size:10px;color:#009688;margin-top:3px;font-weight:600">👥 최소 10개 데이터, 숫자형 2개+</div>
             </div>
           </div>
 
@@ -12394,6 +12413,155 @@ function azUpdateAvailability() {
   document.getElementById('azRunBtn').disabled = true;
 }
 
+// ━━ Feature 1: Data Cleaning Panel ━━
+function azShowCleanPanel() {
+  const panel = document.getElementById('azCleanPanel');
+  if(panel.style.display === 'block') { panel.style.display = 'none'; return; }
+
+  const numCols = AZ_DATA.numCols.map((isNum,i) => isNum ? i : null).filter(i => i !== null);
+
+  // Missing values
+  let missing = [];
+  AZ_DATA.headers.forEach((h,ci) => {
+    const cnt = AZ_DATA.rows.filter(r => !r[ci] || r[ci].trim() === '').length;
+    if(cnt > 0) missing.push({col: h, count: cnt});
+  });
+
+  // Outliers per numeric column
+  let outliers = [];
+  numCols.forEach(ci => {
+    const vals = AZ_DATA.rows.map(r => parseFloat(r[ci])).filter(v => !isNaN(v));
+    if(vals.length < 4) return;
+    const sorted = [...vals].sort((a,b) => a-b);
+    const q1 = sorted[Math.floor(vals.length*0.25)];
+    const q3 = sorted[Math.floor(vals.length*0.75)];
+    const iqr = q3 - q1;
+    const low = q1 - 1.5*iqr, high = q3 + 1.5*iqr;
+    const ocount = AZ_DATA.rows.filter(r => {
+      const v = parseFloat(r[ci]);
+      return !isNaN(v) && (v < low || v > high);
+    }).length;
+    if(ocount > 0) outliers.push({col: AZ_DATA.headers[ci], count: ocount});
+  });
+
+  let html = '<div style="margin-bottom:14px">';
+  if(missing.length > 0) {
+    html += '<div style="margin-bottom:10px"><strong>📌 결측치 (Missing Values):</strong>';
+    missing.forEach(m => html += `<div style="margin-left:10px;font-size:12px">• ${m.col}: ${m.count}개 행</div>`);
+    html += '</div><button class="btn btn-outline btn-sm" onclick="azRemoveMissing()" style="font-size:11px;margin-bottom:10px">결측치 행 제거</button>';
+  } else {
+    html += '<div style="color:#4CAF50;margin-bottom:10px">✅ 결측치 없음</div>';
+  }
+  html += '</div>';
+
+  if(outliers.length > 0) {
+    html += '<div style="margin-bottom:10px"><strong>📌 이상치 (Outliers):</strong>';
+    outliers.forEach(o => html += `<div style="margin-left:10px;font-size:12px">• ${o.col}: ${o.count}개 행</div>`);
+    html += '</div><button class="btn btn-outline btn-sm" onclick="azRemoveOutliers()" style="font-size:11px">이상치 행 제거</button>';
+  } else {
+    html += '<div style="color:#4CAF50;">✅ 이상치 없음</div>';
+  }
+
+  document.getElementById('azCleanContent').innerHTML = html;
+  panel.style.display = 'block';
+}
+
+function azRemoveMissing() {
+  const raw = document.getElementById('azDataInput').value;
+  const sep = raw.includes('\t') ? '\t' : ',';
+  const lines = raw.trim().split('\n');
+  const headers = lines[0];
+  const rows = lines.slice(1).filter(l => {
+    const cells = l.split(sep);
+    return cells.every(c => c.trim() !== '');
+  });
+  const before = lines.length - 1;
+  const after = rows.length;
+  document.getElementById('azDataInput').value = headers + '\n' + rows.join('\n');
+  azParseData();
+  alert(`제거됨: ${before - after}행 → 남은 데이터: ${after}행`);
+}
+
+function azRemoveOutliers() {
+  const numCols = AZ_DATA.numCols.map((isNum,i) => isNum ? i : null).filter(i => i !== null);
+  if(numCols.length === 0) { alert('숫자형 변수가 없습니다.'); return; }
+
+  const outlierRows = new Set();
+  numCols.forEach(ci => {
+    const vals = AZ_DATA.rows.map(r => parseFloat(r[ci])).filter(v => !isNaN(v));
+    if(vals.length < 4) return;
+    const sorted = [...vals].sort((a,b) => a-b);
+    const q1 = sorted[Math.floor(vals.length*0.25)];
+    const q3 = sorted[Math.floor(vals.length*0.75)];
+    const iqr = q3 - q1;
+    const low = q1 - 1.5*iqr, high = q3 + 1.5*iqr;
+    AZ_DATA.rows.forEach((r, ri) => {
+      const v = parseFloat(r[ci]);
+      if(!isNaN(v) && (v < low || v > high)) outlierRows.add(ri);
+    });
+  });
+
+  const sep = document.getElementById('azDataInput').value.includes('\t') ? '\t' : ',';
+  const lines = document.getElementById('azDataInput').value.trim().split('\n');
+  const headers = lines[0];
+  const rows = lines.slice(1).filter((l,idx) => !outlierRows.has(idx));
+  const before = lines.length - 1;
+  const after = rows.length;
+  document.getElementById('azDataInput').value = headers + '\n' + rows.join('\n');
+  azParseData();
+  alert(`제거됨: ${before - after}행 → 남은 데이터: ${after}행`);
+}
+
+// ━━ Feature 2: localStorage Save/Load ━━
+function azSaveData() {
+  const data = document.getElementById('azDataInput').value.trim();
+  if(!data) { alert('저장할 데이터가 없습니다.'); return; }
+  const name = prompt('데이터세트 이름을 입력하세요:');
+  if(!name) return;
+
+  let saved = JSON.parse(localStorage.getItem('statplay_datasets') || '[]');
+  if(saved.length >= 10) { alert('최대 10개까지만 저장 가능합니다.'); return; }
+  saved.push({name, data, date: new Date().toLocaleString('ko-KR')});
+  localStorage.setItem('statplay_datasets', JSON.stringify(saved));
+  alert('저장되었습니다!');
+}
+
+function azShowLoadData() {
+  let saved = JSON.parse(localStorage.getItem('statplay_datasets') || '[]');
+  if(saved.length === 0) { alert('저장된 데이터가 없습니다.'); return; }
+
+  let html = '<div style="padding:16px;background:var(--bg);border-radius:10px">';
+  html += '<div style="font-weight:700;margin-bottom:10px">📂 저장된 데이터</div>';
+  saved.forEach((item, idx) => {
+    html += `<div style="display:flex;gap:8px;margin-bottom:8px;padding:10px;background:white;border-radius:8px;align-items:center">`;
+    html += `<button class="btn btn-sm btn-primary" onclick="azLoadData(${idx})" style="flex:1">📂 ${item.name} (${item.date})</button>`;
+    html += `<button class="btn btn-sm btn-outline" onclick="azDeleteSaved(${idx})" style="color:#FF6B6B">✕</button>`;
+    html += `</div>`;
+  });
+  html += '</div>';
+  const div = document.createElement('div');
+  div.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:10000;max-height:80vh;overflow:auto;max-width:500px;width:90%';
+  div.innerHTML = html + `<button class="btn btn-outline" onclick="this.parentNode.remove()" style="width:100%;margin-top:12px">닫기</button>`;
+  document.body.appendChild(div);
+}
+
+function azLoadData(idx) {
+  let saved = JSON.parse(localStorage.getItem('statplay_datasets') || '[]');
+  if(saved[idx]) {
+    document.getElementById('azDataInput').value = saved[idx].data;
+    azParseData();
+    document.querySelectorAll('[style*="position:fixed"]').forEach(el => el.remove());
+    alert('불러왔습니다!');
+  }
+}
+
+function azDeleteSaved(idx) {
+  let saved = JSON.parse(localStorage.getItem('statplay_datasets') || '[]');
+  saved.splice(idx, 1);
+  localStorage.setItem('statplay_datasets', JSON.stringify(saved));
+  azShowLoadData();
+}
+
 // ━━ Analysis selection ━━
 function azSelectAnalysis(type) {
   // ━━ 표본 크기 경고 시스템 ━━
@@ -12405,7 +12573,8 @@ function azSelectAnalysis(type) {
     correlation: {min: 20, label: '상관분석', ideal: 30},
     frequency: {min: 20, label: '빈도분석'},
     chisquare: {min: 30, label: '카이제곱 검정', note: '각 칸 기대빈도 5이상'},
-    regression: {min: 20, label: '회귀분석', ideal: 30}
+    regression: {min: 20, label: '회귀분석', ideal: 30},
+    multivariate: {min: 10, label: '다변량 시각화'}
   };
   // Remove old warning
   const oldWarn = document.getElementById('azSampleWarn');
@@ -12537,6 +12706,16 @@ function azSelectAnalysis(type) {
             </div>`;
       } else noVarMsg('💡 숫자형 변수가 2개 이상 필요합니다.', '독립변수(X)와 종속변수(Y) 둘 다 숫자여야 합니다.');
       break;
+    case 'multivariate':
+      title.textContent = '📊 다변량 시각화 — 모든 숫자형 변수의 관계를 한눈에';
+      if(numHeaders.length >= 2) {
+        content.innerHTML = `<div style="padding:12px;background:#E0F2F1;border-radius:8px;border:1px solid #009688;font-size:13px;color:#004D40">
+          ✨ 이 분석은 데이터의 모든 숫자형 변수(${numHeaders.length}개)를 사용합니다.<br>
+          • <strong>상관관계 열지도</strong>: 모든 변수 쌍의 상관계수를 색깔로 시각화<br>
+          • <strong>산점도 행렬</strong>: 각 변수 쌍의 산점도 (최대 5개 변수)
+        </div>`;
+      } else noVarMsg('💡 숫자형 변수가 2개 이상 필요합니다.', '이 분석은 최소 2개의 숫자형 변수가 필요합니다.');
+      break;
   }
 }
 
@@ -12625,6 +12804,7 @@ function azRunAnalysis() {
     case 'multiple_regression': azRunMultipleRegression(out); break;
     case 'logistic': azRunLogistic(out); break;
     case 'timeseries': azRunTimeseries(out); break;
+    case 'multivariate': azRunMultivariate(out); break;
   }
   // 분석 완료 후 해석 가이드 푸터 자동 추가
   setTimeout(function() {
@@ -15189,14 +15369,14 @@ function _getMethodInfo(item) {
   var m = ((item.measure||'')+(item.analysis||'')).toLowerCase();
   var t = (item.title||'').toLowerCase();
   var tags = (item.tags||[]).join(' ').toLowerCase();
-  // 실험 판별 — 직접 조작/측정이 핵심
-  var isExperiment = /직접.?측정|실험|뷰렛|스톱워치|ph미터|온도계|프레임 분석|비료|농도.*수준|경사면|중화|반응속도/.test(m+t);
-  // 공공데이터 판별
-  var isSecondary = /공공데이터|기상청|에어코리아|건강행태조사|패널.*종단|통계자료|행태온라인조사/.test(m);
-  // 관찰/앱측정 판별
-  var isObservation = /앱.*측정|스크린타임.*캡처|소음측정앱|동영상.*분석|24시간 회상법|라벨.*조사|현장.*조사|현장.*관찰|마트.*조사/.test(m);
+  // 실험 판별 — 기기·시약·직접 조작이 핵심
+  var isExperiment = /직접.?측정|실험|뷰렛|스톱워치|ph미터|온도계|프레임 분석|비료|농도.*수준|경사면|중화|반응속도|pcr|western blot|elisa|mtt|hplc|gc-ms|gc-fid|nmr|xrd|xps|afm|sem|tem|icp|uv-vis|분광|배양|배지|cfu|전기화학|인장시험|utm |조도계|cmm|열전대|유량계|차압|악력계|inbody|체성분|혈액검사|혈압|spirometry|폐기능|dxa|mri|가스분석기|이온크로마토|크로마토|형광.*염색|효소|열화상|가속도계|당도계|프로브|dpph|abts|관능 평가|비색법|엽록소|엽면적|수확량|적정|요오드|줄자|체중계|마이크 어레이|정전류|충방전|eis|bet |cv.*lsv|tafel|염수분무|assay|시험기|측정기|검사기|분석기|센서|카메라.*fps|droplet pcr|folin|porometer|프롤린|계량|산란 기록|전력계|일사량계|각도기|imu |모션캡처|무향실|s-parameter|wer |pesq|ber |sdr|r-피크|snp |illumina|면역형광|공초점|가스 챔버|gc 분석|퇴비|과실 품질|수량 조사|품질 분석|활동량계|vas |에너지 사용량|계측/.test(m+t);
+  // 공공데이터·아카이브 판별
+  var isSecondary = /공공데이터|기상청|에어코리아|건강행태조사|패널.*종단|통계자료|행태온라인조사|망원경|관측소|noaa|위성.*영상|landsat|패널조사|빅데이터|의무기록|청구자료|국세청|관측망|측정망|건강조사|아카이브|신고.*자료|자료.*연계|데이터.*연계|gps 수신기|벤치마크|wti|cpi|gdp|환율|주가|시가총액|코호트|메타분석|체계적 문헌|폐기물 통계|가격 자료|매출자료|인구통계|매출액|가처분소득|기준금리|국제수지|정부지출|배당금|공사일지|에너지 관리 시스템|인터넷 사용시간.*학업|학업.*성적 기록|성적 기록|수능 성적|소득.*분위|빈곤율|임금.*인상률|고용인원|임금.*비율|교육훈련비.*생산성|r&d비.*순이익|esg.*등급|roe|f1-score|추론 시간|정밀도.*재현율|광학 관측.*시뮬레이션|관측.*toa|적외선 측광|환자.*대조군|분자역학|성적.*평균/.test(m+t);
+  // 관찰·현장측정·모니터링 판별
+  var isObservation = /앱.*측정|스크린타임.*캡처|소음측정앱|동영상.*분석|24시간 회상법|라벨.*조사|현장.*조사|현장.*관찰|마트.*조사|모니터링|채집|조사법|채수|정기.*조사|부상 기록|일지|iaq.*측정|로거|bms/.test(m);
   // 척도/설문 판별
-  var isSurvey = /설문|척도|리커트|자기보고|체크리스트|빈도조사/.test(m);
+  var isSurvey = /설문|척도|리커트|자기보고|체크리스트|빈도조사|servqual|문항.*점|점.*문항|검사\(|문항.*검사|조사표|phq|또래관계.*문항|교사지지.*문항|루브릭|검사지.*문항|성향 검사|가치관 검사|sleep.*index|scid/.test(m);
 
   var methods = [];
   if(isExperiment) methods.push({type:'실험',icon:'🧪',color:'#E65100',
@@ -17219,6 +17399,111 @@ function pSimUpdate() {
      '❌ 검정력 매우 낮음. 이 표본 크기로는 d=' + d.toFixed(2) + '의 효과를 탐지하기 어렵습니다.') +
     '</div>';
 }
+
+// ━━ Feature 3: Multivariate Visualization ━━
+function azRunMultivariate(out) {
+  const numIndices = AZ_DATA.numCols.map((b,i) => b ? i : null).filter(i => i!==null);
+  if(numIndices.length < 2) { out.innerHTML = '<div class="card"><p style="color:var(--orange-dark)">숫자형 변수가 2개 이상 필요합니다.</p></div>'; return; }
+
+  const numHeaders = numIndices.map(i => AZ_DATA.headers[i]);
+  const cols = numIndices.map(i => azGetCol(AZ_DATA.headers[i]));
+
+  // Correlation matrix
+  const corrMatrix = [];
+  for(let i=0; i<cols.length; i++) {
+    const row = [];
+    for(let j=0; j<cols.length; j++) {
+      row.push(_pearsonR(cols[i], cols[j]));
+    }
+    corrMatrix.push(row);
+  }
+
+  // Heatmap SVG
+  const heatW = Math.min(400, 50*numHeaders.length);
+  const cellSize = heatW / numHeaders.length;
+  let heatSVG = `<svg width="${heatW}" height="${heatW}" style="border:1px solid var(--border);border-radius:8px;background:white">`;
+
+  for(let i=0; i<numHeaders.length; i++) {
+    for(let j=0; j<numHeaders.length; j++) {
+      const r = corrMatrix[i][j];
+      const hue = r > 0 ? 200 - r*100 : 0 + Math.abs(r)*100;
+      const sat = Math.abs(r) * 100;
+      const light = 50 - Math.abs(r)*10;
+      const color = `hsl(${hue}, ${sat}%, ${light}%)`;
+      heatSVG += `<rect x="${j*cellSize}" y="${i*cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}" stroke="white" stroke-width="1"/>`;
+      if(cellSize > 30) {
+        const txt = r.toFixed(2);
+        const textColor = Math.abs(r) > 0.5 ? 'white' : 'black';
+        heatSVG += `<text x="${j*cellSize+cellSize/2}" y="${i*cellSize+cellSize/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="600" fill="${textColor}">${txt}</text>`;
+      }
+    }
+  }
+
+  // Row labels
+  for(let i=0; i<numHeaders.length; i++) {
+    heatSVG += `<text x="${-8}" y="${i*cellSize+cellSize/2}" text-anchor="end" dominant-baseline="middle" font-size="10" fill="var(--text2)">${numHeaders[i]}</text>`;
+  }
+  // Col labels
+  for(let j=0; j<numHeaders.length; j++) {
+    heatSVG += `<text x="${j*cellSize+cellSize/2}" y="${-8}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="var(--text2)">${numHeaders[j]}</text>`;
+  }
+
+  heatSVG += '</svg>';
+
+  let html = '<div class="card"><div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">🔥 상관관계 열지도 (Correlation Heatmap)</div>';
+  html += `<div style="overflow-x:auto;margin-bottom:20px;padding:20px;background:var(--bg);border-radius:8px">${heatSVG}</div>`;
+  html += '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">🔵 파란색 = 양의 상관, 🔴 빨간색 = 음의 상관, 흰색 = 상관 없음</div></div>';
+
+  // Scatter matrix (max 5 variables)
+  const maxVars = Math.min(5, numHeaders.length);
+  if(maxVars >= 2) {
+    const selectedIndices = numIndices.slice(0, maxVars);
+    const selectedHeaders = selectedIndices.map(i => AZ_DATA.headers[i]);
+    const selectedCols = selectedIndices.map(i => azGetCol(AZ_DATA.headers[i]));
+
+    const gridSize = 100;
+    const gap = 8;
+    const scatterSVG = `<svg width="${(gridSize+gap)*maxVars-gap}" height="${(gridSize+gap)*maxVars-gap}" style="border:1px solid var(--border);border-radius:8px;background:white">`;
+
+    let svg = scatterSVG;
+    for(let i=0; i<maxVars; i++) {
+      for(let j=0; j<maxVars; j++) {
+        const x = j * (gridSize + gap);
+        const y = i * (gridSize + gap);
+
+        if(i === j) {
+          // Diagonal: variable name
+          svg += `<rect x="${x}" y="${y}" width="${gridSize}" height="${gridSize}" fill="#F5F5F5" stroke="var(--border)" stroke-width="1"/>`;
+          svg += `<text x="${x+gridSize/2}" y="${y+gridSize/2}" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="600" fill="var(--text)">${selectedHeaders[i]}</text>`;
+        } else {
+          // Scatter plot
+          svg += `<rect x="${x}" y="${y}" width="${gridSize}" height="${gridSize}" fill="white" stroke="var(--border)" stroke-width="1"/>`;
+
+          const xs = selectedCols[j];
+          const ys = selectedCols[i];
+          const xMin = Math.min(...xs), xMax = Math.max(...xs);
+          const yMin = Math.min(...ys), yMax = Math.max(...ys);
+          const xR = xMax - xMin || 1, yR = yMax - yMin || 1;
+
+          for(let k=0; k<Math.min(xs.length, ys.length); k++) {
+            const px = x + ((xs[k]-xMin)/xR) * (gridSize-4) + 2;
+            const py = y + (1 - (ys[k]-yMin)/yR) * (gridSize-4) + 2;
+            svg += `<circle cx="${px}" cy="${py}" r="1.5" fill="#6C63FF" opacity="0.6"/>`;
+          }
+        }
+      }
+    }
+    svg += '</svg>';
+
+    html += '<div class="card"><div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">📊 산점도 행렬 (Scatter Matrix)</div>';
+    html += `<div style="overflow-x:auto;padding:20px;background:var(--bg);border-radius:8px">${svg}</div>`;
+    if(numHeaders.length > maxVars) html += `<div style="font-size:12px;color:var(--text2);margin-top:8px">💡 변수가 ${numHeaders.length-maxVars}개 더 있습니다 (표시는 처음 5개만)</div>`;
+    html += '</div>';
+  }
+
+  out.innerHTML = html;
+}
+
 function _normalCDF(x) {
   var t = 1/(1+0.2316419*Math.abs(x));
   var d = 0.3989422804*Math.exp(-x*x/2);
