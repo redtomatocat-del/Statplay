@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goo's StatPlay v1.9 — 놀면서 배우는 통계</title>
+<title>Goo's StatPlay v2.2 — 놀면서 배우는 통계</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -574,7 +574,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
   .mr-step { font-size:9px;padding:6px 2px; }
   .mr-step span { width:20px;height:20px;font-size:10px; }
 }
-/* ═══ v1.9 Mobile Responsive ═══ */
+/* ═══ v2.2 Mobile Responsive ═══ */
 @media (max-width: 768px) {
   .main { padding: 10px !important; }
   .card { padding: 14px !important; }
@@ -600,7 +600,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 <div class="header">
   <h1>Goo's <span>StatPlay</span></h1>
   <p>놀면서 배우는 통계</p>
-  <div class="ver">고등학생을 위한 교육용 통계 · v1.9</div>
+  <div class="ver">고등학생을 위한 교육용 통계 · v2.2</div>
 </div>
 
 <div class="main">
@@ -1382,6 +1382,18 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               </div>
             </div>
 
+            <!-- SD 슬라이더 -->
+            <div style="margin-top:20px;padding:14px;background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-radius:8px;border:1px solid #FFB74D">
+              <div style="font-weight:600;color:#E65100;margin-bottom:8px;font-size:13px">🎚️ 데이터의 흩어짐(SD) 조절</div>
+              <div style="font-size:11px;color:var(--text2);margin-bottom:8px">같은 평균 차이라도 데이터가 흩어져 있으면 결론이 달라집니다!</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:11px;color:var(--text3);white-space:nowrap">모여있음</span>
+                <input id="ttSliderSD" type="range" min="3" max="25" value="8" style="flex:1;cursor:pointer" oninput="tTestSimUpdate()">
+                <span style="font-size:11px;color:var(--text3);white-space:nowrap">흩어짐</span>
+              </div>
+              <div style="text-align:center;margin-top:4px;font-size:12px;font-weight:700;color:#E65100">SD = <span id="ttValSD">8</span></div>
+            </div>
+
             <!-- Visualization: Scatter dots -->
             <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:8px">
               <div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:12px">점수 분포</div>
@@ -1521,6 +1533,17 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
             <p><strong>카이제곱 검정</strong>은 두 개의 범주형 변수가 관련이 있는지 확인하는 통계 방법입니다.</p>
             <p>예: 성별(남/여)과 SNS 중독 여부(예/아니오)가 관련이 있을까?</p>
             <p>아래에서 숫자를 조작하면서 χ² 값과 p값이 어떻게 변하는지 직접 느껴보세요!</p>
+          </div>
+
+          <!-- 시나리오 원클릭 버튼 -->
+          <div style="margin-top:24px;padding:14px;background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-radius:8px;border:1px solid #FFB74D">
+            <div style="font-weight:600;color:#E65100;margin-bottom:8px;font-size:13px">⚡ 한눈에 비교 — 시나리오 선택</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:10px">버튼을 누르면 즉시 표가 바뀌고 결과가 달라집니다!</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-sm" onclick="chiSetScenario('independent')" style="background:#E0E0E0;color:#424242;border:2px solid #BDBDBD;font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px">🟰 완전 독립<br><span style="font-size:10px;font-weight:400">성별과 무관</span></button>
+              <button class="btn btn-sm" onclick="chiSetScenario('weak')" style="background:#FFF9C4;color:#F57F17;border:2px solid #FBC02D;font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px">〰️ 약한 관련<br><span style="font-size:10px;font-weight:400">약간 차이</span></button>
+              <button class="btn btn-sm" onclick="chiSetScenario('strong')" style="background:#FFCDD2;color:#C62828;border:2px solid #EF5350;font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px">🔥 강한 관련<br><span style="font-size:10px;font-weight:400">확연한 차이</span></button>
+            </div>
           </div>
 
           <!-- PART A: 2×2 테이블 시뮬레이션 -->
@@ -1733,6 +1756,18 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                   <div style="font-size:11px;color:var(--text3);margin-top:4px">40 ← → 90</div>
                 </div>
               </div>
+            </div>
+
+            <!-- SD 슬라이더 -->
+            <div style="margin-top:20px;padding:14px;background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-radius:8px;border:1px solid #FFB74D">
+              <div style="font-weight:600;color:#E65100;margin-bottom:8px;font-size:13px">🎚️ 집단 내 흩어짐(SD) 조절</div>
+              <div style="font-size:11px;color:var(--text2);margin-bottom:8px">F = 집단간/집단내 → 집단 내 변동이 크면 F가 작아집니다!</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:11px;color:var(--text3);white-space:nowrap">모여있음</span>
+                <input id="anovSliderSD" type="range" min="3" max="25" value="10" style="flex:1;cursor:pointer" oninput="anovaSimUpdate()">
+                <span style="font-size:11px;color:var(--text3);white-space:nowrap">흩어짐</span>
+              </div>
+              <div style="text-align:center;margin-top:4px;font-size:12px;font-weight:700;color:#E65100">SD = <span id="anovValSD">10</span></div>
             </div>
 
             <!-- Visualization: Strip chart with positioned dots -->
@@ -2525,7 +2560,13 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 
     <!-- ── Lesson: 나만의 연구 만들기 Wizard ── -->
     <div id="lessonMyresearch" style="display:none">
-      <button class="btn btn-outline btn-sm" onclick="backToMenu()" style="margin-bottom:16px">← 학습 메뉴</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="backToMenu()">← 학습 메뉴</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="mrSaveBadge" style="font-size:11px;color:#78909C">💾 저장됨</span>
+          <button class="btn btn-outline btn-sm" onclick="mrReset()" style="font-size:11px;color:#E65100;border-color:#E65100">🔄 새 연구 시작</button>
+        </div>
+      </div>
       <div class="card">
         <div class="card-h" style="background:linear-gradient(135deg,#FF9800,#FF5722);color:white">🚀 나만의 연구 만들기 — 영감에서 설문지까지</div>
         <div class="card-b">
@@ -2583,6 +2624,13 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                 <div style="font-size:18px;font-weight:800">아이디어 전환 — 남의 연구를 나의 연구로</div>
                 <div style="font-size:12px;color:var(--text2)">원래 연구를 비틀어서 자신만의 질문으로 바꾸는 단계</div>
               </div>
+            </div>
+
+            <!-- 나의 연구 주제 -->
+            <div style="padding:14px;background:linear-gradient(135deg,#E3F2FD,#E1F5FE);border-radius:12px;border:2px solid #42A5F5;margin-bottom:16px">
+              <div style="font-size:13px;font-weight:800;color:#1565C0;margin-bottom:6px">📌 나의 연구 주제 (한 줄로 정리)</div>
+              <input id="mrUserTopic" placeholder="예: 고등학생의 SNS 사용 시간이 자존감에 미치는 영향" style="width:100%;border:2px solid #90CAF9;border-radius:8px;padding:10px 12px;font-size:14px;font-family:Pretendard;box-sizing:border-box">
+              <div style="font-size:11px;color:#1976D2;margin-top:4px">💡 아래 아이디어 전환을 하면서 수정해도 됩니다. 최종 연구 주제가 되는 칸이에요.</div>
             </div>
 
             <!-- 원본 연구 요약 -->
@@ -2698,8 +2746,40 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                 <input type="radio" name="mrHypoType" value="influence">
                 <div>
                   <div style="font-weight:700;color:#FF9800">🔗 영향 관계 — "A가 B에 영향을 미친다"</div>
-                  <div style="font-size:12px;color:var(--text2)">원인-결과 관계를 예측</div>
+                  <div style="font-size:12px;color:var(--text2)">원인-결과 관계를 예측 (회귀분석)</div>
                   <div style="font-size:11px;color:var(--text3);margin-top:4px">예: "SNS 사용 시간이 자존감에 부정적 영향을 미칠 것이다"</div>
+                </div>
+              </label>
+              <label class="mr-hypo-type" onclick="mrSelectHypoType('category')">
+                <input type="radio" name="mrHypoType" value="category">
+                <div>
+                  <div style="font-weight:700;color:#E65100">🎲 범주 관련성 — "A에 따라 B가 다르다"</div>
+                  <div style="font-size:12px;color:var(--text2)">두 범주형 변수 간의 관련성 (카이제곱 검정)</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">예: "성별에 따라 선호 교과가 다를 것이다"</div>
+                </div>
+              </label>
+              <label class="mr-hypo-type" onclick="mrSelectHypoType('prepost')">
+                <input type="radio" name="mrHypoType" value="prepost">
+                <div>
+                  <div style="font-weight:700;color:#00897B">🔄 사전-사후 변화 — "처치 전후 차이가 있다"</div>
+                  <div style="font-size:12px;color:var(--text2)">같은 대상의 전·후 비교 (대응표본 t검정)</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">예: "독서 프로그램 실시 전후 읽기 능력에 차이가 있을 것이다"</div>
+                </div>
+              </label>
+              <label class="mr-hypo-type" onclick="mrSelectHypoType('logistic')">
+                <input type="radio" name="mrHypoType" value="logistic">
+                <div>
+                  <div style="font-weight:700;color:#C62828">🎯 합격/여부 예측 — "A로 B(예/아니오)를 예측한다"</div>
+                  <div style="font-size:12px;color:var(--text2)">이진 결과 예측 (로지스틱 회귀)</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">예: "공부시간과 출석률이 시험 합격 여부를 예측할 수 있을 것이다"</div>
+                </div>
+              </label>
+              <label class="mr-hypo-type" onclick="mrSelectHypoType('trend')">
+                <input type="radio" name="mrHypoType" value="trend">
+                <div>
+                  <div style="font-weight:700;color:#2E7D32">📅 시간 추세 — "시간에 따라 변화한다"</div>
+                  <div style="font-size:12px;color:var(--text2)">시간 경과에 따른 변화 패턴 (시계열 분석)</div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:4px">예: "학교 도서관 대출 건수는 시험 전 증가하는 계절성이 있을 것이다"</div>
                 </div>
               </label>
             </div>
@@ -3272,6 +3352,11 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               <input type="range" id="regSimBSlider" min="0" max="10" step="0.5" value="5" oninput="regSimUpdate()" style="flex:1;accent-color:#2E7D32">
               <span id="regSimBVal" style="font-size:18px;font-weight:800;color:#2E7D32;min-width:70px;text-align:right">+5.0점</span>
             </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <label style="font-size:13px;font-weight:700;color:var(--text);min-width:80px">퍼짐(노이즈):</label>
+              <input type="range" id="regSimNoiseSlider" min="2" max="25" step="1" value="10" oninput="regSimUpdate()" style="flex:1;accent-color:#E65100">
+              <span id="regSimNoiseVal" style="font-size:18px;font-weight:800;color:#E65100;min-width:70px;text-align:right">±10</span>
+            </div>
             <!-- 시각적 결과 -->
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
               <div style="padding:14px;background:white;border-radius:10px;text-align:center;border:1px solid #BBDEFB">
@@ -3476,6 +3561,28 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               <div id="mrSimBreak" style="font-size:11px;color:var(--text2);margin-top:4px">수면 +14.0 | SNS -1.6 | 운동 +0.5</div>
             </div>
             <p style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">👀 어떤 슬라이더를 움직일 때 점수가 가장 크게 변하나요?</p>
+
+            <!-- 다중공선성 체험 -->
+            <div style="margin-top:14px;padding:14px;background:#FCE4EC;border-radius:10px;border:1px solid #F48FB1">
+              <div style="font-size:13px;font-weight:700;color:#AD1457;margin-bottom:6px">🔗 다중공선성 체험: 비슷한 변수를 넣으면?</div>
+              <p style="font-size:11px;color:var(--text2);margin-bottom:10px">"수면시간"과 거의 같은 뜻인 "취침시각"을 추가하면 β 값이 어떻게 될까요? 토글을 켜보세요.</p>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <label style="font-size:12px;font-weight:700;color:#AD1457;cursor:pointer;display:flex;align-items:center;gap:6px">
+                  <input type="checkbox" id="mrCollinToggle" onchange="mrCollinUpdate()" style="accent-color:#AD1457;width:18px;height:18px"> "취침시각" 변수 추가
+                </label>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div style="padding:10px;background:white;border-radius:8px;text-align:center">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:2px">수면 β (원래)</div>
+                  <div id="mrCollinBeta1" style="font-size:18px;font-weight:800;color:#6A1B9A">0.45</div>
+                </div>
+                <div id="mrCollinBox2" style="padding:10px;background:#F5F5F5;border-radius:8px;text-align:center;opacity:0.4">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:2px">취침시각 β (추가)</div>
+                  <div id="mrCollinBeta2" style="font-size:18px;font-weight:800;color:#AD1457">—</div>
+                </div>
+              </div>
+              <div id="mrCollinMsg" style="margin-top:8px;padding:8px;border-radius:6px;font-size:12px;text-align:center;background:white;color:var(--text2)">☝️ 토글을 켜서 변수를 추가해보세요</div>
+            </div>
           </div>
 
           <!-- STEP 1: 관찰 -->
@@ -3791,6 +3898,21 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               </div>
             </div>
             <div id="logSimVerdict" style="margin-top:10px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;text-align:center;background:#FFF3E0;color:#E65100">🤔 반반... 아직 확신할 수 없어요</div>
+
+            <!-- 판정 기준선 슬라이더 -->
+            <div style="margin-top:14px;padding:14px;background:#FBE9E7;border-radius:10px;border:1px solid #FFAB91">
+              <div style="font-size:13px;font-weight:700;color:#BF360C;margin-bottom:8px">⚖️ 판정 기준선을 바꿔보세요</div>
+              <p style="font-size:11px;color:var(--text2);margin-bottom:8px">"몇 % 이상이면 합격으로 판정할까?" — 기준을 엄격하게/느슨하게 바꿔보세요.</p>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="font-size:11px;color:var(--text3)">느슨 30%</span>
+                <input type="range" id="logThresholdSlider" min="30" max="80" step="5" value="50" oninput="logSimUpdate()" style="flex:1;accent-color:#BF360C">
+                <span style="font-size:11px;color:var(--text3)">엄격 80%</span>
+              </div>
+              <div style="text-align:center">
+                <span style="font-size:14px;font-weight:800;color:#BF360C">기준선: <span id="logThresholdVal">50</span>%</span>
+              </div>
+              <div id="logThresholdVerdict" style="margin-top:8px;padding:8px;border-radius:6px;font-size:12px;text-align:center;background:white;color:var(--text2)"></div>
+            </div>
           </div>
 
           <!-- STEP 1: 관찰 -->
@@ -3997,6 +4119,22 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                 <span><span style="color:#2E7D32;font-weight:700">●</span> 실제(+노이즈)</span>
               </div>
             </div>
+
+            <!-- 미래 예측 체험 -->
+            <div style="margin-top:14px;padding:14px;background:white;border-radius:10px;border:2px solid #81C784">
+              <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:6px">🔮 미래 예측 — 얼마나 먼 미래까지 믿을 수 있을까?</div>
+              <p style="font-size:11px;color:var(--text2);margin-bottom:10px">예측 기간을 늘려보세요. 멀리 갈수록 불확실성(회색 영역)이 넓어집니다.</p>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <span style="font-size:11px;color:var(--text3)">1개월</span>
+                <input type="range" id="tsForecastSlider" min="1" max="12" step="1" value="3" oninput="tsForecastUpdate()" style="flex:1;accent-color:#2E7D32">
+                <span style="font-size:11px;color:var(--text3)">12개월</span>
+              </div>
+              <div style="text-align:center;margin-bottom:10px">
+                <span style="font-size:14px;font-weight:800;color:#2E7D32">예측 기간: <span id="tsForecastVal">3</span>개월 앞</span>
+              </div>
+              <svg id="tsForecastSVG" width="100%" height="140" viewBox="0 0 440 140" style="display:block"></svg>
+              <div id="tsForecastMsg" style="margin-top:8px;padding:8px;border-radius:6px;font-size:12px;text-align:center;background:#E8F5E9;color:#1B5E20"></div>
+            </div>
           </div>
 
           <!-- STEP 1: 관찰 -->
@@ -4158,7 +4296,8 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 
           <!-- ② 7가지 분석법 상세 가이드 -->
           <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">📚 7가지 분석법 — 상세 가이드</div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.6">각 분석법이 <strong>무엇</strong>이고, <strong>언제</strong> 쓰고, <strong>결과를 어떻게 읽는지</strong>까지 하나씩 살펴봅니다. 위 플로차트에서 방향만 잡았다면, 여기서 진짜 이해를 완성하세요.</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.6">각 분석법이 <strong>무엇</strong>이고, <strong>언제</strong> 쓰고, <strong>결과를 어떻게 읽는지</strong>까지 하나씩 살펴봅니다. 카드를 클릭하면 상세 내용이 펼쳐집니다.</div>
+          <div id="advGuideCards">
 
           <!-- t검정 상세 -->
           <div style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:14px;padding:18px;margin-bottom:12px;border-left:5px solid #1565C0">
@@ -4417,6 +4556,8 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               </div>
             </div>
           </div>
+
+          </div><!-- /advGuideCards -->
 
           <!-- ③ 한눈에 비교표 -->
           <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px">📋 7가지 분석 — 한눈에 비교</div>
@@ -4905,10 +5046,22 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 
     <!-- Step 2: Analysis Selection -->
     <div class="az-section" id="azSec2">
+      <!-- 변수 프로필 패널 -->
+      <div id="azProfilePanel" style="display:none;margin-bottom:16px">
+        <div class="card">
+          <div class="card-h" style="display:flex;justify-content:space-between;align-items:center">
+            <span>📊 내 데이터 프로필 — 변수 자동 감지 결과</span>
+            <button class="btn btn-sm" onclick="document.getElementById('azProfilePanel').style.display='none'" style="font-size:11px;background:none;border:1px solid var(--border);color:var(--text3);padding:4px 10px">접기 ▲</button>
+          </div>
+          <div class="card-b" id="azProfileContent"></div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-h">🔍 무엇을 알고 싶나요?</div>
         <div class="card-b">
-          <div style="margin-bottom:12px;text-align:center">
+          <div style="margin-bottom:12px;text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-sm" onclick="var p=document.getElementById('azProfilePanel');p.style.display=p.style.display==='none'?'block':'none'" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);color:#2E7D32;border:1px solid #81C784;font-weight:700;font-size:12px">📊 내 데이터 프로필 보기</button>
             <button class="btn btn-sm" onclick="toggleAzHelper()" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);color:#0277BD;border:1px solid #90CAF9;font-weight:700;font-size:12px">🧭 어떤 분석을 써야 할지 모르겠어요</button>
           </div>
           <div id="azHelperBox" style="display:none;background:linear-gradient(135deg,#F8F6FF,#EDE7F6);border:2px solid #B39DDB;border-radius:14px;padding:18px;margin-bottom:16px">
@@ -4925,6 +5078,18 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               </div>
             </div>
           </div>
+          <!-- 🔬 자동 탐색 배너 — 직접 데이터 입력 시에만 표시 -->
+          <div id="azExploreBanner" style="display:none;margin-bottom:16px;padding:16px 20px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;border:2px solid #e94560;cursor:pointer;transition:all 0.2s" onclick="azSelectAnalysis('explore')" onmouseover="this.style.borderColor='#ff6b8a';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='#e94560';this.style.transform='none'">
+            <div style="display:flex;align-items:center;gap:16px">
+              <div style="font-size:32px;flex-shrink:0">🔬</div>
+              <div style="flex:1">
+                <div style="font-size:15px;font-weight:800;color:#e94560;margin-bottom:4px">뭘 골라야 할지 모르겠다면? → 자동 탐색</div>
+                <div style="font-size:12px;color:#a0a0b0;line-height:1.6">분석 유형을 고르지 않아도 됩니다. 변수를 자동 분류하고, 상관행렬·집단비교·산점도를 한 번에 생성합니다.</div>
+              </div>
+              <div style="font-size:14px;color:#e94560;font-weight:700;flex-shrink:0">실행 →</div>
+            </div>
+          </div>
+
           <div class="analysis-grid">
             <div class="diff-section-header diff-section-basic" style="grid-column:1/-1">🟢 기초 — 데이터의 모습 파악하기</div>
             <div class="analysis-btn" onclick="azSelectAnalysis('descriptive')" id="azAb-descriptive">
@@ -5085,8 +5250,9 @@ function openLesson(id) {
   if(id==='quest') initQuestLesson();
   if(id==='guide') guideReset();
   if(id==='topics') initTopicsLesson();
-  if(id==='myresearch') mrGoStep(1);
+  if(id==='myresearch') { if(_mrSkipAutoLoad) { _mrSkipAutoLoad = false; mrGoStep(1); } else { var saved = mrAutoLoad(); mrGoStep(saved || 1); mrAttachAutoSave(); } }
   if(id==='pvalue') pSimUpdate();
+  if(id==='advanced') advInitAccordion();
   logStudentAction('lesson', id);
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -5260,6 +5426,56 @@ function advPick(type) {
   }
 }
 
+// ━━ 고급학습 가이드 아코디언 ━━
+function advInitAccordion() {
+  var container = document.getElementById('advGuideCards');
+  if(!container || container._accordionDone) return;
+  container._accordionDone = true;
+  // 각 가이드 카드(border-left이 있는 직접 자식)를 아코디언으로 변환
+  var cards = container.children;
+  for(var i=0; i<cards.length; i++) {
+    var card = cards[i];
+    if(!card.style || !card.style.borderLeft) continue;
+    // 첫 번째 자식 = 헤더 div (아이콘+이름+배지)
+    var header = card.children[0];
+    // 나머지 = 본문 (접을 대상)
+    var bodyEls = [];
+    for(var j=1; j<card.children.length; j++) bodyEls.push(card.children[j]);
+    if(!header || bodyEls.length===0) continue;
+    // 본문을 래퍼로 감싸기
+    var wrapper = document.createElement('div');
+    wrapper.className = 'adv-body';
+    wrapper.style.cssText = 'display:none;padding-top:10px';
+    bodyEls.forEach(function(el) { wrapper.appendChild(el); });
+    card.appendChild(wrapper);
+    // 헤더에 짧은 설명 추가 (첫 strong 텍스트에서 추출)
+    var firstStrong = wrapper.querySelector('strong');
+    var desc = firstStrong ? firstStrong.parentElement.textContent.substring(0,50) : '';
+    // 화살표 + 클릭 가능하게
+    header.style.cursor = 'pointer';
+    header.style.userSelect = 'none';
+    header.style.marginBottom = '0';
+    var arrow = document.createElement('span');
+    arrow.className = 'adv-arrow';
+    arrow.style.cssText = 'font-size:14px;transition:transform 0.3s;margin-left:auto';
+    arrow.textContent = '▼';
+    header.appendChild(arrow);
+    // 패딩 조정 — 접힌 상태에서 컴팩트하게
+    card.style.padding = '0';
+    header.style.padding = '14px 18px';
+    wrapper.style.padding = '0 18px 18px 18px';
+    // 클릭 핸들러
+    (function(w, a, c) {
+      c.addEventListener('click', function(e) {
+        if(e.target.closest('button') || e.target.closest('a')) return;
+        var open = w.style.display !== 'none';
+        w.style.display = open ? 'none' : 'block';
+        a.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+      });
+    })(wrapper, arrow, header);
+  }
+}
+
 function advCheck(qNum, answer, btn) {
   const info = _advAnswers[qNum];
   if(!info) return;
@@ -5301,18 +5517,35 @@ function regSimUpdate() {
 
   const x = parseFloat(xSlider.value);
   const B = parseFloat(bSlider.value);
+  const noiseEl = document.getElementById('regSimNoiseSlider');
+  const noise = noiseEl ? parseFloat(noiseEl.value) : 10;
+
+  // 노이즈 라벨 업데이트
+  const noiseLabel = document.getElementById('regSimNoiseVal');
+  if(noiseLabel) noiseLabel.textContent = '±' + noise;
+
+  // 노이즈 적용된 데이터 생성 (시드 기반 일관된 흩뜨림)
+  const noisyData = _regData.map(function(d, i) {
+    var seed = (i + 1) * 7 + 31;
+    seed = ((seed * 1103515245 + 12345) & 0x7fffffff);
+    var rnd = (seed % 1000) / 1000 - 0.5; // -0.5 ~ 0.5
+    var baseNoise = (d[1] - (52 + 5 * d[0])); // original deviation from ideal line
+    var scaledNoise = baseNoise * (noise / 10);
+    var newY = (52 + 5 * d[0]) + scaledNoise;
+    return [d[0], Math.max(35, Math.min(100, newY))];
+  });
 
   // 절편은 데이터에 맞게 자동 계산: intercept = meanY - B * meanX
-  const meanX = _regData.reduce((s,d)=>s+d[0],0) / _regData.length;
-  const meanY = _regData.reduce((s,d)=>s+d[1],0) / _regData.length;
+  const meanX = noisyData.reduce((s,d)=>s+d[0],0) / noisyData.length;
+  const meanY = noisyData.reduce((s,d)=>s+d[1],0) / noisyData.length;
   const intercept = meanY - B * meanX;
 
   // 예측값
   const yPred = intercept + B * x;
 
   // R² 계산: 1 - SS_res / SS_tot
-  const ssTot = _regData.reduce((s,d) => s + Math.pow(d[1] - meanY, 2), 0);
-  const ssRes = _regData.reduce((s,d) => s + Math.pow(d[1] - (intercept + B * d[0]), 2), 0);
+  const ssTot = noisyData.reduce((s,d) => s + Math.pow(d[1] - meanY, 2), 0);
+  const ssRes = noisyData.reduce((s,d) => s + Math.pow(d[1] - (intercept + B * d[0]), 2), 0);
   const r2 = ssTot > 0 ? Math.max(0, 1 - ssRes / ssTot) : 0;
 
   // UI 업데이트
@@ -5377,7 +5610,7 @@ function regSimUpdate() {
   svg.appendChild(regLine);
 
   // 잔차선 + 데이터 점
-  _regData.forEach(d => {
+  noisyData.forEach(d => {
     const dPred = intercept + B * d[0];
     // 잔차선 (데이터→회귀선)
     const resLine = document.createElementNS(ns,'line');
@@ -5504,6 +5737,118 @@ function tsSimUpdate() {
     t.textContent = Math.round(v);
     svg.appendChild(t);
   });
+}
+
+// 시계열 미래 예측 체험
+function tsForecastUpdate() {
+  var slider = document.getElementById('tsForecastSlider');
+  var months = slider ? parseInt(slider.value) : 3;
+  var label = document.getElementById('tsForecastVal');
+  if(label) label.textContent = months;
+
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('tsForecastSVG');
+  if(!svg) return;
+  svg.innerHTML = '';
+  var W=440, H=140, pad=30;
+  var pW=W-2*pad, pH=H-2*pad;
+
+  // 과거 12개월 데이터
+  var past = [45, 52, 68, 38, 12, 15, 48, 55, 72, 30, 10, 14];
+  var total = 12 + months;
+  var yMin = 0, yMax = 100;
+
+  var toSX = function(i){ return pad + (i/(total-1))*pW; };
+  var toSY = function(v){ return pad + pH - ((v-yMin)/(yMax-yMin))*pH; };
+
+  // 배경
+  var bg = document.createElementNS(ns,'rect');
+  bg.setAttribute('x',pad); bg.setAttribute('y',pad);
+  bg.setAttribute('width',pW); bg.setAttribute('height',pH);
+  bg.setAttribute('fill','#FAFAFA'); bg.setAttribute('stroke','#E0E0E0');
+  svg.appendChild(bg);
+
+  // 과거/미래 경계선
+  var bx = toSX(11);
+  var bl = document.createElementNS(ns,'line');
+  bl.setAttribute('x1',bx); bl.setAttribute('x2',bx);
+  bl.setAttribute('y1',pad); bl.setAttribute('y2',pad+pH);
+  bl.setAttribute('stroke','#E0E0E0'); bl.setAttribute('stroke-dasharray','4,4');
+  svg.appendChild(bl);
+  var btxt = document.createElementNS(ns,'text');
+  btxt.setAttribute('x',bx); btxt.setAttribute('y',pad-4);
+  btxt.setAttribute('text-anchor','middle'); btxt.setAttribute('font-size','9'); btxt.setAttribute('fill','#B2BEC3');
+  btxt.textContent='현재'; svg.appendChild(btxt);
+
+  // 과거 데이터 선
+  var pastPath = '';
+  past.forEach(function(v,i){
+    pastPath += (i===0?'M':'L') + toSX(i).toFixed(1) + ',' + toSY(v).toFixed(1);
+  });
+  var pp = document.createElementNS(ns,'path');
+  pp.setAttribute('d',pastPath); pp.setAttribute('fill','none');
+  pp.setAttribute('stroke','#2E7D32'); pp.setAttribute('stroke-width','2');
+  svg.appendChild(pp);
+
+  // 과거 점
+  past.forEach(function(v,i){
+    var c = document.createElementNS(ns,'circle');
+    c.setAttribute('cx',toSX(i)); c.setAttribute('cy',toSY(v));
+    c.setAttribute('r','3'); c.setAttribute('fill','#2E7D32');
+    svg.appendChild(c);
+  });
+
+  // 미래 예측 (추세 기반 + 계절성)
+  var seasonP = [0.3,0.5,1.0,-0.2,-1.0,-0.8,0.3,0.5,1.0,-0.3,-1.0,-0.8];
+  var lastVal = past[11];
+  var trend = 1.5; // 월당 증가
+  var forecasts = [];
+  for(var m=0; m<months; m++){
+    var fv = lastVal + trend*(m+1) + seasonP[m%12]*18;
+    forecasts.push(Math.max(0,Math.min(100,fv)));
+  }
+
+  // 신뢰구간 (갈수록 넓어짐)
+  var confPath = 'M' + toSX(11).toFixed(1) + ',' + toSY(lastVal).toFixed(1);
+  for(var m=0; m<months; m++){
+    var width = 5 * (m+1); // 갈수록 넓어짐
+    confPath += ' L' + toSX(12+m).toFixed(1) + ',' + toSY(Math.min(100,forecasts[m]+width)).toFixed(1);
+  }
+  for(var m=months-1; m>=0; m--){
+    var width = 5 * (m+1);
+    confPath += ' L' + toSX(12+m).toFixed(1) + ',' + toSY(Math.max(0,forecasts[m]-width)).toFixed(1);
+  }
+  confPath += ' L' + toSX(11).toFixed(1) + ',' + toSY(lastVal).toFixed(1) + ' Z';
+  var conf = document.createElementNS(ns,'path');
+  conf.setAttribute('d',confPath); conf.setAttribute('fill','#B0BEC5'); conf.setAttribute('opacity','0.3');
+  svg.appendChild(conf);
+
+  // 예측선
+  var fPath = 'M' + toSX(11).toFixed(1) + ',' + toSY(lastVal).toFixed(1);
+  forecasts.forEach(function(v,i){
+    fPath += ' L' + toSX(12+i).toFixed(1) + ',' + toSY(v).toFixed(1);
+  });
+  var fp = document.createElementNS(ns,'path');
+  fp.setAttribute('d',fPath); fp.setAttribute('fill','none');
+  fp.setAttribute('stroke','#FF6F00'); fp.setAttribute('stroke-width','2');
+  fp.setAttribute('stroke-dasharray','6,3');
+  svg.appendChild(fp);
+
+  // 메시지
+  var msg = document.getElementById('tsForecastMsg');
+  if(msg) {
+    var lastWidth = 5 * months;
+    if(months <= 3) {
+      msg.innerHTML = '📊 <strong>' + months + '개월</strong> 예측: 불확실성 ±' + lastWidth + ' — <span style="color:#2E7D32">비교적 신뢰할 수 있는 범위</span>';
+      msg.style.background = '#E8F5E9';
+    } else if(months <= 6) {
+      msg.innerHTML = '📊 <strong>' + months + '개월</strong> 예측: 불확실성 ±' + lastWidth + ' — <span style="color:#E65100">주의가 필요한 범위</span>';
+      msg.style.background = '#FFF3E0';
+    } else {
+      msg.innerHTML = '📊 <strong>' + months + '개월</strong> 예측: 불확실성 ±' + lastWidth + ' — <span style="color:#C62828">거의 의미 없는 수준. 회색 영역이 너무 넓어요!</span>';
+      msg.style.background = '#FFEBEE';
+    }
+  }
 }
 
 // β 체험: 퀴즈 → 변환 → 해석
@@ -10263,6 +10608,9 @@ function renderResearchResults(items) {
     return;
   }
   container.innerHTML = items.map((item, idx) => {
+    // 원본 _researchDB에서의 실제 인덱스 찾기
+    var dbIdx = _researchDB.indexOf(item);
+    if(dbIdx < 0) dbIdx = _researchDB.findIndex(function(r){ return r.title === item.title; });
     const catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C',지리:'#0D47A1'};
     const catIcons = {학교:'🏫',건강:'💪',심리:'🧠',과학:'🔬',사회:'🌏',미디어:'📱',진로:'🎯',의학:'🏥',생명:'🧬',행정:'🏛️',교육:'📚',경제:'📈',경영:'💼',건축:'🏗️',마케팅:'📣',우주:'🚀',화학:'⚗️',전자공학:'💡',기계공학:'⚙️',보건:'🩺',환경:'🌿',체육:'🏃',식품:'🍽️',농업:'🌾',수학:'🔢',지리:'🗺️'};
     const color = catColors[item.cat] || '#333';
@@ -10300,7 +10648,7 @@ function renderResearchResults(items) {
         '<div id="resDemo' + idx + '" style="display:none;margin-top:10px"></div>' +
         '<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">' +
           '<button class="btn btn-sm" onclick="showTopicDemo(' + idx + ')" style="background:#00897B;color:white;border:none;font-size:11px;padding:6px 14px">🎮 이 분석 체험해보기</button>' +
-          '<button class="btn btn-sm" onclick="openDesignWithTopic(' + idx + ')" style="background:' + color + ';color:white;border:none;font-size:11px;padding:6px 14px">🚀 나만의 연구 시작하기 →</button>' +
+          '<button class="btn btn-sm" onclick="openDesignWithTopic(' + dbIdx + ')" style="background:' + color + ';color:white;border:none;font-size:11px;padding:6px 14px">🚀 나만의 연구 시작하기 →</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -10785,6 +11133,35 @@ function mrSimUpdate() {
   }
 }
 
+function mrCollinUpdate() {
+  var toggle = document.getElementById('mrCollinToggle');
+  var on = toggle && toggle.checked;
+  var beta1El = document.getElementById('mrCollinBeta1');
+  var beta2El = document.getElementById('mrCollinBeta2');
+  var box2 = document.getElementById('mrCollinBox2');
+  var msg = document.getElementById('mrCollinMsg');
+
+  if(on) {
+    // 다중공선성: 수면 β가 쪼개지고 불안정해짐
+    beta1El.textContent = '0.22';
+    beta1El.style.color = '#C62828';
+    beta2El.textContent = '0.24';
+    box2.style.opacity = '1';
+    box2.style.background = '#FCE4EC';
+    msg.innerHTML = '⚠️ <strong style="color:#C62828">다중공선성 발생!</strong> 수면 β가 0.45→0.22로 쪼개졌습니다. 두 변수가 너무 비슷해서 영향력을 나눠 가졌어요.' +
+      '<br><span style="font-size:11px;color:var(--text3)">VIF(분산팽창계수)가 높아져 → β 추정이 불안정 → 해석이 어려워짐</span>';
+    msg.style.background = '#FFEBEE';
+  } else {
+    beta1El.textContent = '0.45';
+    beta1El.style.color = '#6A1B9A';
+    beta2El.textContent = '—';
+    box2.style.opacity = '0.4';
+    box2.style.background = '#F5F5F5';
+    msg.innerHTML = '☝️ 토글을 켜서 변수를 추가해보세요';
+    msg.style.background = 'white';
+  }
+}
+
 function logSimUpdate() {
   const slider = document.getElementById('logSimSlider');
   if(!slider) return;
@@ -10801,12 +11178,31 @@ function logSimUpdate() {
   const bar = document.getElementById('logSimBar');
   if(bar) bar.style.width = percent + '%';
 
-  // 판정
+  // threshold 읽기
+  const threshEl = document.getElementById('logThresholdSlider');
+  const threshold = threshEl ? parseFloat(threshEl.value) : 50;
+  const threshLabel = document.getElementById('logThresholdVal');
+  if(threshLabel) threshLabel.textContent = threshold;
+
+  // 판정 (threshold 기반)
   const verdict = document.getElementById('logSimVerdict');
   if(verdict) {
-    if(percent < 30) { verdict.textContent='🚫 불합격 가능성이 높아요'; verdict.style.background='#FFEBEE'; verdict.style.color='#C62828'; }
-    else if(percent < 70) { verdict.textContent='🤔 반반... 아직 확신할 수 없어요'; verdict.style.background='#FFF3E0'; verdict.style.color='#E65100'; }
-    else { verdict.textContent='✅ 합격 가능성이 높아요!'; verdict.style.background='#E8F5E9'; verdict.style.color='#2E7D32'; }
+    if(percent >= threshold) { verdict.textContent='✅ 합격 판정! (' + Math.round(percent) + '% ≥ 기준 ' + threshold + '%)'; verdict.style.background='#E8F5E9'; verdict.style.color='#2E7D32'; }
+    else { verdict.textContent='🚫 불합격 판정 (' + Math.round(percent) + '% < 기준 ' + threshold + '%)'; verdict.style.background='#FFEBEE'; verdict.style.color='#C62828'; }
+  }
+
+  // threshold verdict: 기준을 바꾸면 몇 명이 합격/불합격?
+  const threshVerdict = document.getElementById('logThresholdVerdict');
+  if(threshVerdict) {
+    // 10명의 가상 학생 (공부시간 1~10h)
+    var pass = 0, fail = 0;
+    for(var s=1; s<=10; s++) {
+      var sp = 1/(1+Math.exp(-(-2.5+0.5*s))) * 100;
+      if(sp >= threshold) pass++; else fail++;
+    }
+    threshVerdict.innerHTML = '📊 학생 10명 중: <strong style="color:#2E7D32">' + pass + '명 합격</strong>, <strong style="color:#C62828">' + fail + '명 불합격</strong>' +
+      (threshold > 60 ? '<br><span style="font-size:11px;color:var(--text3)">기준이 높으면 → 합격자 줄어듬 (엄격한 시험)</span>' :
+       threshold < 40 ? '<br><span style="font-size:11px;color:var(--text3)">기준이 낮으면 → 합격자 늘어남 (쉬운 시험)</span>' : '');
   }
 
   // S곡선 SVG 그리기
@@ -10817,17 +11213,17 @@ function logSimUpdate() {
   const W=400, H=160, pad=30;
   const pW=W-2*pad, pH=H-2*pad;
 
-  // 50% 기준선
-  const halfY = pad + pH * 0.5;
+  // threshold 기준선 (동적)
+  const threshY = pad + pH - (threshold/100)*pH;
   const hl = document.createElementNS(ns,'line');
   hl.setAttribute('x1',pad); hl.setAttribute('x2',pad+pW);
-  hl.setAttribute('y1',halfY); hl.setAttribute('y2',halfY);
-  hl.setAttribute('stroke','#E0E0E0'); hl.setAttribute('stroke-dasharray','4,4');
+  hl.setAttribute('y1',threshY); hl.setAttribute('y2',threshY);
+  hl.setAttribute('stroke','#BF360C'); hl.setAttribute('stroke-dasharray','4,4'); hl.setAttribute('stroke-width','1.5');
   svg.appendChild(hl);
   const hlTxt = document.createElementNS(ns,'text');
-  hlTxt.setAttribute('x',pad-4); hlTxt.setAttribute('y',halfY+3);
-  hlTxt.setAttribute('text-anchor','end'); hlTxt.setAttribute('font-size','9'); hlTxt.setAttribute('fill','#B2BEC3');
-  hlTxt.textContent='50%'; svg.appendChild(hlTxt);
+  hlTxt.setAttribute('x',pad-4); hlTxt.setAttribute('y',threshY+3);
+  hlTxt.setAttribute('text-anchor','end'); hlTxt.setAttribute('font-size','9'); hlTxt.setAttribute('fill','#BF360C');
+  hlTxt.textContent=threshold+'%'; svg.appendChild(hlTxt);
 
   // Y축 레이블
   [0,100].forEach(v => {
@@ -11516,14 +11912,18 @@ function calculateTTest(groupA, groupB) {
 function tTestSimUpdate() {
   const valA = parseInt(document.getElementById('ttSliderA').value);
   const valB = parseInt(document.getElementById('ttSliderB').value);
+  const sdEl = document.getElementById('ttSliderSD');
+  const sd = sdEl ? parseInt(sdEl.value) : 8;
 
   // 슬라이더 값 표시
   document.getElementById('ttValA').textContent = valA;
   document.getElementById('ttValB').textContent = valB;
+  const sdLabel = document.getElementById('ttValSD');
+  if(sdLabel) sdLabel.textContent = sd;
 
-  // 각 그룹의 샘플 데이터 생성 (정규분포, seeded for 재현성)
-  const groupA = generateNormalDistribution(valA, 8, 15, valA * 1000 + 7);
-  const groupB = generateNormalDistribution(valB, 8, 15, valB * 1000 + 13);
+  // 각 그룹의 샘플 데이터 생성 (정규분포, SD는 슬라이더로 조절)
+  const groupA = generateNormalDistribution(valA, sd, 15, valA * 1000 + 7);
+  const groupB = generateNormalDistribution(valB, sd, 15, valB * 1000 + 13);
 
   // t검정 계산
   const result = calculateTTest(groupA, groupB);
@@ -11663,6 +12063,20 @@ function goToAnalysis(type) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🎲 CHI-SQUARE TEST SIMULATOR
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function chiSetScenario(type) {
+  const vals = {
+    independent: [25, 25, 25, 25],  // 완전 독립: 남녀 모두 50:50
+    weak:        [30, 20, 20, 30],   // 약한 관련: 약간 차이
+    strong:      [40, 10, 8, 42]     // 강한 관련: 확연한 차이
+  };
+  const v = vals[type] || vals.independent;
+  document.getElementById('chiCell00').value = v[0];
+  document.getElementById('chiCell01').value = v[1];
+  document.getElementById('chiCell10').value = v[2];
+  document.getElementById('chiCell11').value = v[3];
+  chiSimUpdate();
+}
+
 function chiSimUpdate() {
   // 테이블에서 값 읽기
   const o00 = parseInt(document.getElementById('chiCell00').value) || 0;
@@ -11729,16 +12143,20 @@ function anovaSimUpdate() {
   const mean1 = parseInt(document.getElementById('anovSlider1').value) || 55;
   const mean2 = parseInt(document.getElementById('anovSlider2').value) || 60;
   const mean3 = parseInt(document.getElementById('anovSlider3').value) || 75;
+  const sdEl = document.getElementById('anovSliderSD');
+  const sd = sdEl ? parseInt(sdEl.value) : 10;
 
   // 슬라이더 값 표시 업데이트
   document.getElementById('anovVal1').textContent = mean1;
   document.getElementById('anovVal2').textContent = mean2;
   document.getElementById('anovVal3').textContent = mean3;
+  const sdLabel = document.getElementById('anovValSD');
+  if(sdLabel) sdLabel.textContent = sd;
 
-  // 각 집단에서 10개의 샘플 생성 (정규분포, SD ≈ 10, seeded for 재현성)
-  const group1 = generateNormalDistribution(mean1, 10, 10, mean1 * 1000 + 3).map(v=>Math.max(20,Math.min(100,v)));
-  const group2 = generateNormalDistribution(mean2, 10, 10, mean2 * 1000 + 7).map(v=>Math.max(20,Math.min(100,v)));
-  const group3 = generateNormalDistribution(mean3, 10, 10, mean3 * 1000 + 11).map(v=>Math.max(20,Math.min(100,v)));
+  // 각 집단에서 10개의 샘플 생성 (정규분포, SD는 슬라이더로 조절)
+  const group1 = generateNormalDistribution(mean1, sd, 10, mean1 * 1000 + 3).map(v=>Math.max(20,Math.min(100,v)));
+  const group2 = generateNormalDistribution(mean2, sd, 10, mean2 * 1000 + 7).map(v=>Math.max(20,Math.min(100,v)));
+  const group3 = generateNormalDistribution(mean3, sd, 10, mean3 * 1000 + 11).map(v=>Math.max(20,Math.min(100,v)));
 
   // 전체 데이터와 평균 계산
   const allData = [...group1, ...group2, ...group3];
@@ -11839,9 +12257,9 @@ let AZ_ANALYSIS = null;
 let azChartInstance = null;
 
 const AZ_SAMPLES = {
-  sns: `학생\tSNS사용시간\t성적\n학생1\t1\t92\n학생2\t2\t88\n학생3\t3\t85\n학생4\t2\t90\n학생5\t4\t75\n학생6\t5\t70\n학생7\t3\t82\n학생8\t1\t95\n학생9\t6\t65\n학생10\t4\t78\n학생11\t2\t87\n학생12\t5\t68\n학생13\t3\t80\n학생14\t1\t93\n학생15\t4\t73\n학생16\t6\t62\n학생17\t2\t86\n학생18\t3\t83\n학생19\t5\t71\n학생20\t1\t91`,
+  sns: `학생\tSNS사용시간\t수학성적\n학생1\t0.8\t93\n학생2\t1.3\t89\n학생3\t1.7\t86\n학생4\t2.1\t84\n학생5\t2.4\t81\n학생6\t2.9\t78\n학생7\t3.2\t76\n학생8\t1.0\t91\n학생9\t3.8\t72\n학생10\t4.3\t68\n학생11\t1.5\t88\n학생12\t5.1\t63\n학생13\t2.6\t80\n학생14\t0.5\t95\n학생15\t4.7\t66\n학생16\t5.6\t60\n학생17\t1.9\t85\n학생18\t3.5\t74\n학생19\t4.0\t70\n학생20\t0.7\t92\n학생21\t2.3\t82\n학생22\t3.1\t77\n학생23\t5.3\t62\n학생24\t1.1\t90\n학생25\t4.5\t67`,
   study: `학생\t그룹\t점수\n학생1\t자기주도\t85\n학생2\t자기주도\t90\n학생3\t자기주도\t78\n학생4\t자기주도\t92\n학생5\t자기주도\t88\n학생6\t자기주도\t82\n학생7\t자기주도\t95\n학생8\t자기주도\t87\n학생9\t자기주도\t80\n학생10\t자기주도\t91\n학생11\t강의식\t72\n학생12\t강의식\t68\n학생13\t강의식\t75\n학생14\t강의식\t80\n학생15\t강의식\t70\n학생16\t강의식\t77\n학생17\t강의식\t65\n학생18\t강의식\t73\n학생19\t강의식\t78\n학생20\t강의식\t71`,
-  sleep: `학생\t수면시간\t집중력점수\n학생1\t5\t60\n학생2\t6\t68\n학생3\t7\t78\n학생4\t8\t85\n학생5\t6\t65\n학생6\t7\t80\n학생7\t5\t55\n학생8\t8\t88\n학생9\t9\t82\n학생10\t6\t70\n학생11\t7\t75\n학생12\t8\t90\n학생13\t5\t58\n학생14\t9\t80\n학생15\t7\t77\n학생16\t6\t63\n학생17\t8\t86\n학생18\t7\t76\n학생19\t5\t52\n학생20\t9\t84`,
+  sleep: `학생\t수면시간\t집중력점수\n학생1\t5.2\t58\n학생2\t5.8\t64\n학생3\t6.3\t72\n학생4\t6.7\t76\n학생5\t7.0\t80\n학생6\t7.3\t83\n학생7\t7.5\t85\n학생8\t7.8\t87\n학생9\t8.1\t86\n학생10\t8.5\t82\n학생11\t5.5\t61\n학생12\t6.0\t68\n학생13\t6.5\t74\n학생14\t7.2\t81\n학생15\t7.6\t84\n학생16\t8.0\t88\n학생17\t8.3\t84\n학생18\t5.0\t55\n학생19\t6.8\t77\n학생20\t7.4\t82`,
   media: `학생\t성별\t선호매체\n학생1\t남\t유튜브\n학생2\t여\t인스타그램\n학생3\t남\t유튜브\n학생4\t여\t네이버뉴스\n학생5\t남\t유튜브\n학생6\t여\t인스타그램\n학생7\t남\tTV뉴스\n학생8\t여\t유튜브\n학생9\t남\t네이버뉴스\n학생10\t여\t인스타그램\n학생11\t남\t유튜브\n학생12\t여\t인스타그램\n학생13\t남\tTV뉴스\n학생14\t여\t유튜브\n학생15\t남\t유튜브\n학생16\t여\t네이버뉴스\n학생17\t남\tTV뉴스\n학생18\t여\t인스타그램\n학생19\t남\t유튜브\n학생20\t여\t인스타그램\n학생21\t남\t네이버뉴스\n학생22\t여\t유튜브\n학생23\t남\t유튜브\n학생24\t여\t인스타그램\n학생25\t남\tTV뉴스\n학생26\t여\t네이버뉴스\n학생27\t남\t유튜브\n학생28\t여\t인스타그램\n학생29\t남\t유튜브\n학생30\t여\tTV뉴스`,
   class3: `학생\t반\t수학점수\n학생1\t1반\t85\n학생2\t1반\t80\n학생3\t1반\t78\n학생4\t1반\t88\n학생5\t1반\t82\n학생6\t1반\t84\n학생7\t1반\t79\n학생8\t1반\t86\n학생9\t1반\t81\n학생10\t1반\t83\n학생11\t1반\t76\n학생12\t2반\t65\n학생13\t2반\t70\n학생14\t2반\t62\n학생15\t2반\t68\n학생16\t2반\t72\n학생17\t2반\t66\n학생18\t2반\t64\n학생19\t2반\t71\n학생20\t2반\t69\n학생21\t2반\t67\n학생22\t2반\t63\n학생23\t3반\t92\n학생24\t3반\t95\n학생25\t3반\t88\n학생26\t3반\t90\n학생27\t3반\t94\n학생28\t3반\t91\n학생29\t3반\t87\n학생30\t3반\t93\n학생31\t3반\t89\n학생32\t3반\t96\n학생33\t3반\t90`,
   paired: `학생\t사전점수\t사후점수\n학생1\t65\t78\n학생2\t72\t80\n학생3\t58\t70\n학생4\t80\t85\n학생5\t55\t72\n학생6\t68\t75\n학생7\t62\t74\n학생8\t75\t82\n학생9\t70\t78\n학생10\t60\t73\n학생11\t78\t84\n학생12\t52\t68\n학생13\t67\t76\n학생14\t73\t80\n학생15\t63\t75`,
@@ -11862,9 +12280,39 @@ function azSwitchInput(mode) {
     if(tab) tab.classList.toggle('active', m===mode);
   });
   if(mode === 'table') azBuildTable();
-  // import 모드에서는 미리보기/다음버튼 숨기기
+  // 탭 전환 시 미리보기 초기화: 해당 모드에 아직 데이터가 없으면 미리보기 숨기기
   const preview = document.getElementById('azPreviewArea');
-  if(preview && mode==='import') preview.style.display = 'none';
+  if(preview) {
+    if(mode === 'import') {
+      preview.style.display = 'none';
+    } else if(mode === 'file') {
+      // 파일 모드: 파일이 아직 안 올라왔으면 미리보기 숨기고 데이터 초기화
+      const fileInput = document.getElementById('azFileInput');
+      if(!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        preview.style.display = 'none';
+        document.getElementById('azDataInput').value = '';
+        document.getElementById('azDataStats').textContent = '';
+      }
+    } else if(mode === 'paste') {
+      // 붙여넣기 모드: textarea가 비어있으면 미리보기 숨기기
+      const ta = document.getElementById('azDataInput');
+      if(!ta || !ta.value.trim()) {
+        preview.style.display = 'none';
+        document.getElementById('azDataStats').textContent = '';
+      }
+    } else if(mode === 'table') {
+      // 직접입력 모드: 미리보기 숨기기 (테이블 자체가 입력)
+      preview.style.display = 'none';
+      document.getElementById('azDataInput').value = '';
+      document.getElementById('azDataStats').textContent = '';
+    }
+  }
+  // 탐색 배너: 직접 데이터 입력(paste, file, table)일 때만 표시
+  const exploreBanner = document.getElementById('azExploreBanner');
+  if(exploreBanner) {
+    const showExplore = (mode==='paste'||mode==='file'||mode==='table');
+    exploreBanner.style.display = showExplore ? 'block' : 'none';
+  }
 }
 
 let azCurrentScenario = null;
@@ -11875,6 +12323,9 @@ function azLoadSample(key) {
   azParseData();
   azCurrentScenario = key;
   azShowScenarioGuide(key);
+  // 시나리오에서는 탐색 배너 숨기기
+  const eb = document.getElementById('azExploreBanner');
+  if(eb) eb.style.display = 'none';
 }
 
 // ━━ 시나리오 실습 가이드 ━━
@@ -11885,7 +12336,7 @@ const AZ_SCENARIOS = {
     hypothesis: 'SNS 사용시간이 길수록 성적이 낮을 것이다. (음의 상관)',
     analysis: 'correlation',
     analysisName: '함께 움직이는지 확인 (상관분석)',
-    varGuide: 'X 변수: <strong>SNS사용시간</strong>, Y 변수: <strong>성적</strong>',
+    varGuide: 'X 변수: <strong>SNS사용시간</strong> (스크린타임 캡처, 소수점 시간), Y 변수: <strong>수학성적</strong>',
     interpret: [
       'r값이 음수(-)인가요? → SNS↑ 성적↓ 경향 확인',
       '|r|이 0.4 이상인가요? → 중간 이상의 관련성',
@@ -12202,7 +12653,7 @@ function azGoStep(n) {
     if(i < n) s.classList.add('done');
     if(i === n) s.classList.add('active');
   });
-  if(n === 2) azUpdateAvailability();
+  if(n === 2) { azProfileVariables(); azRenderProfile(); azUpdateAvailability(); }
   if(n === 3) window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -12214,8 +12665,25 @@ function azParseData() {
   const lines = raw.split('\n').map(l => l.split(sep).map(c => c.trim()));
   if(lines.length < 2) return false;
   AZ_DATA.headers = lines[0];
-  AZ_DATA.rows = lines.slice(1).filter(r => r.length === AZ_DATA.headers.length);
-  AZ_DATA.numCols = AZ_DATA.headers.map((h,i) => AZ_DATA.rows.every(r => { const v=r[i].trim(); return v!=='' && /^-?\d+(\.\d+)?$/.test(v); }));
+  // 행 길이 정규화: 헤더와 다른 길이의 행도 수용 (짧으면 빈 셀 추가, 길면 자름)
+  var hLen = AZ_DATA.headers.length;
+  AZ_DATA.rows = lines.slice(1).filter(function(r){ return r.some(function(c){ return c.trim() !== ''; }); }).map(function(r) {
+    while(r.length < hLen) r.push('');
+    if(r.length > hLen) r = r.slice(0, hLen);
+    return r;
+  });
+  // 숫자 판정: 순수 숫자, 쉼표 숫자(1,000), 퍼센트(85%), 원화(₩5,000) 등 허용
+  AZ_DATA.numCols = AZ_DATA.headers.map((h,i) => {
+    var validCount = 0, totalValid = 0;
+    AZ_DATA.rows.forEach(r => {
+      var v = (r[i]||'').trim();
+      if(v === '') return; // 빈 값은 건너뜀
+      totalValid++;
+      var cleaned = v.replace(/[₩$%,원명개회점]/g,'').trim();
+      if(/^-?\d+(\.\d+)?$/.test(cleaned)) validCount++;
+    });
+    return totalValid > 0 && validCount >= totalValid * 0.8; // 80% 이상 숫자면 숫자형
+  });
   
   let html = '<thead><tr>' + AZ_DATA.headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
   AZ_DATA.rows.slice(0,8).forEach(r => { html += '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>'; });
@@ -12242,6 +12710,268 @@ document.getElementById('azDataInput').addEventListener('input', () => {
   if(val.split('\n').length >= 2) azParseData();
   else document.getElementById('azPreviewArea').style.display = 'none';
 });
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📊 VARIABLE PROFILING ENGINE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var AZ_PROFILE = [];
+
+function azProfileVariables() {
+  AZ_PROFILE = [];
+  if(!AZ_DATA.headers || AZ_DATA.headers.length === 0) return AZ_PROFILE;
+
+  AZ_DATA.headers.forEach(function(h, ci) {
+    var values = AZ_DATA.rows.map(function(r){ return r[ci]; }).filter(function(v){ return v && v.trim() !== ''; });
+    var missing = AZ_DATA.rows.length - values.length;
+    var uniq = [];
+    var seen = {};
+    values.forEach(function(v){ if(!seen[v]){ seen[v]=true; uniq.push(v); }});
+    var numVals = values.map(function(v){ return v.trim().replace(/[₩$%,원명개회점]/g,'').trim(); }).filter(function(v){ return /^-?\d+(\.\d+)?$/.test(v); }).map(function(v){ return parseFloat(v); });
+    var numRatio = values.length > 0 ? numVals.length / values.length : 0;
+
+    var profile = {
+      index: ci, name: h,
+      total: AZ_DATA.rows.length, valid: values.length,
+      missing: missing,
+      missingPct: AZ_DATA.rows.length > 0 ? Math.round(missing / AZ_DATA.rows.length * 100) : 0,
+      unique: uniq.length,
+      sampleValues: uniq.slice(0, 6)
+    };
+
+    // ID/식별자 감지
+    var idPat = /^(이름|학생|번호|학번|성명|name|id|no|#|순번|연번|idx|응답자|참여자)$/i;
+    if(idPat.test(h.trim()) || (uniq.length > values.length * 0.9 && numRatio < 0.5 && uniq.length > 10)) {
+      profile.type = 'id'; profile.typeLabel = '🏷️ 식별자'; profile.typeColor = '#9E9E9E';
+      profile.measurable = false; profile.analysisTip = '분석에 사용하지 않습니다';
+    } else if(numRatio >= 0.8 && numVals.length >= 2) {
+      // 숫자형 → 세분화
+      var sorted = numVals.slice().sort(function(a,b){ return a-b; });
+      var sum = 0; numVals.forEach(function(v){ sum += v; });
+      var mean = sum / numVals.length;
+      var uniqNums = []; var ns = {};
+      numVals.forEach(function(v){ if(!ns[v]){ ns[v]=true; uniqNums.push(v); }});
+      var mn = sorted[0], mx = sorted[sorted.length-1];
+      var vari = 0; numVals.forEach(function(v){ vari += (v-mean)*(v-mean); }); vari /= numVals.length;
+      var std = Math.sqrt(vari);
+      var median = sorted.length % 2 === 0 ? (sorted[sorted.length/2-1]+sorted[sorted.length/2])/2 : sorted[Math.floor(sorted.length/2)];
+      profile.stats = { mean:mean, median:median, std:std, min:mn, max:mx };
+      profile.measurable = true;
+
+      var allInt = uniqNums.every(function(v){ return v === Math.floor(v); });
+      if(allInt && mn >= 1 && mx <= 7 && uniqNums.length <= 7) {
+        profile.type = 'likert'; profile.typeLabel = '📊 리커트 척도'; profile.typeColor = '#7B1FA2';
+        profile.analysisTip = mn+'~'+mx+'점 척도 → 평균 비교, 상관분석 가능';
+      } else if(allInt && mn >= 0 && mx <= 10 && uniqNums.length <= 11) {
+        profile.type = 'scale'; profile.typeLabel = '📊 점수 척도'; profile.typeColor = '#7B1FA2';
+        profile.analysisTip = mn+'~'+mx+' 범위 척도 → 연속형으로 분석 가능';
+      } else if(allInt && mn >= 0 && mx <= 100 && uniqNums.length <= 5) {
+        profile.type = 'discrete'; profile.typeLabel = '🔢 이산형'; profile.typeColor = '#0277BD';
+        profile.analysisTip = '정수값 '+uniqNums.length+'종 → 범주로 전환 가능';
+      } else {
+        profile.type = 'continuous'; profile.typeLabel = '📏 연속형 숫자'; profile.typeColor = '#1565C0';
+        profile.analysisTip = mn.toFixed(1)+' ~ '+mx.toFixed(1)+' 범위 → 평균, 상관, 회귀 분석 가능';
+      }
+    } else {
+      // 범주형
+      var dateP = /^\d{4}[-/.]\d{1,2}([-/.]\d{1,2})?$/;
+      var dateCnt = values.filter(function(v){ return dateP.test(v.trim()); }).length;
+      if(dateCnt > values.length * 0.5) {
+        profile.type = 'date'; profile.typeLabel = '📅 날짜형'; profile.typeColor = '#6A1B9A';
+        profile.measurable = true; profile.analysisTip = '시계열 분석 가능';
+      } else if(uniq.length === 2) {
+        profile.type = 'binary'; profile.typeLabel = '⭕ 이항'; profile.typeColor = '#E65100';
+        profile.measurable = true; profile.analysisTip = '값: '+uniq.join(' vs ')+' → 집단 비교, 카이제곱, 로지스틱';
+        profile.categories = uniq;
+      } else if(uniq.length <= 10) {
+        profile.type = 'nominal'; profile.typeLabel = '🏷️ 범주형'; profile.typeColor = '#2E7D32';
+        profile.measurable = true; profile.analysisTip = uniq.length+'개 범주 → 빈도분석, 카이제곱, 집단 비교';
+        profile.categories = uniq;
+      } else if(uniq.length <= 30) {
+        profile.type = 'multicat'; profile.typeLabel = '🏷️ 다범주'; profile.typeColor = '#558B2F';
+        profile.measurable = true; profile.analysisTip = uniq.length+'개 범주 (재분류 권장)';
+        profile.categories = uniq;
+      } else {
+        profile.type = 'text'; profile.typeLabel = '📝 텍스트'; profile.typeColor = '#78909C';
+        profile.measurable = false; profile.analysisTip = '고유값 '+uniq.length+'개 — 범주로 재분류해야 분석 가능';
+      }
+    }
+    AZ_PROFILE.push(profile);
+  });
+  return AZ_PROFILE;
+}
+
+// ━━ Variable Profile Panel Rendering ━━
+function azRenderProfile() {
+  var panel = document.getElementById('azProfilePanel');
+  var content = document.getElementById('azProfileContent');
+  if(!panel || !content) return;
+  if(AZ_PROFILE.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  var measurable = AZ_PROFILE.filter(function(p){ return p.measurable; });
+  var numericVars = AZ_PROFILE.filter(function(p){ return p.type==='continuous'||p.type==='likert'||p.type==='scale'||p.type==='discrete'; });
+  var catVars = AZ_PROFILE.filter(function(p){ return p.type==='nominal'||p.type==='binary'||p.type==='multicat'; });
+
+  var html = '';
+  // 요약 헤더
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">';
+  html += '<div style="flex:1;min-width:120px;padding:10px 14px;background:#E3F2FD;border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#1565C0">'+AZ_PROFILE.length+'</div><div style="font-size:11px;color:#1976D2">전체 변수</div></div>';
+  html += '<div style="flex:1;min-width:120px;padding:10px 14px;background:#E8F5E9;border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#2E7D32">'+measurable.length+'</div><div style="font-size:11px;color:#388E3C">분석 가능</div></div>';
+  html += '<div style="flex:1;min-width:120px;padding:10px 14px;background:#FFF3E0;border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#E65100">'+numericVars.length+'</div><div style="font-size:11px;color:#EF6C00">숫자형</div></div>';
+  html += '<div style="flex:1;min-width:120px;padding:10px 14px;background:#F3E5F5;border-radius:10px;text-align:center"><div style="font-size:22px;font-weight:900;color:#7B1FA2">'+catVars.length+'</div><div style="font-size:11px;color:#8E24AA">범주형</div></div>';
+  html += '</div>';
+
+  // 변수 카드
+  html += '<div style="display:grid;gap:8px">';
+  AZ_PROFILE.forEach(function(p) {
+    var opacity = p.measurable ? '1' : '0.55';
+    html += '<div style="padding:10px 14px;background:white;border-radius:10px;border-left:4px solid '+p.typeColor+';opacity:'+opacity+';display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
+    // 이름 + 타입 배지
+    html += '<div style="min-width:140px"><div style="font-size:13px;font-weight:700;color:var(--text)">'+p.name+'</div>';
+    html += '<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:'+p.typeColor+'15;color:'+p.typeColor+';font-weight:700">'+p.typeLabel+'</span></div>';
+    // 통계 요약
+    html += '<div style="flex:1;font-size:11px;color:var(--text2);line-height:1.6">';
+    if(p.stats) {
+      html += '평균 <strong>'+p.stats.mean.toFixed(2)+'</strong> · 중앙값 '+p.stats.median.toFixed(1)+' · 표준편차 '+p.stats.std.toFixed(2)+' · 범위 '+p.stats.min+'~'+p.stats.max;
+    } else if(p.categories) {
+      html += '값: '+p.categories.slice(0,5).join(', ')+(p.categories.length>5?' 외 '+(p.categories.length-5)+'개':'');
+    } else {
+      html += '샘플: '+p.sampleValues.slice(0,3).join(', ')+'...';
+    }
+    if(p.missing > 0) html += ' <span style="color:#E65100">⚠ 결측 '+p.missing+'개('+p.missingPct+'%)</span>';
+    html += '</div>';
+    // 분석 팁
+    html += '<div style="font-size:10px;color:'+p.typeColor+';font-weight:600;min-width:100px;text-align:right">'+p.analysisTip+'</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ━━ 추천 분석 조합 테이블 ━━
+  var combos = azGenerateCombinations();
+  if(combos.length > 0) {
+    html += '<div style="margin-top:16px;padding:14px;background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-radius:12px;border:1px solid #FFB74D">';
+    html += '<div style="font-size:14px;font-weight:800;color:#E65100;margin-bottom:10px">🎯 이 데이터로 할 수 있는 분석 조합</div>';
+    html += '<div style="display:grid;gap:6px">';
+    combos.forEach(function(c) {
+      html += '<div style="padding:8px 12px;background:white;border-radius:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;border:1px solid #FFE0B2;transition:all 0.2s" onclick="azSelectAnalysis(\''+c.analysis+'\')" onmouseover="this.style.borderColor=\'#FF9800\'" onmouseout="this.style.borderColor=\'#FFE0B2\'">';
+      html += '<div style="font-size:12px;font-weight:700;color:'+c.color+'">'+c.icon+' '+c.label+'</div>';
+      html += '<div style="font-size:12px;color:var(--text2);flex:1">'+c.desc+'</div>';
+      html += '<div style="font-size:10px;padding:2px 10px;border-radius:6px;background:'+c.color+'15;color:'+c.color+';font-weight:700;white-space:nowrap">'+c.analysisName+' →</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  content.innerHTML = html;
+}
+
+// ━━ Generate Analysis Combinations from Profile ━━
+function azGenerateCombinations() {
+  var combos = [];
+  var nums = AZ_PROFILE.filter(function(p){ return p.type==='continuous'||p.type==='likert'||p.type==='scale'; });
+  var cats = AZ_PROFILE.filter(function(p){ return p.type==='nominal'||p.type==='binary'||p.type==='multicat'; });
+  var bins = AZ_PROFILE.filter(function(p){ return p.type==='binary'; });
+  var dates = AZ_PROFILE.filter(function(p){ return p.type==='date'; });
+  var pairPat = /전|후|before|after|pre|post|사전|사후|이전|이후|1차|2차/i;
+  var pairedNums = nums.filter(function(n){ return pairPat.test(n.name); });
+
+  // 전/후 패턴 감지 → 대응표본 t검정
+  if(pairedNums.length >= 2) {
+    combos.push({
+      icon: '🔄', label: pairedNums[0].name+' vs '+pairedNums[1].name,
+      desc: '같은 사람의 전후 변화가 유의미한지 검정',
+      analysis: 'paired', analysisName: '대응표본 t검정', color: '#1565C0'
+    });
+  }
+
+  // 이항(2그룹) + 숫자 → 독립표본 t검정
+  bins.forEach(function(b) {
+    if(nums.length > 0) {
+      combos.push({
+        icon: '⚖️', label: b.name+'('+b.categories.join('/')+')'+'에 따른 '+nums[0].name+' 차이',
+        desc: '두 그룹의 평균 차이 검정',
+        analysis: 'ttest', analysisName: '독립표본 t검정', color: '#2E7D32'
+      });
+    }
+  });
+
+  // 다범주(3+그룹) + 숫자 → ANOVA
+  cats.filter(function(c){ return c.type==='nominal' && c.categories && c.categories.length >= 3; }).forEach(function(c) {
+    if(nums.length > 0 && combos.length < 8) {
+      combos.push({
+        icon: '📊', label: c.name+'('+c.categories.length+'그룹)에 따른 '+nums[0].name+' 차이',
+        desc: '세 그룹 이상의 평균 비교',
+        analysis: 'anova', analysisName: 'ANOVA', color: '#E65100'
+      });
+    }
+  });
+
+  // 숫자 × 숫자 → 상관분석
+  if(nums.length >= 2 && !pairedNums.length) {
+    combos.push({
+      icon: '🔗', label: nums[0].name+' ↔ '+nums[1].name,
+      desc: '두 변수가 함께 변하는지 (r값)',
+      analysis: 'correlation', analysisName: '상관분석', color: '#6A1B9A'
+    });
+  }
+
+  // 숫자 2+ → 회귀분석
+  if(nums.length >= 2 && combos.length < 8) {
+    combos.push({
+      icon: '📈', label: nums.slice(0,-1).map(function(n){return n.name;}).join('+')+' → '+nums[nums.length-1].name,
+      desc: 'X로 Y를 예측하는 모형',
+      analysis: nums.length >= 3 ? 'multiple_regression' : 'regression',
+      analysisName: nums.length >= 3 ? '다중회귀분석' : '단순회귀분석', color: '#FF6B35'
+    });
+  }
+
+  // 범주 × 범주 → 카이제곱
+  if(cats.length >= 2 && combos.length < 8) {
+    combos.push({
+      icon: '🔲', label: cats[0].name+' × '+cats[1].name,
+      desc: '두 범주 간 관련성 (독립성 검정)',
+      analysis: 'chisquare', analysisName: '카이제곱 검정', color: '#00838F'
+    });
+  }
+
+  // 이항 결과 + 숫자 예측변수 → 로지스틱
+  if(bins.length > 0 && nums.length >= 1 && combos.length < 8) {
+    combos.push({
+      icon: '🎲', label: nums[0].name+' → '+bins[0].name+'('+bins[0].categories.join('/')+')',
+      desc: '예/아니오를 확률로 예측',
+      analysis: 'logistic', analysisName: '로지스틱 회귀', color: '#C62828'
+    });
+  }
+
+  // 날짜 + 숫자 → 시계열
+  if(dates.length > 0 && nums.length > 0 && AZ_DATA.rows.length >= 6 && combos.length < 8) {
+    combos.push({
+      icon: '📅', label: dates[0].name+'에 따른 '+nums[0].name+' 추이',
+      desc: '시간에 따른 패턴/추세 분석',
+      analysis: 'timeseries', analysisName: '시계열 분석', color: '#7E57C2'
+    });
+  }
+
+  // 항상 기술통계 추가
+  if(nums.length >= 1) {
+    combos.push({
+      icon: '📏', label: '전체 숫자형 변수 요약',
+      desc: '평균, 중앙값, 분포 한눈에 보기',
+      analysis: 'descriptive', analysisName: '기술통계', color: '#546E7A'
+    });
+  }
+
+  // 빈도분석
+  if(cats.length >= 1 && combos.length < 10) {
+    combos.push({
+      icon: '📋', label: cats[0].name+' 항목별 빈도',
+      desc: '각 범주가 몇 명인지 세기',
+      analysis: 'frequency', analysisName: '빈도분석', color: '#795548'
+    });
+  }
+
+  return combos;
+}
 
 // ━━ Availability check + 추천 시스템 ━━
 function azUpdateAvailability() {
@@ -12574,7 +13304,8 @@ function azSelectAnalysis(type) {
     frequency: {min: 20, label: '빈도분석'},
     chisquare: {min: 30, label: '카이제곱 검정', note: '각 칸 기대빈도 5이상'},
     regression: {min: 20, label: '회귀분석', ideal: 30},
-    multivariate: {min: 10, label: '다변량 시각화'}
+    multivariate: {min: 10, label: '다변량 시각화'},
+    explore: {min: 10, label: '데이터 탐색'}
   };
   // Remove old warning
   const oldWarn = document.getElementById('azSampleWarn');
@@ -12612,7 +13343,15 @@ function azSelectAnalysis(type) {
   document.querySelectorAll('.analysis-btn').forEach(b => b.classList.remove('selected'));
   const el = document.getElementById('azAb-'+type);
   if(el) el.classList.add('selected');
-  
+
+  // 탐색 모드: 변수 선택 패널 건너뛰고 바로 실행
+  if(type === 'explore') {
+    document.getElementById('azVarSelectArea').style.display = 'none';
+    document.getElementById('azRunBtn').disabled = false;
+    azRunAnalysis();
+    return;
+  }
+
   const area = document.getElementById('azVarSelectArea');
   const content = document.getElementById('azVarSelectContent');
   const title = document.getElementById('azVarSelectTitle');
@@ -12805,6 +13544,7 @@ function azRunAnalysis() {
     case 'logistic': azRunLogistic(out); break;
     case 'timeseries': azRunTimeseries(out); break;
     case 'multivariate': azRunMultivariate(out); break;
+    case 'explore': azRunExplore(out); break;
   }
   // 분석 완료 후 해석 가이드 푸터 자동 추가
   setTimeout(function() {
@@ -13191,6 +13931,20 @@ function azRunRegression(out) {
             <span id="azRegPredY" style="font-size:18px;font-weight:900;color:#E65100">${(a+b*meanX).toFixed(2)}</span>
           </div>
           <div style="font-size:11px;color:var(--text3);margin-top:6px">* 예측값은 평균적 경향입니다. 개인차가 있을 수 있습니다. (표준오차: ±${se.toFixed(2)})</div>
+        </div>
+
+        <!-- 💡 실질적 의미 해석 -->
+        <div style="padding:14px;background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border-radius:10px;margin-top:12px;border:1px solid #7C4DFF">
+          <div style="font-size:13px;font-weight:800;color:#7C4DFF;margin-bottom:8px">💡 이 결과가 의미하는 것</div>
+          <div style="font-size:13px;line-height:2;color:var(--text)">
+            ${sig ? `<p><strong>핵심 발견:</strong> ${xVar}은 ${yVar}을 <strong>유의미하게 예측</strong>합니다.</p>
+            <p style="color:var(--text2)">→ ${xVar}이 <strong>1단위 ${b>0?'높아':'낮아'}질 때마다</strong> ${yVar}은 평균적으로 <strong>${bAbs}만큼 ${bDir}</strong>합니다. ${Math.abs(b)>=10?'이는 상당히 큰 변화로, '+xVar+'이 '+yVar+'에 실질적으로 큰 영향을 미칩니다.':Math.abs(b)>=1?'의미 있는 수준의 변화입니다.':'변화 폭은 작지만 통계적으로 일관된 경향입니다.'}</p>
+            <p style="color:var(--text2)">→ <strong>설명력 ${(r2*100).toFixed(1)}%</strong>: ${r2>=0.5?xVar+'만으로 '+yVar+'의 절반 이상을 설명할 수 있어, 매우 강력한 예측 변수입니다.':r2>=0.25?xVar+'이 '+yVar+'의 변동을 상당 부분 설명하지만, 다른 요인도 함께 고려하면 예측력이 더 높아질 것입니다.':r2>=0.1?xVar+' 하나만으로는 '+yVar+'을 충분히 예측하기 어렵습니다. 다른 변수를 추가한 다중회귀를 고려해보세요.':'직선적 관계가 매우 약합니다. 비선형 관계이거나, 다른 변수가 더 중요할 수 있습니다.'}</p>
+            <p style="color:var(--text2)">→ <strong>표준오차(±${se.toFixed(2)})</strong>: 실제 값은 예측값에서 평균적으로 ±${se.toFixed(2)}만큼 벗어납니다. ${se/Math.abs(meanY)<0.1?'예측 정밀도가 높은 편입니다.':se/Math.abs(meanY)<0.3?'적당한 수준의 예측 오차입니다.':'예측 오차가 큰 편이므로, 개별 예측보다는 전체 경향을 파악하는 용도로 활용하세요.'}</p>`
+            : `<p><strong>핵심 발견:</strong> ${xVar}은 ${yVar}을 유의미하게 <strong>예측하지 못합니다</strong>.</p>
+            <p style="color:var(--text2)">→ 두 변수 사이에 직선적 관계가 통계적으로 확인되지 않았습니다. ${n<30?'데이터가 '+n+'개로 적어 관계를 감지하기 어려웠을 수 있습니다.':'충분한 데이터에서도 관계가 나타나지 않았으므로, '+xVar+'은 '+yVar+'의 직접적 예측 변수가 아닐 가능성이 높습니다.'}</p>
+            <p style="color:var(--text2)">→ 비선형 관계(U자형, 지수적 등)일 수 있으니 산점도 패턴을 확인해보세요. 또는 다른 변수와의 관계를 탐색해보세요.</p>`}
+          </div>
         </div>
 
         <!-- 보고서 문장 -->
@@ -14223,6 +14977,16 @@ function azRunTTest(out) {
           ${r.n1<15||r.n2<15?`<p style="margin-top:8px;color:var(--orange-dark)">⚠️ 각 집단이 ${Math.min(r.n1,r.n2)}명으로 적습니다. 30명 이상이면 결과를 더 신뢰할 수 있습니다.</p>`:''}
         </div>
       </div>
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          ${sig ? `<p><strong>핵심 발견:</strong> <strong>${higher}</strong> 집단이 ${yVar}에서 통계적으로 유의미하게 더 ${r.m1>r.m2?'높':'낮'}습니다.</p>
+          <p style="color:var(--text2)">→ 구체적으로, <strong>${gNames[0]}</strong>(${r.m1.toFixed(2)})과 <strong>${gNames[1]}</strong>(${r.m2.toFixed(2)}) 사이에 <strong>${Math.abs(r.diff).toFixed(2)}점</strong>의 차이가 있으며, 이 차이가 우연일 확률은 ${(r.p*100).toFixed(2)}%에 불과합니다.</p>
+          <p style="color:var(--text2)">→ <strong>실질적 차이(d=${d.toFixed(2)}):</strong> ${d>=0.8?'효과크기가 큰 수준(d≥0.8)으로, 두 집단의 분포가 상당히 분리되어 있습니다. 실제 현장에서도 눈에 띄는 차이입니다.':d>=0.5?'효과크기가 중간 수준(d≥0.5)으로, 의미 있는 차이이지만 두 집단 간 겹치는 영역도 있습니다.':d>=0.2?'효과크기가 작은 수준(d≥0.2)으로, 통계적으론 유의미하지만 실제 차이는 크지 않습니다. 다른 요인의 영향이 더 클 수 있습니다.':'효과크기가 매우 작아(d<0.2), 통계적으론 유의미하지만 실질적 차이는 거의 없는 수준입니다.'}</p>`
+          : `<p><strong>핵심 발견:</strong> 두 집단(${gNames[0]} vs ${gNames[1]}) 사이에 ${yVar}의 유의미한 차이가 <strong>확인되지 않았습니다</strong>.</p>
+          <p style="color:var(--text2)">→ 평균 차이(${Math.abs(r.diff).toFixed(2)}점)가 있긴 하지만, 이 정도 차이는 표본의 자연적 변동(개인차)으로도 충분히 발생할 수 있습니다.</p>
+          <p style="color:var(--text2)">→ ${r.n1<15||r.n2<15?'표본 크기가 작아('+Math.min(r.n1,r.n2)+'명) 차이를 감지하기 어려웠을 수 있습니다. 더 많은 데이터가 필요합니다.':'현재 데이터로는 두 집단이 실질적으로 비슷하다고 해석할 수 있습니다.'}</p>`}
+        </div>
+      </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
         <p class="report-text">독립표본 t검정 결과, ${gNames[0]}(M=${r.m1.toFixed(2)}, SD=${r.sd1.toFixed(2)})과 ${gNames[1]}(M=${r.m2.toFixed(2)}, SD=${r.sd2.toFixed(2)})의 ${yVar}에는 통계적으로 ${sig?'유의미한':'유의미하지 않은'} 차이가 ${sig?'있었다':'없었다'}(t(${r.df})=${r.t.toFixed(2)}, p${_pText(r.p)}, d=${d.toFixed(2)}).</p>
       </div>
@@ -14264,6 +15028,16 @@ function azRunPaired(out) {
           <p style="margin-top:8px"><strong>3단계 — 변화의 크기</strong></p>
           <p style="color:var(--text2)">d = ${d.toFixed(2)}. ${d>=0.8?'<strong>큰 효과</strong> — 실질적으로 의미 있는 변화입니다.':d>=0.5?'<strong>중간 효과</strong> — 꽤 의미 있는 변화입니다.':d>=0.2?'<strong>작은 효과</strong> — 변화가 있긴 하지만 크진 않습니다.':'<strong>효과가 거의 없습니다.</strong>'}</p>
           <p style="margin-top:8px;color:var(--text2)">💡 대응표본의 장점: 같은 사람의 전/후를 비교하므로 개인차(원래 잘하는 학생/못하는 학생)의 영향이 제거됩니다.</p>
+        </div>
+      </div>
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          ${sig ? `<p><strong>핵심 발견:</strong> ${preVar}에서 ${postVar}으로 <strong>유의미한 변화</strong>가 있었습니다.</p>
+          <p style="color:var(--text2)">→ 같은 ${r.n}명의 점수가 평균 <strong>${Math.abs(r.meanDiff).toFixed(2)}점 ${improved}</strong>했으며, 이 변화가 우연일 확률은 ${(r.p*100).toFixed(2)}%에 불과합니다.</p>
+          <p style="color:var(--text2)">→ <strong>효과크기 d=${d.toFixed(2)}</strong>: ${d>=0.8?'큰 효과입니다. 처치(수업, 프로그램 등)가 실질적으로 의미 있는 변화를 만들었습니다. 실무적으로 도입할 가치가 충분합니다.':d>=0.5?'중간 효과입니다. 처치가 의미 있는 변화를 만들었지만, 모든 참가자에게 균일하지는 않았을 수 있습니다.':d>=0.2?'작은 효과입니다. 통계적으로 유의미하지만, 실질적 변화 폭은 크지 않습니다. 처치의 강도나 기간을 늘리는 것을 고려해보세요.':'매우 작은 효과입니다. 통계적 유의미성은 있지만 실질적 변화는 미미합니다.'}</p>`
+          : `<p><strong>핵심 발견:</strong> ${preVar}에서 ${postVar}으로의 변화가 통계적으로 <strong>확인되지 않았습니다</strong>.</p>
+          <p style="color:var(--text2)">→ 평균 ${Math.abs(r.meanDiff).toFixed(2)}점의 변화가 있긴 하지만, 개인마다 변화 방향과 크기가 제각각이어서 전체적으로는 의미 있는 패턴이 아닙니다.</p>
+          <p style="color:var(--text2)">→ ${r.n<15?'표본이 '+r.n+'명으로 적어 효과를 감지하기 어려웠을 수 있습니다. 더 많은 참가자로 재검증을 권합니다.':'처치가 효과를 내지 못했거나, 효과가 있더라도 매우 작아 현재 표본으로는 감지 불가능한 수준입니다.'}</p>`}
         </div>
       </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
@@ -14312,6 +15086,17 @@ function azRunCorrelation(out) {
         </div>
       </div>
       <div class="interp interp-warn"><div class="tag tag-orange">⚠️ 가장 중요한 주의</div><p><strong>상관관계 ≠ 인과관계!</strong> ${xVar}과 ${yVar}이 함께 변한다고 해서, ${xVar}이 ${yVar}의 원인이라고 단정할 수 없습니다. 제3의 변수가 둘 다에 영향을 줄 수도 있습니다.</p></div>
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          ${sig ? `<p><strong>핵심 발견:</strong> ${xVar}과 ${yVar} 사이에 통계적으로 확인된 ${_rStrength(r)} ${_rDir(r)} 관계가 있습니다.</p>
+          <p style="color:var(--text2)">→ 쉽게 말하면, <strong>${xVar}${r>0?'이 높은 사람일수록':'이 높은 사람일수록'} ${yVar}${r>0?'도 높은 경향':'은 낮은 경향'}</strong>이 있다는 뜻입니다. ${Math.abs(r)>=0.7?'이 관계는 상당히 일관적이어서, '+xVar+'을 알면 '+yVar+'을 상당 수준 예측할 수 있습니다.':Math.abs(r)>=0.4?'다만 이 관계는 중간 정도이므로, 예외 사례도 적지 않습니다. 개인차가 크다는 뜻입니다.':'다만 이 관계는 약한 편이라, 전반적 경향은 있지만 개인별 편차가 매우 큽니다.'}</p>
+          <p style="color:var(--text2)">→ <strong>설명력 ${(r2*100).toFixed(1)}%</strong>: ${yVar}이 사람마다 다른 이유 중 ${(r2*100).toFixed(1)}%만 ${xVar}으로 설명됩니다. ${r2<0.25?'나머지 '+(100-r2*100).toFixed(1)+'%는 다른 요인(환경, 노력, 개인 특성 등)이 더 크게 작용한다는 의미입니다.':r2<0.5?'상당 부분은 다른 요인도 함께 작용한다는 의미이므로, 이 변수 하나로 결론 내리기엔 부족합니다.':'이 변수가 '+yVar+'을 설명하는 핵심 요인 중 하나라 볼 수 있습니다.'}</p>
+          <p style="color:var(--text2)">→ <strong>추세선 방정식 y = ${b.toFixed(3)}x + ${a.toFixed(2)}</strong>: ${xVar}이 1단위 ${r>0?'증가':'증가'}하면, ${yVar}은 평균적으로 <strong>${Math.abs(b).toFixed(3)}만큼 ${b>0?'증가':'감소'}</strong>합니다.</p>`
+          : `<p><strong>핵심 발견:</strong> ${xVar}과 ${yVar} 사이에 통계적으로 유의미한 관계가 <strong>확인되지 않았습니다</strong>.</p>
+          <p style="color:var(--text2)">→ 이 결과가 "전혀 관계없다"는 뜻은 아닙니다. 현재 데이터(${n}쌍)로는 충분한 근거를 찾지 못했다는 의미입니다. ${n<30?'표본이 '+n+'개로 적어, 더 많은 데이터를 모으면 결과가 달라질 수 있습니다.':'이 정도 데이터에서도 관계가 나타나지 않았으므로, 두 변수의 직접적 연관은 약할 가능성이 높습니다.'}</p>
+          <p style="color:var(--text2)">→ 다른 변수를 매개하여 간접적으로 연결될 수 있으니, 탐색 분석(EDA)으로 다른 변수와의 관계도 확인해보세요.</p>`}
+        </div>
+      </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
         <p class="report-text">${xVar}과(와) ${yVar}의 피어슨 상관분석 결과, ${_rStrength(r)} ${_rDir(r)} 상관관계가 ${sig?'확인되었다':'나타났으나 유의미하지 않았다'}(r=${r.toFixed(3)}, p${_pText(pVal)}, N=${n}). ${sig?`${xVar}이(가) ${yVar} 변량의 ${(r2*100).toFixed(1)}%를 설명하였다.`:''}</p>
       </div>
@@ -14337,6 +15122,13 @@ function azRunFrequency(out) {
       </div>
       ${tbl}
       <div class="chart-wrap"><canvas id="azChart1"></canvas></div>
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          <p><strong>핵심 발견:</strong> <strong>'${top[0]}'</strong>이 전체의 <strong>${(top[1]/total*100).toFixed(1)}%</strong>로 가장 많습니다.</p>
+          <p style="color:var(--text2)">→ ${sorted.length <= 3 ? '항목이 '+sorted.length+'개로 적어 분포가 단순합니다.' + (top[1]/total >= 0.6 ? " '"+top[0]+"'에 크게 편중되어 있습니다." : ' 비교적 고른 분포입니다.') : sorted.length <= 7 ? '${top[1]/total >= 0.5 ? "상위 1개 항목이 과반을 차지하는 편중된 분포입니다. 이 집단의 특성이 전체를 대표할 가능성이 높습니다." : "여러 항목에 비교적 분산되어 있어, 다양한 특성이 혼재합니다."}' : '항목이 '+sorted.length+'개로 많아 세밀한 구분이 가능합니다.'}</p>
+          ${sorted.length >= 2 ? '<p style="color:var(--text2)">→ 상위 2개: <strong>'+sorted[0][0]+'</strong>('+sorted[0][1]+'명, '+(sorted[0][1]/total*100).toFixed(1)+'%) + <strong>'+sorted[1][0]+'</strong>('+sorted[1][1]+'명, '+(sorted[1][1]/total*100).toFixed(1)+'%) = 전체의 <strong>'+((sorted[0][1]+sorted[1][1])/total*100).toFixed(1)+'%</strong></p>' : ''}
+        </div>
+      </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
         <p class="report-text">${vn}의 빈도를 분석한 결과, '${top[0]}'이(가) ${top[1]}명(${(top[1]/total*100).toFixed(1)}%)으로 가장 높은 비율을 차지하였다(N=${total}).</p>
       </div>
@@ -14386,6 +15178,16 @@ function azRunANOVA(out) {
           }</p>
           
           ${sig?`<p style="margin-top:8px;padding:10px;background:#FFF3E0;border-radius:8px;border:1px solid var(--orange)"><strong>⬇️ 아래에서 사후검정 결과를 확인하세요!</strong> ANOVA는 "차이가 있다"만 알려주므로, <strong>"어떤 집단끼리"</strong> 다른지 Tukey HSD 사후검정으로 확인합니다.</p>`:''}
+        </div>
+      </div>
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          ${sig ? `<p><strong>핵심 발견:</strong> ${gVar}에 따라 ${yVar}에 실제 차이가 있습니다. <strong>${maxG.name}</strong>(${maxG.mean.toFixed(2)})이 가장 높고, <strong>${minG.name}</strong>(${minG.mean.toFixed(2)})이 가장 낮습니다.</p>
+          <p style="color:var(--text2)">→ 최고-최저 집단 간 차이는 <strong>${(maxG.mean-minG.mean).toFixed(2)}점</strong>입니다. ${etaSq>=0.14?'η²='+etaSq.toFixed(3)+'으로 큰 효과크기에 해당하여, '+gVar+'이 '+yVar+'의 변동을 상당 부분('+((etaSq*100).toFixed(1))+'%) 설명합니다. '+gVar+'은 '+yVar+'에 영향을 주는 핵심 요인입니다.':etaSq>=0.06?'η²='+etaSq.toFixed(3)+'으로 중간 효과크기에 해당합니다. '+gVar+'이 '+yVar+'에 의미 있는 영향을 주지만, 다른 요인도 함께 고려해야 합니다.':'η²='+etaSq.toFixed(3)+'으로 효과크기가 작은 편입니다. 통계적으로 유의미하지만, '+gVar+'만으로 '+yVar+' 차이를 설명하기엔 부족합니다.'}</p>
+          <p style="color:var(--text2)">→ 아래 사후검정(Tukey HSD)에서 <strong>구체적으로 어떤 집단끼리</strong> 다른지 확인하세요.</p>`
+          : `<p><strong>핵심 발견:</strong> ${k}개 ${gVar} 집단 사이에 ${yVar}의 유의미한 차이가 <strong>확인되지 않았습니다</strong>.</p>
+          <p style="color:var(--text2)">→ 평균 차이(최대 ${(maxG.mean-minG.mean).toFixed(2)}점)가 있긴 하지만, 각 집단 내 개인차(흩어짐)가 더 커서 집단 간 차이가 통계적으로 의미를 갖지 못합니다.</p>
+          <p style="color:var(--text2)">→ ${N<30?'전체 데이터('+N+'명)가 적어 차이를 감지하기 어려웠을 수 있습니다.':gVar+' 자체가 '+yVar+'에 큰 영향을 주지 않는 변수일 가능성이 높습니다. 다른 변수와의 관계를 탐색해보세요.'}</p>`}
         </div>
       </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
@@ -14571,6 +15373,17 @@ function azRunChiSquare(out) {
         </div>
       </div>
 
+      <div class="interp" style="background:linear-gradient(135deg,#E3F2FD,#F3E5F5);border:1px solid #7C4DFF"><div class="tag" style="background:#7C4DFF;color:white">💡 이 결과가 의미하는 것</div>
+        <div style="font-size:13px;line-height:2;color:var(--text)">
+          ${sig ? `<p><strong>핵심 발견:</strong> ${xVar}과 ${yVar}은 서로 <strong>관련이 있습니다</strong>. ${xVar}이 어떤 값인지에 따라 ${yVar}의 분포가 달라집니다.</p>
+          <p style="color:var(--text2)">→ 쉽게 말하면, ${xVar}을 알면 ${yVar}이 무엇일지 <strong>${V>=0.5?'상당히':V>=0.3?'어느 정도':V>=0.1?'약간':'거의'} 예측</strong>할 수 있다는 뜻입니다.</p>
+          <p style="color:var(--text2)">→ 관련성 세기(V=${V.toFixed(3)}): ${V>=0.5?'강한 관련으로, 실무에서 의사결정의 중요한 근거가 됩니다.':V>=0.3?'중간 수준의 관련으로, 무시할 수 없는 패턴입니다. 다만 예외도 상당히 있습니다.':V>=0.1?'약한 관련으로, 전체 경향은 있지만 개별 사례에서는 예측력이 낮습니다.':'매우 약한 관련으로, 통계적으로 유의미하지만 실질적 차이는 작습니다.'}</p>
+          ${lowExpPct>20?'<p style="color:var(--orange-dark)">⚠️ 다만, 기대빈도 5 미만인 셀이 '+lowExpPct+'%로 많아 결과의 신뢰도가 떨어질 수 있습니다. 범주를 합치거나 더 많은 데이터를 모으는 것이 좋습니다.</p>':''}`
+          : `<p><strong>핵심 발견:</strong> ${xVar}과 ${yVar} 사이에 유의미한 관련성이 <strong>확인되지 않았습니다</strong>.</p>
+          <p style="color:var(--text2)">→ 현재 데이터로 보면 ${xVar}이 무엇이든 ${yVar}의 분포는 비슷합니다. 두 변수는 독립적(서로 무관)일 가능성이 높습니다.</p>
+          <p style="color:var(--text2)">→ ${N<50?'데이터가 '+N+'개로 적어 관련성을 감지하기 어려웠을 수 있습니다.':'충분한 데이터에서도 관련성이 나타나지 않았으므로, 실제로 독립적인 변수일 가능성이 높습니다.'}</p>`}
+        </div>
+      </div>
       <div class="interp interp-report"><div class="tag tag-green">📋 보고서 문장</div><button class="copy-btn" onclick="azCopy(this)">복사</button>
         <p class="report-text">${xVar}과 ${yVar}의 카이제곱 독립성 검정 결과, 통계적으로 ${sig?'유의미한':'유의미하지 않은'} 관련성이 ${sig?'확인되었다':'나타나지 않았다'}(χ²(${df})=${chiSq.toFixed(2)}, p${_pText(pVal)}, V=${V.toFixed(3)}, N=${N}).</p>
       </div>
@@ -14966,10 +15779,30 @@ function initDesignLesson() {
   window._designFromTopic = false;
 }
 
+var _mrSkipAutoLoad = false; // openDesignWithTopic에서 진입 시 autoLoad 방지
+
 function openDesignWithTopic(idx) {
-  // Redirect to the new 나만의 연구 만들기 wizard
+  // 기존 저장된 연구가 있으면 확인
+  var saved = localStorage.getItem(MR_SAVE_KEY);
+  if(saved) {
+    var data = JSON.parse(saved);
+    if(data && data.ts && (data.mrHypoFinal || data.mrMyIdea || data.mrVarXName)) {
+      if(!confirm('⚠️ 이전에 작성 중이던 연구가 있습니다.\n\n새 연구를 시작하면 이전 내용이 지워집니다.\n계속하시겠습니까?')) return;
+    }
+  }
+  // 이전 저장 데이터 제거 + autoLoad 건너뛰기 플래그
+  localStorage.removeItem(MR_SAVE_KEY);
+  _mrSkipAutoLoad = true;
+  // 나만의 연구 위저드 열기
   openLesson('myresearch');
+  // 선택한 연구 설정 + Step 2(아이디어 전환)로 바로 이동
   mrSelectResearch(idx);
+  // 연구 주제 강제 설정 (새 연구이므로 덮어쓰기)
+  var topicEl = document.getElementById('mrUserTopic');
+  if(topicEl) topicEl.value = _researchDB[idx].title;
+  mrGoStep(2);
+  mrAttachAutoSave();
+  mrAutoSave(); // 선택한 연구 즉시 저장
 }
 
 function initDesignFromScratch() {
@@ -15183,17 +16016,32 @@ let _azWorkbook = null; // 엑셀 워크북 캐시
 (function initDropzone() {
   document.addEventListener('DOMContentLoaded', () => {
     const dz = document.getElementById('azDropzone');
-    if (!dz) return;
-    ['dragenter','dragover'].forEach(ev => {
-      dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.add('drag-over'); });
-    });
-    ['dragleave','drop'].forEach(ev => {
-      dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag-over'); });
-    });
-    dz.addEventListener('drop', e => {
-      const file = e.dataTransfer.files[0];
-      if (file) azHandleFile(file);
-    });
+    if (dz) {
+      ['dragenter','dragover'].forEach(ev => {
+        dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.add('drag-over'); });
+      });
+      ['dragleave','drop'].forEach(ev => {
+        dz.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag-over'); });
+      });
+      dz.addEventListener('drop', e => {
+        const file = e.dataTransfer.files[0];
+        if (file) azHandleFile(file);
+      });
+    }
+
+    // ━━ 글로벌 드롭 핸들러: Step 1 영역 어디든 파일 드래그하면 자동 처리 ━━
+    const sec1 = document.getElementById('azSec1');
+    if (sec1) {
+      sec1.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); });
+      sec1.addEventListener('drop', e => {
+        e.preventDefault(); e.stopPropagation();
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          azSwitchInput('file');
+          azHandleFile(file);
+        }
+      });
+    }
 
     // 붙여넣기 탭의 textarea에도 드래그앤드롭 지원
     const ta = document.getElementById('azDataInput');
@@ -15204,7 +16052,6 @@ let _azWorkbook = null; // 엑셀 워크북 캐시
         e.preventDefault(); ta.style.borderColor = '';
         const file = e.dataTransfer.files[0];
         if (file) {
-          // 파일 탭으로 전환 후 처리
           azSwitchInput('file');
           azHandleFile(file);
         }
@@ -15215,6 +16062,17 @@ let _azWorkbook = null; // 엑셀 워크북 캐시
 
 function azHandleFile(file) {
   if (!file) return;
+  // ━━ 예시 시나리오 상태 초기화 ━━
+  azCurrentScenario = null;
+  var sgEl = document.getElementById('azScenarioGuide');
+  if(sgEl) sgEl.style.display = 'none';
+  // 파일 처리 시작 피드백
+  var info = document.getElementById('azFileInfo');
+  if(info) {
+    info.style.display = 'block';
+    document.getElementById('azFileName').textContent = '⏳ ' + file.name + ' 읽는 중...';
+    document.getElementById('azFileStats').textContent = '파일 크기: ' + (file.size/1024).toFixed(1) + 'KB';
+  }
   const name = file.name.toLowerCase();
   const ext = name.split('.').pop();
 
@@ -15235,18 +16093,31 @@ function azHandleFile(file) {
   } else if (['xlsx','xls'].includes(ext)) {
     // 엑셀 파일: SheetJS로 파싱
     if (typeof XLSX === 'undefined') {
-      alert('엑셀 라이브러리가 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');
+      alert('⚠️ 엑셀 라이브러리(SheetJS)가 로드되지 않았습니다.\n\n가능한 원인:\n• 인터넷 연결이 불안정합니다\n• 학교/기관 네트워크에서 CDN이 차단되었습니다\n\n해결 방법: 페이지를 새로고침하거나, CSV 형식으로 저장 후 다시 시도해주세요.');
+      if(info) info.style.display = 'none';
       return;
     }
     const reader = new FileReader();
+    reader.onerror = function() {
+      console.error('FileReader error:', reader.error);
+      alert('⚠️ 파일을 읽을 수 없습니다.\n\n파일이 손상되었거나 너무 큰 파일일 수 있습니다.\nCSV로 변환 후 다시 시도해주세요.');
+      var info2 = document.getElementById('azFileInfo');
+      if(info2) { info2.style.display = 'none'; }
+    };
     reader.onload = e => {
       try {
-        _azWorkbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-        const sheets = _azWorkbook.SheetNames;
+        _azWorkbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellStyles: false, cellFormula: false, cellDates: true });
+        var sheets = _azWorkbook.SheetNames;
+        if(!sheets || sheets.length === 0) {
+          alert('⚠️ 엑셀 파일에 시트가 없습니다.');
+          var info2 = document.getElementById('azFileInfo');
+          if(info2) info2.style.display = 'none';
+          return;
+        }
         if (sheets.length > 1) {
           // 시트 선택 UI 표시
-          const sel = document.getElementById('azSheetName');
-          sel.innerHTML = sheets.map(s => `<option value="${s}">${s}</option>`).join('');
+          var sel = document.getElementById('azSheetName');
+          sel.innerHTML = sheets.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
           document.getElementById('azSheetSelect').style.display = 'block';
         } else {
           document.getElementById('azSheetSelect').style.display = 'none';
@@ -15254,7 +16125,10 @@ function azHandleFile(file) {
         // 첫 시트 로드
         _loadSheetData(sheets[0], file.name);
       } catch(err) {
-        alert('엑셀 파일을 읽는 중 오류가 발생했습니다: ' + err.message);
+        console.error('Excel parse error:', err);
+        alert('⚠️ 엑셀 파일을 읽는 중 오류가 발생했습니다.\n\n오류: ' + err.message + '\n\n해결 방법:\n1. 엑셀에서 "다른 이름으로 저장" → CSV(쉼표 구분) 선택 후 CSV로 다시 시도\n2. 파일이 암호로 보호되어 있다면 암호 해제 후 다시 시도\n3. .xlsb 형식이라면 .xlsx로 저장 후 다시 시도');
+        var info2 = document.getElementById('azFileInfo');
+        if(info2) info2.style.display = 'none';
       }
     };
     reader.readAsArrayBuffer(file);
@@ -15271,12 +16145,145 @@ function azLoadSheet() {
 }
 
 function _loadSheetData(sheetName, fileName) {
-  const ws = _azWorkbook.Sheets[sheetName];
-  // SheetJS → TSV 텍스트
-  const tsv = XLSX.utils.sheet_to_csv(ws, { FS: '\t' });
-  document.getElementById('azDataInput').value = tsv;
-  _showFileInfo(fileName || sheetName, tsv, sheetName);
-  azParseData();
+  try {
+    var ws = _azWorkbook.Sheets[sheetName];
+    if(!ws) { alert('시트 "'+sheetName+'"를 읽을 수 없습니다.'); return; }
+
+    // 병합 셀 해제 처리 (merged cells → 첫 셀 값을 전체에 복사)
+    if(ws['!merges'] && ws['!merges'].length > 0) {
+      ws['!merges'].forEach(function(m) {
+        var topLeft = XLSX.utils.encode_cell({r: m.s.r, c: m.s.c});
+        var val = ws[topLeft] ? ws[topLeft] : {t:'s', v:''};
+        for(var R = m.s.r; R <= m.e.r; R++) {
+          for(var C = m.s.c; C <= m.e.c; C++) {
+            var addr = XLSX.utils.encode_cell({r: R, c: C});
+            if(!ws[addr]) ws[addr] = {t: val.t, v: val.v};
+          }
+        }
+      });
+    }
+
+    // SheetJS → TSV 텍스트 (defval로 빈 셀 처리)
+    var tsv = XLSX.utils.sheet_to_csv(ws, { FS: '\t', blankrows: false, defval: '' });
+
+    // ━━ 스마트 헤더 감지: 빈 행/메타 행/병합 제목 행 건너뛰기 ━━
+    var lines = tsv.split('\n').filter(function(l){ return l.trim() !== ''; });
+    if(lines.length < 2) {
+      alert('⚠️ 시트 "'+sheetName+'"에 데이터가 없거나 너무 적습니다.');
+      var info2 = document.getElementById('azFileInfo');
+      if(info2) info2.style.display = 'none';
+      return;
+    }
+
+    // 행이 제목/병합/카테고리 행인지 판정
+    function _isTitleRow(cells) {
+      var nonEmpty = cells.filter(function(c){ return c.trim() !== ''; });
+      if(nonEmpty.length < 2) return true; // 1개 이하 = 제목/메타
+      var freq = {};
+      nonEmpty.forEach(function(v){ var k = v.trim().replace(/\s+/g,' '); freq[k] = (freq[k]||0)+1; });
+      var maxFreq = Math.max.apply(null, Object.values(freq));
+      var uniqueCount = Object.keys(freq).length;
+      // 50% 이상 동일 값 = 병합 제목 행
+      if(maxFreq >= nonEmpty.length * 0.5) return true;
+      // 고유값 비율이 매우 낮으면 카테고리 헤더 (예: "수시 대학별 통계"×6, "정시 대학별 통계"×6)
+      if(uniqueCount <= 3 && nonEmpty.length >= 6) return true;
+      // 반복 값이 4회 이상 && 고유값 비율 < 40% = 그룹 헤더 행
+      if(maxFreq >= 4 && uniqueCount / nonEmpty.length < 0.4) return true;
+      return false;
+    }
+
+    // 행이 진짜 헤더인지 판정: 고유값 비율이 높고, 대부분 문자열
+    function _isHeaderRow(cells, nextCells) {
+      var nonEmpty = cells.filter(function(c){ return c.trim() !== ''; });
+      if(nonEmpty.length < 2) return false;
+      // 고유값 비율 체크
+      var unique = {};
+      nonEmpty.forEach(function(v){ unique[v.trim()] = true; });
+      var uniqueRatio = Object.keys(unique).length / nonEmpty.length;
+      if(uniqueRatio < 0.4) return false; // 고유값 비율 낮으면 헤더 아님
+      // 다음 행도 비슷한 열 수여야 함
+      var nextNonEmpty = nextCells.filter(function(c){ return c.trim() !== ''; });
+      return nextNonEmpty.length >= 2;
+    }
+
+    var headerIdx = 0;
+    for(var i = 0; i < Math.min(lines.length, 10); i++) {
+      var cells = lines[i].split('\t');
+      var nonEmptyCells = cells.filter(function(c){ return c.trim() !== ''; });
+      if(nonEmptyCells.length < 2) continue; // 빈 행 건너뛰기
+      if(_isTitleRow(cells)) continue; // 병합/제목 행 건너뛰기
+      var nextCells = (lines[i+1]||'').split('\t');
+      if(_isHeaderRow(cells, nextCells)) { headerIdx = i; break; }
+      // 그래도 못 찾으면 첫 번째 비어있지 않은 행으로 fallback
+      if(headerIdx === 0 && nonEmptyCells.length >= 3) { headerIdx = i; break; }
+    }
+    if(headerIdx > 0) {
+      lines = lines.slice(headerIdx);
+    }
+
+    // 행을 셀로 분할
+    var rows = lines.map(function(l){ return l.split('\t'); });
+    if(rows.length < 2) return;
+
+    // 헤더 열 수 기준 결정 (최대 열 수 or 헤더 열 수)
+    var headerLen = rows[0].length;
+
+    // 행 길이 정규화: 짧은 행은 빈 셀 추가, 긴 행은 자르기
+    rows = rows.map(function(r) {
+      while(r.length < headerLen) r.push('');
+      if(r.length > headerLen) r = r.slice(0, headerLen);
+      return r;
+    });
+
+    // 완전히 빈 열 제거
+    var colCount = rows[0].length;
+    var emptyCols = [];
+    for(var c = colCount - 1; c >= 0; c--) {
+      var allEmpty = rows.every(function(r){ return !r[c] || r[c].trim() === ''; });
+      if(allEmpty) emptyCols.push(c);
+    }
+    if(emptyCols.length > 0 && emptyCols.length < colCount) {
+      rows = rows.map(function(r) {
+        return r.filter(function(_, ci) { return emptyCols.indexOf(ci) === -1; });
+      });
+    }
+
+    // 너무 많은 열 제한 (100열 초과 시 경고)
+    if(rows[0].length > 100) {
+      console.warn('열이 ' + rows[0].length + '개로 많음 — 100열까지만 표시');
+      rows = rows.map(function(r){ return r.slice(0, 100); });
+    }
+
+    // ━━ 중복 헤더명 자동 구분 처리 ━━
+    var hdr = rows[0];
+    var nameCount = {};
+    for(var hi = 0; hi < hdr.length; hi++) {
+      var name = (hdr[hi]||'').trim().replace(/\n/g,' ');
+      if(!name) name = '열'+(hi+1);
+      hdr[hi] = name;
+      nameCount[name] = (nameCount[name]||0) + 1;
+    }
+    // 중복이 있는 이름에 순번 붙이기
+    var nameIdx = {};
+    for(var hi = 0; hi < hdr.length; hi++) {
+      var name = hdr[hi];
+      if(nameCount[name] > 1) {
+        nameIdx[name] = (nameIdx[name]||0) + 1;
+        hdr[hi] = name + '_' + nameIdx[name];
+      }
+    }
+    rows[0] = hdr;
+
+    tsv = rows.map(function(r){ return r.join('\t'); }).join('\n');
+    document.getElementById('azDataInput').value = tsv;
+    _showFileInfo(fileName || sheetName, tsv, sheetName);
+    azParseData();
+  } catch(err) {
+    console.error('_loadSheetData error:', err);
+    alert('⚠️ 시트 데이터를 처리하는 중 오류가 발생했습니다.\n\n오류: ' + err.message + '\n\nCSV로 변환 후 다시 시도해주세요.');
+    var info2 = document.getElementById('azFileInfo');
+    if(info2) info2.style.display = 'none';
+  }
 }
 
 function _showFileInfo(fileName, text, sheetName) {
@@ -15324,9 +16331,159 @@ const _origAzSwitchInput = typeof azSwitchInput === 'function' ? azSwitchInput :
 // ═══════════════════════════════════════
 var mrSelectedResearch = null;
 var mrCurrentStep = 1;
+var MR_SAVE_KEY = 'statplay_myresearch_v1';
+
+// ━━ 자동 저장/복원 시스템 ━━
+var MR_FIELD_IDS = [
+  'mrMyIdea','mrIdea1','mrIdea2','mrIdea3','mrIdea4','mrIdea5','mrIdea6',
+  'mrHypoFinal','mrVarXName','mrVarXScale','mrVarXDetail',
+  'mrVarYName','mrVarYScale','mrVarYDetail','mrVarControl',
+  'mrSampleWho','mrSampleN','mrMyMethodPlan','mrMyQuestions','mrMyWorries',
+  'mrUserTopic'
+];
+var MR_CHECK_IDS = ['mrChk1','mrChk2','mrChk3','mrChk4'];
+
+function mrAutoSave() {
+  try {
+    var data = { step: mrCurrentStep, ts: Date.now() };
+    // 선택한 연구 인덱스 저장
+    if(mrSelectedResearch) {
+      var idx = _researchDB.findIndex(function(r){ return r.title === mrSelectedResearch.title; });
+      data.researchIdx = idx >= 0 ? idx : -1;
+    }
+    // 텍스트 필드
+    MR_FIELD_IDS.forEach(function(id) {
+      var el = document.getElementById(id);
+      if(el) data[id] = el.value || '';
+    });
+    // 체크박스
+    MR_CHECK_IDS.forEach(function(id) {
+      var el = document.getElementById(id);
+      if(el) data[id] = el.checked;
+    });
+    // 연구방법 라디오
+    var radio = document.querySelector('input[name="mrMethodType"]:checked');
+    if(radio) data.mrMethodType = radio.value;
+    // 가설유형 라디오
+    var hypoRadio = document.querySelector('input[name="mrHypoType"]:checked');
+    if(hypoRadio) data.mrHypoType = hypoRadio.value;
+    // 브레인스토밍 동적 필드
+    var brainInputs = document.querySelectorAll('[id^="mrBrain_"]');
+    var brains = {};
+    brainInputs.forEach(function(inp) { if(inp.value) brains[inp.id] = inp.value; });
+    data.brains = brains;
+    localStorage.setItem(MR_SAVE_KEY, JSON.stringify(data));
+    // 저장 표시 업데이트
+    var badge = document.getElementById('mrSaveBadge');
+    if(badge) { badge.textContent = '💾 자동 저장됨'; badge.style.color = '#2E7D32'; setTimeout(function(){ badge.textContent = '💾 저장됨'; badge.style.color = '#78909C'; }, 1500); }
+  } catch(e) {}
+}
+
+function mrAutoLoad() {
+  try {
+    var raw = localStorage.getItem(MR_SAVE_KEY);
+    if(!raw) return false;
+    var data = JSON.parse(raw);
+    if(!data || !data.ts) return false;
+    // 연구 복원
+    if(data.researchIdx >= 0 && data.researchIdx < _researchDB.length) {
+      mrSelectedResearch = _researchDB[data.researchIdx];
+    }
+    // 텍스트 필드 복원 (지연 — DOM이 준비된 후)
+    setTimeout(function() {
+      MR_FIELD_IDS.forEach(function(id) {
+        var el = document.getElementById(id);
+        if(el && data[id] !== undefined) el.value = data[id];
+      });
+      MR_CHECK_IDS.forEach(function(id) {
+        var el = document.getElementById(id);
+        if(el && data[id] !== undefined) el.checked = data[id];
+      });
+      if(data.mrMethodType) {
+        var radio = document.querySelector('input[name="mrMethodType"][value="'+data.mrMethodType+'"]');
+        if(radio) radio.checked = true;
+      }
+      if(data.mrHypoType) {
+        var hypoRadio = document.querySelector('input[name="mrHypoType"][value="'+data.mrHypoType+'"]');
+        if(hypoRadio) { hypoRadio.checked = true; mrSelectHypoType(data.mrHypoType); }
+      }
+      // 브레인스토밍 동적 필드 복원
+      if(data.brains) {
+        Object.keys(data.brains).forEach(function(id) {
+          var el = document.getElementById(id);
+          if(el) el.value = data.brains[id];
+        });
+      }
+    }, 300);
+    return data.step || 1;
+  } catch(e) { return false; }
+}
+
+function mrReset() {
+  if(!confirm('⚠️ 현재까지 작성한 연구 설계를 모두 지우고 새로 시작하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) return;
+  localStorage.removeItem(MR_SAVE_KEY);
+  mrSelectedResearch = null;
+  mrCurrentStep = 1;
+  // 모든 필드 초기화
+  MR_FIELD_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  MR_CHECK_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el) el.checked = false;
+  });
+  var brainInputs = document.querySelectorAll('[id^="mrBrain_"]');
+  brainInputs.forEach(function(inp) { inp.value = ''; });
+  // 가설유형 라디오 초기화
+  document.querySelectorAll('input[name="mrHypoType"]').forEach(function(r){ r.checked = false; });
+  var hypoBuilder = document.getElementById('mrHypoBuilder');
+  if(hypoBuilder) hypoBuilder.style.display = 'none';
+  // 선택 배너 숨기기
+  var banner = document.getElementById('mrSelectedBanner');
+  if(banner) banner.style.display = 'none';
+  // Step 1로 이동
+  mrGoStep(1);
+  // 저장 표시
+  var badge = document.getElementById('mrSaveBadge');
+  if(badge) { badge.textContent = '🔄 초기화됨'; badge.style.color = '#E65100'; }
+}
+
+// 입력 이벤트 리스너 등록 (위저드 열릴 때)
+function mrAttachAutoSave() {
+  MR_FIELD_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el && !el._mrBound) { el.addEventListener('input', mrAutoSave); el._mrBound = true; }
+  });
+  MR_CHECK_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el && !el._mrBound) { el.addEventListener('change', mrAutoSave); el._mrBound = true; }
+  });
+  var radios = document.querySelectorAll('input[name="mrMethodType"]');
+  radios.forEach(function(r) {
+    if(!r._mrBound) { r.addEventListener('change', mrAutoSave); r._mrBound = true; }
+  });
+  var hypoRadios = document.querySelectorAll('input[name="mrHypoType"]');
+  hypoRadios.forEach(function(r) {
+    if(!r._mrBound) { r.addEventListener('change', mrAutoSave); r._mrBound = true; }
+  });
+  // 브레인스토밍 필드에도 연결 (동적 생성이므로 MutationObserver 대신 주기적 체크)
+  setTimeout(function() {
+    document.querySelectorAll('[id^="mrBrain_"]').forEach(function(inp) {
+      if(!inp._mrBound) { inp.addEventListener('input', mrAutoSave); inp._mrBound = true; }
+    });
+    var plan = document.getElementById('mrMyMethodPlan');
+    var qs = document.getElementById('mrMyQuestions');
+    var worries = document.getElementById('mrMyWorries');
+    [plan, qs, worries].forEach(function(el) {
+      if(el && !el._mrBound) { el.addEventListener('input', mrAutoSave); el._mrBound = true; }
+    });
+  }, 500);
+}
 
 function mrGoStep(step) {
   mrCurrentStep = step;
+  mrAutoSave();
   for(var i=1;i<=5;i++) {
     var panel = document.getElementById('mrStep'+i);
     if(panel) panel.style.display = (i===step) ? 'block' : 'none';
@@ -15449,6 +16606,9 @@ function mrSelectResearch(idx) {
   info.innerHTML = mrBuildRefCard(item);
   banner.style.display = 'block';
   banner.scrollIntoView({behavior:'smooth',block:'center'});
+  // 연구 주제 필드 자동 채우기
+  var topicEl = document.getElementById('mrUserTopic');
+  if(topicEl && !topicEl.value) topicEl.value = item.title;
 }
 
 function mrBuildRefCard(r) {
@@ -15574,7 +16734,40 @@ function mrSelectHypoType(type) {
       '<input id="mrTplB" placeholder="[원인변수]" style="width:120px;border-bottom:2px solid #FF9800;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">은(는) ' +
       '<input id="mrTplC" placeholder="[결과변수]" style="width:120px;border-bottom:2px solid #FF9800;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">에 ' +
       '<select id="mrTplDir" style="border:none;border-bottom:2px solid #FF9800;font-size:14px;font-family:Pretendard;padding:4px"><option>긍정적</option><option>부정적</option><option>유의한</option></select> 영향을 미칠 것이다.' +
-      '</div></div>'
+      '</div></div>',
+    category: '<div style="background:#FFF3E0;padding:12px;border-radius:8px;margin-bottom:8px">' +
+      '<div style="font-size:12px;color:#E65100;font-weight:700;margin-bottom:6px">범주 관련성 가설 틀: (카이제곱 검정)</div>' +
+      '<div style="font-size:15px">' +
+      '<input id="mrTplA" placeholder="[범주A]" style="width:120px;border-bottom:2px solid #E65100;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">에 따라 ' +
+      '<input id="mrTplB" placeholder="[범주B]" style="width:120px;border-bottom:2px solid #E65100;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">에는 유의미한 ' +
+      '<select id="mrTplDir" style="border:none;border-bottom:2px solid #E65100;font-size:14px;font-family:Pretendard;padding:4px"><option>차이가</option><option>관련성이</option></select> 있을 것이다.' +
+      '</div></div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6">💡 두 변수 모두 범주(남/여, 찬성/반대, 1반/2반/3반 등)일 때 사용합니다.</div>',
+    prepost: '<div style="background:#E0F2F1;padding:12px;border-radius:8px;margin-bottom:8px">' +
+      '<div style="font-size:12px;color:#00695C;font-weight:700;margin-bottom:6px">사전-사후 변화 가설 틀: (대응표본 t검정)</div>' +
+      '<div style="font-size:15px">' +
+      '<input id="mrTplA" placeholder="[프로그램/처치]" style="width:140px;border-bottom:2px solid #00897B;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px"> 실시 ' +
+      '<select id="mrTplDir" style="border:none;border-bottom:2px solid #00897B;font-size:14px;font-family:Pretendard;padding:4px"><option>전후</option><option>전과 후</option></select> ' +
+      '<input id="mrTplB" placeholder="[대상]" style="width:100px;border-bottom:2px solid #00897B;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">의 ' +
+      '<input id="mrTplC" placeholder="[측정변수]" style="width:120px;border-bottom:2px solid #00897B;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">에는 유의미한 차이가 있을 것이다.' +
+      '</div></div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6">💡 같은 사람을 두 번 측정(전 vs 후)할 때 사용합니다.</div>',
+    logistic: '<div style="background:#FFEBEE;padding:12px;border-radius:8px;margin-bottom:8px">' +
+      '<div style="font-size:12px;color:#C62828;font-weight:700;margin-bottom:6px">합격/여부 예측 가설 틀: (로지스틱 회귀)</div>' +
+      '<div style="font-size:15px">' +
+      '<input id="mrTplA" placeholder="[예측변수1]" style="width:120px;border-bottom:2px solid #C62828;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">과(와) ' +
+      '<input id="mrTplB" placeholder="[예측변수2]" style="width:120px;border-bottom:2px solid #C62828;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">은(는) ' +
+      '<input id="mrTplC" placeholder="[결과: 합격/불합격]" style="width:150px;border-bottom:2px solid #C62828;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">을(를) 유의미하게 예측할 것이다.' +
+      '</div></div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6">💡 결과가 "예/아니오"(합격/불합격, 참여/미참여)일 때 사용합니다.</div>',
+    trend: '<div style="background:#E8F5E9;padding:12px;border-radius:8px;margin-bottom:8px">' +
+      '<div style="font-size:12px;color:#2E7D32;font-weight:700;margin-bottom:6px">시간 추세 가설 틀: (시계열 분석)</div>' +
+      '<div style="font-size:15px">' +
+      '<input id="mrTplA" placeholder="[측정 대상]" style="width:140px;border-bottom:2px solid #2E7D32;border-top:none;border-left:none;border-right:none;text-align:center;font-size:14px;font-family:Pretendard;padding:4px">은(는) 시간에 따라 ' +
+      '<select id="mrTplDir" style="border:none;border-bottom:2px solid #2E7D32;font-size:14px;font-family:Pretendard;padding:4px"><option>증가하는</option><option>감소하는</option><option>계절적 변화</option><option>변화하는</option></select> ' +
+      '<select id="mrTplDir2" style="border:none;border-bottom:2px solid #2E7D32;font-size:14px;font-family:Pretendard;padding:4px"><option>추세가 있을 것이다.</option><option>패턴이 있을 것이다.</option></select>' +
+      '</div></div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.6">💡 월별/연도별 데이터에서 추세나 계절 패턴을 찾을 때 사용합니다.</div>'
   };
   tpl.innerHTML = (templates[type]||'') + '<div style="margin-top:8px"><button class="btn btn-sm" onclick="mrAutoFillHypo()" style="font-size:11px;background:#EDE7F6;color:#6A1B9A;border:1px solid #CE93D8">입력한 내용으로 가설 자동 완성 ↓</button></div>';
 }
@@ -15584,12 +16777,32 @@ function mrAutoFillHypo() {
   var b = document.getElementById('mrTplB');
   var c = document.getElementById('mrTplC');
   var dir = document.getElementById('mrTplDir');
-  if(!a||!b||!c) return;
+  var dir2 = document.getElementById('mrTplDir2');
   var type = document.querySelector('input[name="mrHypoType"]:checked');
-  var text = '';
-  if(type && type.value==='correlation') text = (a.value||'[대상]')+'의 '+(b.value||'[변수A]')+'이(가) 높을수록 '+(c.value||'[변수B]')+'이(가) '+(dir?dir.value:'높을')+' 것이다.';
-  else if(type && type.value==='difference') text = (a.value||'[집단A]')+'과(와) '+(b.value||'[집단B]')+'의 '+(c.value||'[측정변수]')+'에는 유의미한 차이가 있을 것이다.';
-  else if(type && type.value==='influence') text = (a.value||'[대상]')+'의 '+(b.value||'[원인변수]')+'은(는) '+(c.value||'[결과변수]')+'에 '+(dir?dir.value:'유의한')+' 영향을 미칠 것이다.';
+  if(!type) return;
+  var t = type.value, text = '';
+  if(t==='correlation') {
+    if(!a||!b||!c) return;
+    text = (a.value||'[대상]')+'의 '+(b.value||'[변수A]')+'이(가) 높을수록 '+(c.value||'[변수B]')+'이(가) '+(dir?dir.value:'높을')+' 것이다.';
+  } else if(t==='difference') {
+    if(!a||!b||!c) return;
+    text = (a.value||'[집단A]')+'과(와) '+(b.value||'[집단B]')+'의 '+(c.value||'[측정변수]')+'에는 유의미한 차이가 있을 것이다.';
+  } else if(t==='influence') {
+    if(!a||!b||!c) return;
+    text = (a.value||'[대상]')+'의 '+(b.value||'[원인변수]')+'은(는) '+(c.value||'[결과변수]')+'에 '+(dir?dir.value:'유의한')+' 영향을 미칠 것이다.';
+  } else if(t==='category') {
+    if(!a||!b) return;
+    text = (a.value||'[범주A]')+'에 따라 '+(b.value||'[범주B]')+'에는 유의미한 '+(dir?dir.value:'차이가')+' 있을 것이다.';
+  } else if(t==='prepost') {
+    if(!a||!b||!c) return;
+    text = (a.value||'[프로그램/처치]')+' 실시 '+(dir?dir.value:'전후')+' '+(b.value||'[대상]')+'의 '+(c.value||'[측정변수]')+'에는 유의미한 차이가 있을 것이다.';
+  } else if(t==='logistic') {
+    if(!a||!b||!c) return;
+    text = (a.value||'[예측변수1]')+'과(와) '+(b.value||'[예측변수2]')+'은(는) '+(c.value||'[결과: 합격/불합격]')+'을(를) 유의미하게 예측할 것이다.';
+  } else if(t==='trend') {
+    if(!a) return;
+    text = (a.value||'[측정 대상]')+'은(는) 시간에 따라 '+(dir?dir.value:'변화하는')+' '+(dir2?dir2.value:'추세가 있을 것이다.');
+  }
   document.getElementById('mrHypoFinal').value = text;
 }
 
@@ -15652,17 +16865,38 @@ function mrInitStep5() {
   // ━━ 브레인스토밍 가이드 초기화 ━━
   mrShowMethodGuide();
 
-  // ━━ 최종 요약 자동 업데이트 ━━
+  // ━━ 최종 요약 자동 업데이트 (전체 과정 포함) ━━
   var finalEl = document.getElementById('mrFinalContent');
   if(finalEl) {
-    var rows = [];
-    if(topic) rows.push('<strong>주제:</strong> ' + topic);
-    if(hypo) rows.push('<strong>가설:</strong> ' + hypo);
-    rows.push('<strong>독립변수(X):</strong> ' + xName);
-    rows.push('<strong>종속변수(Y):</strong> ' + yName);
-    if(control) rows.push('<strong>통제변수:</strong> ' + control);
-    if(sampleWho||sampleN) rows.push('<strong>대상:</strong> ' + (sampleWho||'미정') + (sampleN ? ' '+sampleN+'명' : ''));
-    finalEl.innerHTML = '<div style="display:grid;gap:4px">' + rows.map(function(r){return '<div>'+r+'</div>';}).join('') + '</div>';
+    var sections = [];
+    // 기본 설계
+    var basicRows = [];
+    if(topic) basicRows.push('<strong>주제:</strong> ' + topic);
+    if(hypo) basicRows.push('<strong>가설:</strong> ' + hypo);
+    basicRows.push('<strong>독립변수(X):</strong> ' + xName);
+    basicRows.push('<strong>종속변수(Y):</strong> ' + yName);
+    if(control) basicRows.push('<strong>통제변수:</strong> ' + control);
+    if(sampleWho||sampleN) basicRows.push('<strong>대상:</strong> ' + (sampleWho||'미정') + (sampleN ? ' '+sampleN+'명' : ''));
+    sections.push('<div style="display:grid;gap:3px">' + basicRows.map(function(r){return '<div>'+r+'</div>';}).join('') + '</div>');
+    // 아이디어 메모 (있으면)
+    var ideaIds = ['mrIdea1','mrIdea2','mrIdea3','mrIdea4','mrIdea5','mrIdea6'];
+    var ideaText = ideaIds.map(function(id) { return (document.getElementById(id)||{}).value||''; }).filter(function(v){return v.trim();});
+    if(ideaText.length > 0) {
+      sections.push('<div style="padding:8px;background:#FFF8E1;border-radius:6px;border-left:3px solid #FFB74D;font-size:11px"><strong>💡 아이디어 메모:</strong> ' + ideaText.length + '개 작성됨</div>');
+    }
+    // 연구방법 정보
+    var methodType = (document.querySelector('input[name="mrMethodType"]:checked')||{}).value || '';
+    var methodNames = {survey:'설문조사',experiment:'실험',secondary:'공공데이터 분석',observation:'관찰/측정'};
+    var plan = (document.getElementById('mrMyMethodPlan')||{}).value;
+    var questions = (document.getElementById('mrMyQuestions')||{}).value;
+    if(methodType || plan || questions) {
+      var methodParts = [];
+      if(methodType) methodParts.push('<strong>연구방법:</strong> ' + (methodNames[methodType]||methodType));
+      if(plan) methodParts.push('<strong>수집 계획:</strong> ' + plan.substring(0,100) + (plan.length>100?'...':''));
+      if(questions) methodParts.push('<strong>측정 항목:</strong> ' + questions.substring(0,100) + (questions.length>100?'...':''));
+      sections.push('<div style="padding:8px;background:#E8F5E9;border-radius:6px;border-left:3px solid #66BB6A;font-size:11px;display:grid;gap:3px">' + methodParts.join('') + '</div>');
+    }
+    finalEl.innerHTML = sections.join('<div style="height:6px"></div>');
   }
 }
 
@@ -16234,36 +17468,84 @@ function mrPrintSurvey() {
 }
 
 function mrCopyAll() {
-  var el = document.getElementById('mrFinalContent');
-  if(!el) return;
-  var text = '═══ 나의 연구 설계 ═══\n\n' + el.innerText;
-  // 브레인스토밍 답변 수집
+  var text = '═══ 나의 연구 설계 ═══\n';
+  // 1. 기본 설계 정보
+  var topic = (document.getElementById('mrUserTopic')||{}).value || (document.getElementById('mrMyIdea')||{}).value || '';
+  var hypo = (document.getElementById('mrHypoFinal')||{}).value || '';
+  var xName = (document.getElementById('mrVarXName')||{}).value || '';
+  var yName = (document.getElementById('mrVarYName')||{}).value || '';
+  var xScale = (document.getElementById('mrVarXScale')||{}).value || '';
+  var xDetail = (document.getElementById('mrVarXDetail')||{}).value || '';
+  var yScale = (document.getElementById('mrVarYScale')||{}).value || '';
+  var yDetail = (document.getElementById('mrVarYDetail')||{}).value || '';
+  var control = (document.getElementById('mrVarControl')||{}).value || '';
+  var sampleWho = (document.getElementById('mrSampleWho')||{}).value || '';
+  var sampleN = (document.getElementById('mrSampleN')||{}).value || '';
+  if(topic) text += '\n주제: ' + topic;
+  if(hypo) text += '\n가설: ' + hypo;
+  if(xName) text += '\n독립변수(X): ' + xName + (xScale ? ' ['+xScale+']' : '') + (xDetail ? ' — '+xDetail : '');
+  if(yName) text += '\n종속변수(Y): ' + yName + (yScale ? ' ['+yScale+']' : '') + (yDetail ? ' — '+yDetail : '');
+  if(control) text += '\n통제변수: ' + control;
+  if(sampleWho||sampleN) text += '\n연구 대상: ' + (sampleWho||'미정') + (sampleN ? ' '+sampleN+'명' : '');
+
+  // 2. 아이디어 전환 메모
+  var ideas = ['mrIdea1','mrIdea2','mrIdea3','mrIdea4','mrIdea5','mrIdea6'];
+  var ideaLabels = ['대상 변경','원인 변경','결과 변경','조건 추가','반대 가설','융합'];
+  var hasIdea = false;
+  ideas.forEach(function(id, i) {
+    var v = (document.getElementById(id)||{}).value;
+    if(v && v.trim()) {
+      if(!hasIdea) { text += '\n\n═══ 아이디어 전환 메모 ═══'; hasIdea = true; }
+      text += '\n' + ideaLabels[i] + ': ' + v.trim();
+    }
+  });
+  var myIdea = (document.getElementById('mrMyIdea')||{}).value;
+  if(myIdea && myIdea.trim() && myIdea !== topic) text += '\n나의 아이디어: ' + myIdea.trim();
+
+  // 3. 브레인스토밍 답변
   var brainInputs = document.querySelectorAll('[id^="mrBrain_"]');
-  if(brainInputs.length > 0) {
-    var hasAny = false;
-    var brainText = '';
-    brainInputs.forEach(function(inp) {
-      if(inp.value && inp.value.trim()) {
-        if(!hasAny) { brainText += '\n\n═══ 브레인스토밍 메모 ═══\n'; hasAny = true; }
-        var label = inp.closest('div[style*="background:white"]');
-        var qTitle = label ? (label.querySelector('div[style*="font-weight:700"]')||{}).textContent||'' : '';
-        brainText += '\n' + qTitle + '\n→ ' + inp.value.trim() + '\n';
-      }
-    });
-    text += brainText;
-  }
+  var hasBrain = false;
+  brainInputs.forEach(function(inp) {
+    if(inp.value && inp.value.trim()) {
+      if(!hasBrain) { text += '\n\n═══ 브레인스토밍 메모 ═══'; hasBrain = true; }
+      var label = inp.closest('div[style*="background:white"]');
+      var qTitle = label ? (label.querySelector('div[style*="font-weight:700"]')||{}).textContent||'' : '';
+      text += '\n' + qTitle + '\n→ ' + inp.value.trim();
+    }
+  });
+
+  // 4. 연구방법 정리
+  var methodType = (document.querySelector('input[name="mrMethodType"]:checked')||{}).value || '';
+  var methodNames = {survey:'설문조사',experiment:'실험',secondary:'공공데이터 분석',observation:'관찰/측정'};
+  if(methodType) text += '\n\n═══ 연구 방법 ═══\n선택: ' + (methodNames[methodType]||methodType);
   var plan = (document.getElementById('mrMyMethodPlan')||{}).value;
   var questions = (document.getElementById('mrMyQuestions')||{}).value;
   var worries = (document.getElementById('mrMyWorries')||{}).value;
-  if(plan) text += '\n\n═══ 데이터 수집 계획 ═══\n' + plan;
-  if(questions) text += '\n\n═══ 핵심 질문/측정 항목 ═══\n' + questions;
-  if(worries) text += '\n\n═══ 걱정/한계 ═══\n' + worries;
+  if(plan) text += '\n\n데이터 수집 계획:\n' + plan;
+  if(questions) text += '\n\n핵심 질문/측정 항목:\n' + questions;
+  if(worries) text += '\n\n걱정/한계:\n' + worries;
+
+  // 5. AI 프롬프트
   var prompt = document.getElementById('mrPromptPreview');
-  if(prompt && prompt.style.display!=='none' && prompt.textContent.trim()) text += '\n\n═══ AI 프롬프트 ═══\n\n' + document.getElementById('mrPromptText').textContent;
-  navigator.clipboard.writeText(text).then(function(){alert('연구 설계 전체가 클립보드에 복사되었습니다!');});
+  if(prompt && prompt.style.display!=='none') {
+    var promptText = (document.getElementById('mrPromptText')||{}).textContent;
+    if(promptText && promptText.trim()) text += '\n\n═══ AI 프롬프트 ═══\n\n' + promptText;
+  }
+
+  // 6. 원본 연구 정보
+  if(mrSelectedResearch) {
+    text += '\n\n═══ 영감을 받은 원본 연구 ═══';
+    text += '\n제목: ' + (mrSelectedResearch.title||'');
+    if(mrSelectedResearch.source) text += '\n출처: ' + mrSelectedResearch.source;
+  }
+
+  navigator.clipboard.writeText(text).then(function(){
+    alert('📋 전체 복사 완료!\n\n포함된 내용:\n• 연구 설계 (주제, 가설, 변수)\n• 아이디어 전환 메모\n• 브레인스토밍 메모\n• 연구 방법 및 수집 계획\n' + (prompt && prompt.style.display!=='none' ? '• AI 프롬프트\n' : '') + '• 원본 연구 정보');
+  });
 }
 
 function mrExportDesign() {
+  mrAutoSave(); // 먼저 저장
   // Fill the existing design form
   var hypo = document.getElementById('mrHypoFinal');
   var xName = document.getElementById('mrVarXName');
@@ -16276,13 +17558,29 @@ function mrExportDesign() {
   var idea = document.getElementById('mrMyIdea');
   if(idea) document.getElementById('dsQ').value = idea.value;
   openLesson('design');
+  // 돌아가기 버튼 추가
+  setTimeout(function() {
+    var lessonDesign = document.getElementById('lessonDesign');
+    if(lessonDesign && !document.getElementById('mrReturnBtnDesign')) {
+      var btn = document.createElement('button');
+      btn.id = 'mrReturnBtnDesign';
+      btn.className = 'btn btn-sm';
+      btn.style.cssText = 'background:#FF9800;color:white;border:none;border-radius:8px;font-weight:700;font-size:12px;margin-bottom:12px';
+      btn.textContent = '🔙 나만의 연구로 돌아가기';
+      btn.onclick = function() { openLesson('myresearch'); };
+      var firstChild = lessonDesign.querySelector('.card') || lessonDesign.firstChild;
+      lessonDesign.insertBefore(btn, firstChild);
+    }
+  }, 200);
 }
 
 function mrGoToAnalyze() {
+  mrAutoSave(); // 먼저 저장
   // 나만의 연구에서 직접 분석 모드로 전환
   var msg = '설문 데이터를 수집하셨나요?\n\n' +
     '📊 데이터가 있다면 → 분석하기 모드에서 직접 입력\n' +
     '📝 아직이라면 → 예시 데이터로 먼저 연습\n\n' +
+    '💾 작성 내용은 자동 저장되어 있으므로,\n"나만의 연구로 돌아가기"를 누르면 이어서 작업할 수 있습니다.\n\n' +
     '분석하기 모드로 이동하시겠습니까?';
   if(!confirm(msg)) return;
 
@@ -16301,10 +17599,13 @@ function mrGoToAnalyze() {
         var wizard = document.getElementById('azWizard');
         if(wizard) wizard.parentNode.insertBefore(banner, wizard);
       }
-      banner.innerHTML = '<div style="font-weight:700;color:#1565C0;margin-bottom:4px">📐 나만의 연구 설계</div>' +
+      banner.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">' +
+        '<div><div style="font-weight:700;color:#1565C0;margin-bottom:4px">📐 나만의 연구 설계</div>' +
         (hypo ? '<div>가설: '+hypo+'</div>' : '') +
         '<div>🔵 X: '+xName+' &nbsp; 🔴 Y: '+yName+'</div>' +
-        '<div style="margin-top:6px;color:var(--text3)">아래에서 데이터를 입력하고 분석을 시작하세요</div>';
+        '<div style="margin-top:6px;color:var(--text3)">아래에서 데이터를 입력하고 분석을 시작하세요</div></div>' +
+        '<button class="btn btn-sm" onclick="switchMode(\'learn\');setTimeout(function(){openLesson(\'myresearch\');},200)" style="background:#FF9800;color:white;border:none;border-radius:8px;font-weight:700;font-size:11px;white-space:nowrap;flex-shrink:0">🔙 연구 설계로</button>' +
+        '</div>';
     }
     azGoStep(1);
   }, 200);
@@ -16619,7 +17920,7 @@ async function azExportPDF() {
     const html = `
       <div style="background:linear-gradient(135deg,#6C5CE7,#4834D4);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
         <div style="font-size:26px;font-weight:900;margin-bottom:8px">${title}</div>
-        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v1.8 &nbsp;|&nbsp; ${dateStr}</div>
+        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.2 &nbsp;|&nbsp; ${dateStr}</div>
       </div>
 
       <div style="${sectionStyle}">
@@ -16654,7 +17955,7 @@ async function azExportPDF() {
 
       <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
         * 상관관계가 인과관계를 의미하지는 않습니다.<br>
-        본 보고서는 Goo's StatPlay v1.8 통계 분석 도구를 활용하여 작성되었습니다.<br>
+        본 보고서는 Goo's StatPlay v2.2 통계 분석 도구를 활용하여 작성되었습니다.<br>
         작성일: ${dateStr} ${timeStr}
       </div>
     `;
@@ -16706,7 +18007,7 @@ async function mrExportPDF() {
       <div style="background:linear-gradient(135deg,#2E7D32,#1B5E20);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
         <div style="font-size:24px;font-weight:900;margin-bottom:6px">연구설계서</div>
         <div style="font-size:16px;font-weight:600;opacity:0.95;margin-bottom:8px">${topic}</div>
-        <div style="font-size:12px;opacity:0.8">Goo's StatPlay v1.8 &nbsp;|&nbsp; ${dateStr}</div>
+        <div style="font-size:12px;opacity:0.8">Goo's StatPlay v2.2 &nbsp;|&nbsp; ${dateStr}</div>
       </div>
 
       ${secTitle('#2E7D32','1. 연구 가설')}
@@ -16724,7 +18025,7 @@ async function mrExportPDF() {
       ${promptSection ? secTitle('#AD1457','4. AI 프롬프트') + promptSection : ''}
 
       <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
-        본 연구설계서는 Goo's StatPlay v1.8 '나만의 연구 만들기' 위저드로 작성되었습니다.<br>
+        본 연구설계서는 Goo's StatPlay v2.2 '나만의 연구 만들기' 위저드로 작성되었습니다.<br>
         작성일: ${dateStr}
       </div>
     `;
@@ -17357,6 +18658,357 @@ function azRunTimeseries(out) {
   html+=`<p><strong>추세선 R² = ${(R2*100).toFixed(1)}%</strong> → 단순 선형 추세가 변동의 ${(R2*100).toFixed(1)}%를 설명합니다.</p>`;
   html+='</div></div>';
   out.innerHTML=html;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🔬 탐색적 분석 (EDA) — 데이터 전체 변수 관계 자동 분석
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function azRunExplore(out) {
+  if(!AZ_DATA||!AZ_DATA.rows||!AZ_DATA.headers) return;
+  const h=AZ_DATA.headers, rows=AZ_DATA.rows, N=rows.length;
+  if(N<5){out.innerHTML='<div class="interp interp-warn"><div class="tag tag-yellow">⚠️</div><p>데이터가 5행 미만입니다.</p></div>';return;}
+
+  // ── 1. 변수 유형 자동 분류 ──
+  const vars=[];
+  h.forEach((name,ci)=>{
+    const vals=rows.map(r=>r[ci]).filter(v=>v!=null&&String(v).trim()!=='');
+    const numVals=vals.map(v=>parseFloat(v)).filter(v=>!isNaN(v));
+    const numRatio=numVals.length/Math.max(vals.length,1);
+    const uniq=[...new Set(vals.map(v=>String(v).trim()))];
+    let type='unknown';
+    if(numRatio>0.8&&uniq.length>5) type='numeric';
+    else if(uniq.length===2) type='binary';
+    else if(uniq.length<=20&&uniq.length>=2) type='categorical';
+    else if(numRatio>0.8&&uniq.length<=5) type='ordinal';
+    else if(uniq.length>20&&numRatio<=0.8) type='text';
+    vars.push({name,ci,type,uniq,numVals,vals,n:vals.length});
+  });
+
+  const numVars=vars.filter(v=>v.type==='numeric');
+  const catVars=vars.filter(v=>v.type==='categorical'||v.type==='binary');
+  const binVars=vars.filter(v=>v.type==='binary');
+
+  // ── Helper: 상관계수 ──
+  function pearson(xArr,yArr){
+    const pairs=[];
+    for(let i=0;i<Math.min(xArr.length,yArr.length);i++){
+      const xv=parseFloat(xArr[i]),yv=parseFloat(yArr[i]);
+      if(!isNaN(xv)&&!isNaN(yv))pairs.push([xv,yv]);
+    }
+    if(pairs.length<5)return{r:null,n:0};
+    const n=pairs.length,mx=pairs.reduce((a,p)=>a+p[0],0)/n,my=pairs.reduce((a,p)=>a+p[1],0)/n;
+    let cov=0,sx2=0,sy2=0;
+    pairs.forEach(p=>{cov+=(p[0]-mx)*(p[1]-my);sx2+=(p[0]-mx)**2;sy2+=(p[1]-my)**2;});
+    const sx=Math.sqrt(sx2/(n-1)),sy=Math.sqrt(sy2/(n-1));
+    const r=sx&&sy?cov/(n-1)/(sx*sy):0;
+    return{r,n};
+  }
+
+  // ── Helper: 그룹별 평균/sd ──
+  function groupStats(catIdx,numIdx){
+    const groups={};
+    rows.forEach(row=>{
+      const g=String(row[catIdx]).trim(),v=parseFloat(row[numIdx]);
+      if(g&&!isNaN(v)){if(!groups[g])groups[g]=[];groups[g].push(v);}
+    });
+    return Object.entries(groups).map(([name,vals])=>({
+      name,n:vals.length,
+      mean:vals.reduce((a,b)=>a+b,0)/vals.length,
+      sd:Math.sqrt(vals.reduce((s,v)=>s+(v-vals.reduce((a,b)=>a+b,0)/vals.length)**2,0)/(vals.length-1||1))
+    })).filter(g=>g.n>=2);
+  }
+
+  let html='';
+
+  // ── SECTION 0: 변수 분류 요약 ──
+  html+='<div class="card" style="margin-bottom:16px">';
+  html+='<div class="card-h">🔍 변수 자동 분류 결과</div>';
+  html+='<div class="card-b">';
+  html+=`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">`;
+  html+=`<div style="padding:8px 14px;background:#EEF2FF;border-radius:8px;border:1px solid #C7D2FE"><strong style="color:#4338CA">${numVars.length}</strong><span style="color:#6366F1;font-size:12px"> 숫자형</span></div>`;
+  html+=`<div style="padding:8px 14px;background:#ECFDF5;border-radius:8px;border:1px solid #A7F3D0"><strong style="color:#065F46">${catVars.length}</strong><span style="color:#059669;font-size:12px"> 범주형</span></div>`;
+  html+=`<div style="padding:8px 14px;background:#FFF7ED;border-radius:8px;border:1px solid #FED7AA"><strong style="color:#9A3412">${binVars.length}</strong><span style="color:#EA580C;font-size:12px"> 이진형</span></div>`;
+  html+=`<div style="padding:8px 14px;background:#F9FAFB;border-radius:8px;border:1px solid #E5E7EB"><strong style="color:#374151">${N}</strong><span style="color:#6B7280;font-size:12px"> 행</span></div>`;
+  html+='</div>';
+  html+='<table class="preview-tbl" style="font-size:12px"><thead><tr><th>변수</th><th>유형</th><th>유효값</th><th>고유값 수</th><th style="min-width:200px">요약</th></tr></thead><tbody>';
+  vars.forEach(v=>{
+    let summary='';
+    if(v.type==='numeric'){
+      const sorted=v.numVals.slice().sort((a,b)=>a-b);
+      const mean=(v.numVals.reduce((a,b)=>a+b,0)/v.numVals.length);
+      const med=sorted[Math.floor(sorted.length/2)];
+      summary=`평균 ${mean.toFixed(2)} | 중앙값 ${med.toFixed(2)} | 범위 ${sorted[0].toFixed(1)}~${sorted[sorted.length-1].toFixed(1)}`;
+    } else if(v.type==='binary'||v.type==='categorical'){
+      const top3=v.uniq.slice(0,3).map(u=>{const cnt=v.vals.filter(x=>String(x).trim()===u).length;return `${u}(${cnt})`;});
+      summary=top3.join(', ')+(v.uniq.length>3?` +${v.uniq.length-3}개`:'');
+    }
+    const typeLabel={'numeric':'🔢 숫자','binary':'⚡ 이진','categorical':'🏷️ 범주','ordinal':'📊 서열','text':'📝 텍스트','unknown':'❓'}[v.type]||v.type;
+    const typeColor={'numeric':'#4338CA','binary':'#EA580C','categorical':'#059669','ordinal':'#7C3AED','text':'#6B7280','unknown':'#9CA3AF'}[v.type]||'#666';
+    html+=`<tr><td style="font-weight:600">${v.name}</td><td><span style="color:${typeColor};font-weight:600;font-size:11px">${typeLabel}</span></td><td>${v.n}/${N}</td><td>${v.uniq.length}</td><td style="font-size:11px;color:#6B7280">${summary}</td></tr>`;
+  });
+  html+='</tbody></table></div></div>';
+
+  // ── SECTION 1: 상관행렬 (숫자형 변수끼리) ──
+  if(numVars.length>=2){
+    html+='<div class="card" style="margin-bottom:16px">';
+    html+='<div class="card-h">🔗 숫자 변수 간 상관관계 행렬</div>';
+    html+='<div class="card-b">';
+    // Compute correlation matrix
+    const corrData=[];
+    for(let i=0;i<numVars.length;i++){
+      corrData.push([]);
+      for(let j=0;j<numVars.length;j++){
+        if(i===j){corrData[i].push({r:1,n:numVars[i].n});}
+        else{
+          const xVals=rows.map(r=>r[numVars[i].ci]);
+          const yVals=rows.map(r=>r[numVars[j].ci]);
+          corrData[i].push(pearson(xVals,yVals));
+        }
+      }
+    }
+    // Render as table heatmap
+    html+='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;width:auto"><thead><tr><th style="padding:6px 8px;background:#F9FAFB"></th>';
+    numVars.forEach(v=>{html+=`<th style="padding:6px 8px;background:#F9FAFB;max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px" title="${v.name}">${v.name.length>8?v.name.slice(0,7)+'…':v.name}</th>`;});
+    html+='</tr></thead><tbody>';
+    for(let i=0;i<numVars.length;i++){
+      html+=`<tr><td style="padding:6px 8px;font-weight:600;background:#F9FAFB;white-space:nowrap;font-size:10px">${numVars[i].name.length>10?numVars[i].name.slice(0,9)+'…':numVars[i].name}</td>`;
+      for(let j=0;j<numVars.length;j++){
+        const r=corrData[i][j].r;
+        if(r===null){html+='<td style="padding:6px;text-align:center;color:#ccc">-</td>';continue;}
+        const abs=Math.abs(r);
+        let bg,fg='#000';
+        if(i===j){bg='#E0E7FF';fg='#4338CA';}
+        else if(r>0){bg=`rgba(16,185,129,${abs*0.6})`;if(abs>0.5)fg='#fff';}
+        else{bg=`rgba(239,68,68,${abs*0.6})`;if(abs>0.5)fg='#fff';}
+        const star=abs>0.7?'**':abs>0.4?'*':'';
+        html+=`<td style="padding:6px;text-align:center;background:${bg};color:${fg};font-weight:${abs>0.4?'700':'400'};cursor:pointer" title="${numVars[i].name} × ${numVars[j].name}: r=${r.toFixed(3)} (n=${corrData[i][j].n})" onclick="azExploreScatter(${numVars[i].ci},${numVars[j].ci},'${numVars[i].name.replace(/'/g,"\\'")}','${numVars[j].name.replace(/'/g,"\\'")}')">${r.toFixed(2)}${star}</td>`;
+      }
+      html+='</tr>';
+    }
+    html+='</tbody></table></div>';
+    html+='<div style="margin-top:8px;font-size:11px;color:#6B7280">🟢 양의 상관 🔴 음의 상관 | ** 강함(0.7+) * 중간(0.4+) | 셀을 클릭하면 산점도가 나타납니다</div>';
+
+    // 주요 상관관계 발견
+    const findings=[];
+    for(let i=0;i<numVars.length;i++){
+      for(let j=i+1;j<numVars.length;j++){
+        const r=corrData[i][j].r;
+        if(r!==null&&Math.abs(r)>0.3){
+          findings.push({v1:numVars[i].name,v2:numVars[j].name,r,n:corrData[i][j].n,ci1:numVars[i].ci,ci2:numVars[j].ci});
+        }
+      }
+    }
+    if(findings.length>0){
+      findings.sort((a,b)=>Math.abs(b.r)-Math.abs(a.r));
+      html+='<div style="margin-top:12px;padding:12px;background:linear-gradient(135deg,#EEF2FF,#F0FDF4);border-radius:10px;border:1px solid #C7D2FE">';
+      html+='<div style="font-size:13px;font-weight:700;color:#4338CA;margin-bottom:8px">💡 주요 발견: 의미 있는 상관관계</div>';
+      findings.slice(0,8).forEach(f=>{
+        const strength=Math.abs(f.r)>0.7?'강한':Math.abs(f.r)>0.5?'상당한':'중간 정도의';
+        const dir=f.r>0?'양의':'음의';
+        const emoji=f.r>0?'📈':'📉';
+        html+=`<div style="padding:6px 10px;background:white;border-radius:6px;margin-bottom:4px;font-size:12px;border:1px solid #E5E7EB;cursor:pointer" onclick="azExploreScatter(${f.ci1},${f.ci2},'${f.v1.replace(/'/g,"\\'")}','${f.v2.replace(/'/g,"\\'")}')">${emoji} <strong>${f.v1}</strong> ↔ <strong>${f.v2}</strong>: r=${f.r.toFixed(3)} (${strength} ${dir} 상관, n=${f.n}) <span style="color:#6366F1;font-size:10px">클릭→산점도</span></div>`;
+      });
+      html+='</div>';
+    }
+    html+='</div></div>';
+  }
+
+  // ── SECTION 2: 범주형 × 숫자형 (집단 비교) ──
+  if(catVars.length>0&&numVars.length>0){
+    html+='<div class="card" style="margin-bottom:16px">';
+    html+='<div class="card-h">⚖️ 집단별 비교 (범주형 × 숫자형)</div>';
+    html+='<div class="card-b">';
+    html+='<div style="font-size:12px;color:#6B7280;margin-bottom:12px">범주형 변수의 그룹별로 숫자형 변수의 평균을 비교합니다.</div>';
+
+    // 가장 유의미한 조합 찾기
+    const combos=[];
+    catVars.forEach(cv=>{
+      if(cv.uniq.length>10)return; // 너무 많은 범주는 건너뛰기
+      numVars.forEach(nv=>{
+        const gs=groupStats(cv.ci,nv.ci);
+        if(gs.length<2)return;
+        const means=gs.map(g=>g.mean);
+        const range=Math.max(...means)-Math.min(...means);
+        const overallMean=nv.numVals.reduce((a,b)=>a+b,0)/nv.numVals.length;
+        const effect=overallMean?range/overallMean:0;
+        combos.push({cat:cv,num:nv,groups:gs,range,effect});
+      });
+    });
+    combos.sort((a,b)=>b.effect-a.effect);
+
+    combos.slice(0,6).forEach((combo,idx)=>{
+      const gs=combo.groups.sort((a,b)=>b.mean-a.mean);
+      const maxMean=Math.max(...gs.map(g=>g.mean));
+      const colors=['#6366F1','#06D6A0','#FBBF24','#F87171','#A78BFA','#38BDF8','#FB923C','#34D399'];
+      html+=`<div style="margin-bottom:16px;padding:12px;background:#FAFAFA;border-radius:10px;border:1px solid #E5E7EB">`;
+      html+=`<div style="font-size:13px;font-weight:700;margin-bottom:8px"><span style="color:#059669">${combo.cat.name}</span> 별 <span style="color:#4338CA">${combo.num.name}</span> 비교</div>`;
+      gs.forEach((g,gi)=>{
+        const pct=maxMean>0?g.mean/maxMean*100:0;
+        html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">`;
+        html+=`<div style="width:80px;font-size:11px;color:#6B7280;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${g.name}">${g.name}</div>`;
+        html+=`<div style="flex:1;height:22px;background:#E5E7EB;border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${colors[gi%8]};border-radius:4px;display:flex;align-items:center;padding:0 6px"><span style="font-size:10px;color:#fff;font-weight:600;white-space:nowrap">${g.mean.toFixed(2)}</span></div></div>`;
+        html+=`<div style="width:60px;font-size:10px;color:#9CA3AF;text-align:right">n=${g.n}, SD=${g.sd.toFixed(1)}</div>`;
+        html+=`</div>`;
+      });
+      // 간단한 해석
+      if(gs.length===2){
+        const diff=Math.abs(gs[0].mean-gs[1].mean);
+        html+=`<div style="margin-top:6px;font-size:11px;color:#6B7280">→ <strong>${gs[0].name}</strong>(${gs[0].mean.toFixed(2)}) vs <strong>${gs[1].name}</strong>(${gs[1].mean.toFixed(2)}), 차이=${diff.toFixed(2)} — <span style="color:#4338CA">t검정으로 유의성 확인 가능</span></div>`;
+      } else if(gs.length>2){
+        html+=`<div style="margin-top:6px;font-size:11px;color:#6B7280">→ ${gs.length}개 집단 — 최고 <strong>${gs[0].name}</strong>(${gs[0].mean.toFixed(2)}), 최저 <strong>${gs[gs.length-1].name}</strong>(${gs[gs.length-1].mean.toFixed(2)}) — <span style="color:#4338CA">ANOVA로 유의성 확인 가능</span></div>`;
+      }
+      html+=`</div>`;
+    });
+
+    if(combos.length===0){
+      html+='<div style="padding:12px;color:#9CA3AF;font-size:13px">비교 가능한 범주-숫자 조합이 없습니다.</div>';
+    }
+    html+='</div></div>';
+  }
+
+  // ── SECTION 3: 이진 변수가 있으면 합격률 등 계산 ──
+  if(binVars.length>0&&numVars.length>0){
+    html+='<div class="card" style="margin-bottom:16px">';
+    html+='<div class="card-h">🎯 이진 변수 예측 분석</div>';
+    html+='<div class="card-b">';
+    html+='<div style="font-size:12px;color:#6B7280;margin-bottom:12px">이진 변수(예/아니오, 합격/불합격 등)와 숫자 변수의 관계를 분석합니다.</div>';
+
+    binVars.forEach(bv=>{
+      const cats=bv.uniq.sort();
+      numVars.slice(0,5).forEach(nv=>{
+        const g0=[],g1=[];
+        rows.forEach(r=>{
+          const gVal=String(r[bv.ci]).trim(),nVal=parseFloat(r[nv.ci]);
+          if(!isNaN(nVal)){
+            if(gVal===cats[0])g0.push(nVal);
+            else if(gVal===cats[1])g1.push(nVal);
+          }
+        });
+        if(g0.length<3||g1.length<3)return;
+        const m0=g0.reduce((a,b)=>a+b,0)/g0.length;
+        const m1=g1.reduce((a,b)=>a+b,0)/g1.length;
+        const diff=m1-m0;
+        const poolSD=Math.sqrt(((g0.length-1)*_var2(g0)+(g1.length-1)*_var2(g1))/(g0.length+g1.length-2));
+        const d=poolSD>0?diff/poolSD:0;
+        const emoji=Math.abs(d)>0.8?'🔴':Math.abs(d)>0.5?'🟡':'⚪';
+        html+=`<div style="padding:8px 12px;background:white;border-radius:8px;margin-bottom:6px;border:1px solid #E5E7EB;font-size:12px">`;
+        html+=`${emoji} <strong>${nv.name}</strong>: ${cats[0]}=${m0.toFixed(2)}(n=${g0.length}) vs ${cats[1]}=${m1.toFixed(2)}(n=${g1.length}) | Cohen's d=${d.toFixed(2)} ${Math.abs(d)>0.8?'<strong style="color:#DC2626">큰 효과</strong>':Math.abs(d)>0.5?'<strong style="color:#D97706">중간 효과</strong>':'<span style="color:#9CA3AF">작은 효과</span>'}`;
+        html+=`</div>`;
+      });
+    });
+    html+='</div></div>';
+  }
+
+  // ── SECTION 4: 산점도 영역 (클릭 시 렌더링) ──
+  html+='<div class="card" style="margin-bottom:16px;display:none" id="azExploreScatterCard">';
+  html+='<div class="card-h" id="azExploreScatterTitle">📊 산점도</div>';
+  html+='<div class="card-b"><canvas id="azExploreScatterCanvas" width="600" height="400" style="width:100%;max-height:400px"></canvas>';
+  html+='<div id="azExploreScatterInfo" style="margin-top:8px;font-size:12px;color:#6B7280"></div></div></div>';
+
+  // ── SECTION 5: 추천 분석 ──
+  html+='<div class="card" style="margin-bottom:16px">';
+  html+='<div class="card-h">🧭 이 데이터로 추천하는 분석</div>';
+  html+='<div class="card-b">';
+  const recs=[];
+  if(numVars.length>=2) recs.push({type:'correlation',icon:'🔗',label:'상관분석',reason:'숫자 변수가 2개 이상 있습니다',action:`azSelectAnalysis('correlation');azRunAnalysis()`});
+  if(catVars.length>=1&&numVars.length>=1) recs.push({type:'ttest',icon:'⚖️',label:'t검정/ANOVA',reason:'범주형+숫자형 변수가 있습니다',action:`azSelectAnalysis('ttest');azRunAnalysis()`});
+  if(binVars.length>=1&&numVars.length>=1) recs.push({type:'logistic',icon:'🎲',label:'로지스틱 회귀',reason:'이진 변수를 예측할 수 있습니다',action:`azSelectAnalysis('logistic');azRunAnalysis()`});
+  if(numVars.length>=3) recs.push({type:'multiple_regression',icon:'🔗',label:'다중회귀',reason:'숫자 변수가 3개 이상 있습니다',action:`azSelectAnalysis('multiple_regression');azRunAnalysis()`});
+  if(catVars.length>=2) recs.push({type:'chisquare',icon:'🔲',label:'카이제곱 검정',reason:'범주형 변수가 2개 이상 있습니다',action:`azSelectAnalysis('chisquare');azRunAnalysis()`});
+
+  recs.forEach(rec=>{
+    html+=`<div style="padding:10px 14px;background:white;border-radius:8px;border:1px solid #E5E7EB;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="${rec.action}" onmouseover="this.style.borderColor='#6366F1'" onmouseout="this.style.borderColor='#E5E7EB'">`;
+    html+=`<div><span style="font-size:16px">${rec.icon}</span> <strong style="font-size:13px">${rec.label}</strong> <span style="font-size:11px;color:#6B7280">— ${rec.reason}</span></div>`;
+    html+=`<span style="color:#6366F1;font-size:12px;font-weight:600">실행 →</span></div>`;
+  });
+  if(recs.length===0){
+    html+='<div style="padding:12px;color:#9CA3AF;font-size:13px">현재 데이터로 추천할 분석이 없습니다.</div>';
+  }
+  html+='</div></div>';
+
+  out.innerHTML=html;
+}
+
+// Helper: 분산 (EDA용)
+function _var2(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;return arr.reduce((s,v)=>s+(v-m)**2,0)/(arr.length-1||1);}
+
+// 산점도 렌더링 (EDA 상관행렬 셀 클릭 시)
+function azExploreScatter(ci1,ci2,name1,name2){
+  const card=document.getElementById('azExploreScatterCard');
+  if(!card)return;
+  card.style.display='block';
+  document.getElementById('azExploreScatterTitle').textContent='📊 '+name1+' vs '+name2;
+
+  const canvas=document.getElementById('azExploreScatterCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.clientWidth,H=Math.min(400,W*0.6);
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const pad={t:20,r:20,b:40,l:55};
+  const pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+
+  // Collect points
+  const rows=AZ_DATA.rows;
+  const pts=[];
+  rows.forEach(r=>{
+    const x=parseFloat(r[ci1]),y=parseFloat(r[ci2]);
+    if(!isNaN(x)&&!isNaN(y))pts.push({x,y});
+  });
+  if(pts.length<2){document.getElementById('azExploreScatterInfo').textContent='데이터 부족';return;}
+
+  let xMin=Math.min(...pts.map(p=>p.x)),xMax=Math.max(...pts.map(p=>p.x));
+  let yMin=Math.min(...pts.map(p=>p.y)),yMax=Math.max(...pts.map(p=>p.y));
+  const xPad=(xMax-xMin)*0.08||1,yPad=(yMax-yMin)*0.08||1;
+  xMin-=xPad;xMax+=xPad;yMin-=yPad;yMax+=yPad;
+
+  function tx(v){return pad.l+(v-xMin)/(xMax-xMin)*pw;}
+  function ty(v){return pad.t+ph-(v-yMin)/(yMax-yMin)*ph;}
+
+  // Grid
+  ctx.strokeStyle='#E5E7EB';ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){
+    const x=pad.l+pw*i/5,y=pad.t+ph*i/5;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+pw,y);ctx.stroke();
+    ctx.fillStyle='#9CA3AF';ctx.font='10px Pretendard';
+    ctx.textAlign='center';ctx.fillText((xMin+(xMax-xMin)*i/5).toFixed(1),x,pad.t+ph+16);
+    ctx.textAlign='right';ctx.fillText((yMax-(yMax-yMin)*i/5).toFixed(1),pad.l-6,y+4);
+  }
+
+  // Regression line
+  const n=pts.length,mx=pts.reduce((a,p)=>a+p.x,0)/n,my=pts.reduce((a,p)=>a+p.y,0)/n;
+  let num=0,den=0;pts.forEach(p=>{num+=(p.x-mx)*(p.y-my);den+=(p.x-mx)**2;});
+  const slope=den?num/den:0,intercept=my-slope*mx;
+  ctx.strokeStyle='rgba(99,102,241,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
+  ctx.beginPath();ctx.moveTo(tx(xMin),ty(slope*xMin+intercept));ctx.lineTo(tx(xMax),ty(slope*xMax+intercept));ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Points
+  pts.forEach(p=>{
+    ctx.beginPath();ctx.arc(tx(p.x),ty(p.y),4,0,Math.PI*2);
+    ctx.fillStyle='rgba(99,102,241,0.6)';ctx.fill();
+    ctx.strokeStyle='rgba(99,102,241,0.9)';ctx.lineWidth=0.5;ctx.stroke();
+  });
+
+  // Labels
+  ctx.fillStyle='#374151';ctx.font='12px Pretendard';
+  ctx.textAlign='center';ctx.fillText(name1,pad.l+pw/2,H-4);
+  ctx.save();ctx.translate(14,pad.t+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(name2,0,0);ctx.restore();
+
+  // Correlation info
+  let cov=0,sx2=0,sy2=0;pts.forEach(p=>{cov+=(p.x-mx)*(p.y-my);sx2+=(p.x-mx)**2;sy2+=(p.y-my)**2;});
+  const r=Math.sqrt(sx2)*Math.sqrt(sy2)?cov/Math.sqrt(sx2)/Math.sqrt(sy2):0;
+  const r2=r*r;
+  document.getElementById('azExploreScatterInfo').innerHTML=
+    `<strong>r = ${r.toFixed(4)}</strong> | R² = ${(r2*100).toFixed(1)}% | n = ${n} | ` +
+    `회귀식: Y = ${slope.toFixed(4)}·X + ${intercept.toFixed(4)} | ` +
+    `<span style="color:${Math.abs(r)>0.7?'#DC2626':Math.abs(r)>0.4?'#D97706':'#6B7280'}">${Math.abs(r)>0.7?'강한 상관':Math.abs(r)>0.4?'중간 상관':'약한 상관'}</span>`;
+
+  card.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 // t-distribution CDF (for multiple regression p-values)
