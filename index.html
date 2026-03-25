@@ -15554,9 +15554,12 @@ function mrShowMethodGuide() {
     var h = '';
     if(origHint) h += '<div style="font-size:11px;padding:4px 8px;background:#FFF8E1;border-radius:4px;border-left:2px solid #FFB300;color:#795548;margin:4px 0">📖 원래 연구: '+origHint+'</div>';
     h += '<div style="font-size:11px;color:var(--text3);margin-top:3px">💡 '+myHint+'</div>';
+    var inputId = 'mrBrain_' + type + '_' + num.replace(/[^a-zA-Z0-9가-힣]/g,'');
     return '<div style="padding:10px 12px;background:white;border-radius:8px">' +
       '<div style="font-size:12px;font-weight:700;color:#4A148C">' + num + '. ' + q + '</div>' +
-      h + '</div>';
+      h +
+      '<textarea id="'+inputId+'" placeholder="여기에 내 생각을 적어보세요..." style="width:100%;min-height:48px;margin-top:6px;padding:8px;border:1px solid #E0E0E0;border-radius:6px;font-size:12px;font-family:Pretendard;resize:vertical;line-height:1.6"></textarea>' +
+      '</div>';
   };
 
   var html = '';
@@ -15696,6 +15699,17 @@ function mrGeneratePrompt() {
   base += '- 데이터 수집 방법: ' + (methodTypeNames[methodType]||methodType) + '\n';
   if(methodPlan) base += '\n# 학생이 계획한 연구 방법\n' + methodPlan + '\n';
   if(myQuestions) base += '\n# 학생이 구상한 핵심 질문/측정 항목\n' + myQuestions + '\n';
+  // 브레인스토밍 답변도 포함
+  var brainInputs = document.querySelectorAll('[id^="mrBrain_"]');
+  var brainText = '';
+  brainInputs.forEach(function(inp) {
+    if(inp.value && inp.value.trim()) {
+      var label = inp.closest('div[style*="background:white"]');
+      var qTitle = label ? (label.querySelector('div[style*="font-weight:700"]')||{}).textContent||'' : '';
+      brainText += qTitle + ': ' + inp.value.trim() + '\n';
+    }
+  });
+  if(brainText) base += '\n# 학생의 브레인스토밍 메모\n' + brainText + '\n';
   if(memo) base += '\n# 추가 맥락\n' + memo + '\n';
 
   var prompt = '';
@@ -16080,6 +16094,21 @@ function mrCopyAll() {
   var el = document.getElementById('mrFinalContent');
   if(!el) return;
   var text = '═══ 나의 연구 설계 ═══\n\n' + el.innerText;
+  // 브레인스토밍 답변 수집
+  var brainInputs = document.querySelectorAll('[id^="mrBrain_"]');
+  if(brainInputs.length > 0) {
+    var hasAny = false;
+    var brainText = '';
+    brainInputs.forEach(function(inp) {
+      if(inp.value && inp.value.trim()) {
+        if(!hasAny) { brainText += '\n\n═══ 브레인스토밍 메모 ═══\n'; hasAny = true; }
+        var label = inp.closest('div[style*="background:white"]');
+        var qTitle = label ? (label.querySelector('div[style*="font-weight:700"]')||{}).textContent||'' : '';
+        brainText += '\n' + qTitle + '\n→ ' + inp.value.trim() + '\n';
+      }
+    });
+    text += brainText;
+  }
   var plan = (document.getElementById('mrMyMethodPlan')||{}).value;
   var questions = (document.getElementById('mrMyQuestions')||{}).value;
   var worries = (document.getElementById('mrMyWorries')||{}).value;
