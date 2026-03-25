@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goo's StatPlay v1.8 — 놀면서 배우는 통계</title>
+<title>Goo's StatPlay v1.9 — 놀면서 배우는 통계</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -574,7 +574,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
   .mr-step { font-size:9px;padding:6px 2px; }
   .mr-step span { width:20px;height:20px;font-size:10px; }
 }
-/* ═══ v1.8 Mobile Responsive ═══ */
+/* ═══ v1.9 Mobile Responsive ═══ */
 @media (max-width: 768px) {
   .main { padding: 10px !important; }
   .card { padding: 14px !important; }
@@ -600,7 +600,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 <div class="header">
   <h1>Goo's <span>StatPlay</span></h1>
   <p>놀면서 배우는 통계</p>
-  <div class="ver">고등학생을 위한 교육용 통계 · v1.8</div>
+  <div class="ver">고등학생을 위한 교육용 통계 · v1.9</div>
 </div>
 
 <div class="main">
@@ -2536,7 +2536,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
             <div class="mr-step" data-step="2" onclick="mrGoStep(2)"><span>2</span> 아이디어 전환</div>
             <div class="mr-step" data-step="3" onclick="mrGoStep(3)"><span>3</span> 가설 설정</div>
             <div class="mr-step" data-step="4" onclick="mrGoStep(4)"><span>4</span> 변수 정의</div>
-            <div class="mr-step" data-step="5" onclick="mrGoStep(5)"><span>5</span> 설문지 생성</div>
+            <div class="mr-step" data-step="5" onclick="mrGoStep(5)"><span>5</span> 연구 방법</div>
           </div>
 
           <!-- ═══ STEP 1: 영감 찾기 ═══ -->
@@ -2836,80 +2836,177 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 
             <div style="display:flex;gap:8px;margin-top:16px">
               <button class="btn btn-outline btn-sm" onclick="mrGoStep(3)" style="font-size:12px">← 가설 수정</button>
-              <button class="btn btn-primary btn-sm" onclick="mrGoStep(5)" style="background:var(--primary);font-size:12px">다음 → 설문지 만들기 🎉</button>
+              <button class="btn btn-primary btn-sm" onclick="mrGoStep(5)" style="background:#E65100;border-color:#E65100;font-size:12px">다음 → 연구 방법 설계 🔬</button>
             </div>
           </div>
 
-          <!-- ═══ STEP 5: 설문지 생성 ═══ -->
+          <!-- ═══ STEP 5: 연구 방법 설계 (메인) ═══ -->
           <div id="mrStep5" class="mr-panel" style="display:none">
             <div id="mrRefCard5" style="display:none"></div>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-              <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0">5</div>
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF9800);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex-shrink:0">5</div>
               <div>
-                <div style="font-size:18px;font-weight:800">설문지 자동 생성</div>
-                <div style="font-size:12px;color:var(--text2)">변수에 맞는 설문 문항이 자동으로 만들어집니다</div>
+                <div style="font-size:18px;font-weight:800">연구 방법 설계 — 어떻게 데이터를 모을까</div>
+                <div style="font-size:12px;color:var(--text2)">원래 연구의 방법을 참고해서, 나만의 설문/실험 계획을 세워보세요</div>
               </div>
             </div>
 
-            <!-- 설문지 설정 -->
-            <div style="padding:16px;background:#F3E5F5;border-radius:12px;margin-bottom:16px">
-              <!-- 설문 작성 원칙 (기존 설계서에서 흡수) -->
-              <div style="margin-bottom:14px;padding:10px;background:white;border-radius:8px;border:1px solid #CE93D8;font-size:11px;line-height:1.7;color:var(--text2)">
-                <div style="font-size:12px;font-weight:700;color:#6A1B9A;margin-bottom:4px">📋 설문 문항 작성 4원칙</div>
-                1. 한 문항에 <strong>한 가지만</strong> 물어본다 &nbsp;|&nbsp; 2. <strong>유도하지</strong> 않는다 &nbsp;|&nbsp; 3. 척도를 <strong>통일</strong>한다 &nbsp;|&nbsp; 4. 측정 <strong>단위를 명시</strong>한다
+            <!-- ━━ PART A: 원래 연구는 이렇게 했어요 ━━ -->
+            <div style="padding:18px;background:linear-gradient(135deg,#FFF3E0,#FFF8E1);border-radius:14px;border:2px solid #FFB300;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="font-size:20px">📖</span>
+                <div style="font-size:15px;font-weight:800;color:#E65100">원래 연구는 이렇게 했어요</div>
               </div>
-              <div style="font-size:14px;font-weight:700;color:#6A1B9A;margin-bottom:10px">⚙️ 설문지 설정</div>
-              <div style="display:grid;gap:8px">
-                <div style="display:flex;gap:8px;align-items:center">
-                  <span style="font-size:12px;white-space:nowrap;font-weight:600">설문 제목:</span>
-                  <input id="mrSurveyTitle" placeholder="자동 생성됨" style="flex:1;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-family:Pretendard">
-                </div>
-                <div style="display:flex;gap:8px;align-items:center">
-                  <span style="font-size:12px;white-space:nowrap;font-weight:600">독립변수 문항 수:</span>
-                  <select id="mrXItemCount" style="border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px">
-                    <option value="3">3문항</option>
-                    <option value="5" selected>5문항</option>
-                    <option value="7">7문항</option>
-                    <option value="10">10문항</option>
-                  </select>
-                </div>
-                <div style="display:flex;gap:8px;align-items:center">
-                  <span style="font-size:12px;white-space:nowrap;font-weight:600">종속변수 문항 수:</span>
-                  <select id="mrYItemCount" style="border:1px solid var(--border);border-radius:8px;padding:6px;font-size:12px">
-                    <option value="3">3문항</option>
-                    <option value="5" selected>5문항</option>
-                    <option value="7">7문항</option>
-                    <option value="10">10문항</option>
-                  </select>
-                </div>
-                <label style="display:flex;gap:8px;align-items:center;font-size:12px;cursor:pointer"><input type="checkbox" id="mrIncludeDemographic" checked> 인구통계 문항 포함 (성별, 학년 등)</label>
-                <label style="display:flex;gap:8px;align-items:center;font-size:12px;cursor:pointer"><input type="checkbox" id="mrIncludeControl" checked> 통제변수 문항 포함</label>
-              </div>
-              <button class="btn btn-primary btn-sm" onclick="mrGenerateSurvey()" style="margin-top:12px;background:#6A1B9A;border-color:#6A1B9A;font-size:13px;width:100%">📋 설문지 생성하기</button>
-            </div>
-
-            <!-- 설문지 미리보기 -->
-            <div id="mrSurveyPreview" style="display:none">
-              <div style="padding:20px;background:white;border-radius:12px;border:2px solid var(--primary);margin-bottom:12px">
-                <div id="mrSurveyContent" style="font-size:13px;line-height:1.8"></div>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn btn-primary btn-sm" onclick="mrCopySurvey()" style="font-size:12px">📋 설문지 복사</button>
-                <button class="btn btn-outline btn-sm" onclick="mrPrintSurvey()" style="font-size:12px">🖨️ 인쇄하기</button>
-                <button class="btn btn-outline btn-sm" onclick="mrGoStep(4)" style="font-size:12px">← 변수 수정</button>
+              <div id="mrOrigMethodDetail" style="display:grid;gap:8px"></div>
+              <div id="mrOrigMethodEmpty" style="padding:12px;text-align:center;color:var(--text3);font-size:12px">
+                (영감 연구를 선택하면 여기에 연구 방법이 표시됩니다)
               </div>
             </div>
 
-            <!-- 최종 연구 요약 -->
-            <div id="mrFinalSummary" style="display:none;margin-top:24px;padding:20px;background:linear-gradient(135deg,#E8F5E9,#E0FFFE);border-radius:12px;border:2px solid #4CAF50">
+            <!-- ━━ PART B: 추천 연구방법 + 선택 ━━ -->
+            <div style="padding:18px;background:white;border-radius:14px;border:2px solid #E0E0E0;margin-bottom:18px">
+              <div style="font-size:15px;font-weight:800;color:#333;margin-bottom:12px">🔬 나는 어떤 방법으로 할까?</div>
+
+              <!-- 추천 배지 -->
+              <div id="mrMethodBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+
+              <div style="display:grid;gap:6px;margin-bottom:4px">
+                <label class="mr-method-option" style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#FAFAFA;border-radius:10px;cursor:pointer;border:2px solid transparent;font-size:12px;transition:border-color 0.2s" onclick="this.querySelector('input').checked=true;mrShowMethodGuide()">
+                  <input type="radio" name="mrMethodType" value="survey" checked style="accent-color:#6A1B9A;margin-top:2px">
+                  <div>
+                    <div style="font-weight:700;color:#6A1B9A;font-size:13px">📋 설문조사</div>
+                    <div style="color:var(--text2);margin-top:2px">질문지로 응답자의 인식·태도·행동을 수집. 가장 많이 쓰이고 실행이 쉬움</div>
+                    <div style="color:#6A1B9A;font-size:11px;margin-top:3px">적합: 스트레스, 자존감, 학습태도, 만족도, 인식 조사 등</div>
+                  </div>
+                </label>
+                <label class="mr-method-option" style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#FAFAFA;border-radius:10px;cursor:pointer;border:2px solid transparent;font-size:12px;transition:border-color 0.2s" onclick="this.querySelector('input').checked=true;mrShowMethodGuide()">
+                  <input type="radio" name="mrMethodType" value="experiment" style="accent-color:#E65100;margin-top:2px">
+                  <div>
+                    <div style="font-weight:700;color:#E65100;font-size:13px">🧪 실험</div>
+                    <div style="color:var(--text2);margin-top:2px">조건을 직접 바꾸고 결과를 측정. 인과관계를 확인하는 가장 강력한 방법</div>
+                    <div style="color:#E65100;font-size:11px;margin-top:3px">적합: 식물 성장, 화학 반응, 물리 실험, 비료/온도/농도 변화 등</div>
+                  </div>
+                </label>
+                <label class="mr-method-option" style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#FAFAFA;border-radius:10px;cursor:pointer;border:2px solid transparent;font-size:12px;transition:border-color 0.2s" onclick="this.querySelector('input').checked=true;mrShowMethodGuide()">
+                  <input type="radio" name="mrMethodType" value="observation" style="accent-color:#00838F;margin-top:2px">
+                  <div>
+                    <div style="font-weight:700;color:#00838F;font-size:13px">👁️ 관찰/앱 측정</div>
+                    <div style="color:var(--text2);margin-top:2px">앱이나 도구로 실제 행동·환경을 기록. 자기보고보다 객관적</div>
+                    <div style="color:#00838F;font-size:11px;margin-top:3px">적합: 스크린타임, 소음, 미세먼지, 행동 빈도 관찰 등</div>
+                  </div>
+                </label>
+                <label class="mr-method-option" style="display:flex;gap:10px;align-items:flex-start;padding:12px;background:#FAFAFA;border-radius:10px;cursor:pointer;border:2px solid transparent;font-size:12px;transition:border-color 0.2s" onclick="this.querySelector('input').checked=true;mrShowMethodGuide()">
+                  <input type="radio" name="mrMethodType" value="secondary" style="accent-color:#1565C0;margin-top:2px">
+                  <div>
+                    <div style="font-weight:700;color:#1565C0;font-size:13px">📂 공공데이터 분석</div>
+                    <div style="color:var(--text2);margin-top:2px">정부·기관의 대규모 데이터를 내려받아 분석. 표본이 커서 통계적 힘이 강함</div>
+                  </div>
+                </label>
+                <label style="display:flex;gap:8px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid #E0E0E0">
+                  <input type="radio" name="mrMethodType" value="mixed" style="accent-color:#37474F;margin-top:2px">
+                  <div>
+                    <div style="font-weight:700;color:#37474F;font-size:13px">🔀 혼합 (설문 + 관찰/실험)</div>
+                    <div style="color:var(--text2);margin-top:2px">설문으로 주관적 인식 + 앱/실험으로 객관적 데이터 동시 수집</div>
+                    <div style="color:#1565C0;font-size:11px;margin-top:3px">예: 설문으로 수면 만족도 + 스크린타임 앱으로 실제 사용시간</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- ━━ PART C: 방법별 브레인스토밍 가이드 ━━ -->
+            <div id="mrMethodGuide" style="padding:18px;background:linear-gradient(135deg,#EDE7F6,#F3E5F5);border-radius:14px;border:2px solid #CE93D8;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+                <span style="font-size:20px">💡</span>
+                <div>
+                  <div id="mrGuideTitle" style="font-size:15px;font-weight:800;color:#4A148C">설문 설계 가이드</div>
+                  <div style="font-size:11px;color:var(--text2)">아래 질문에 답하면서 나의 연구 방법을 구체화하세요</div>
+                </div>
+              </div>
+              <div id="mrGuideContent" style="display:grid;gap:10px"></div>
+            </div>
+
+            <!-- ━━ PART D: 나의 연구 방법 메모장 ━━ -->
+            <div style="padding:18px;background:linear-gradient(135deg,#E8F5E9,#F1F8E9);border-radius:14px;border:2px solid #66BB6A;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+                <span style="font-size:20px">✏️</span>
+                <div>
+                  <div style="font-size:15px;font-weight:800;color:#2E7D32">나의 연구 방법 정리</div>
+                  <div style="font-size:11px;color:var(--text2)">위에서 생각한 것을 정리해서 적어보세요 — 이게 나의 연구 계획서가 됩니다</div>
+                </div>
+              </div>
+
+              <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:6px">📋 데이터 수집 계획</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:8px">어디서, 누구에게, 어떻게 데이터를 모을 건지 적으세요</div>
+              <textarea id="mrMyMethodPlan" style="width:100%;min-height:70px;border:2px solid #66BB6A;border-radius:10px;padding:12px;font-size:13px;font-family:Pretendard;resize:vertical;line-height:1.7;box-sizing:border-box" placeholder="예: 구글 폼으로 설문지 만들어서, 점심시간에 우리반 + 옆반에 QR코드 배포. 1주일간 수집."></textarea>
+
+              <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:6px;margin-top:14px">📝 핵심 질문 / 측정 항목 (최소 3개)</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:8px">설문이면 실제 물어볼 질문, 실험이면 측정할 항목을 적으세요</div>
+              <textarea id="mrMyQuestions" style="width:100%;min-height:100px;border:2px solid #66BB6A;border-radius:10px;padding:12px;font-size:13px;font-family:Pretendard;resize:vertical;line-height:1.7;box-sizing:border-box" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea>
+
+              <div style="font-size:13px;font-weight:700;color:#2E7D32;margin-bottom:6px;margin-top:14px">🤔 걱정되는 점 / 한계</div>
+              <textarea id="mrMyWorries" style="width:100%;min-height:50px;border:2px solid #A5D6A7;border-radius:10px;padding:12px;font-size:13px;font-family:Pretendard;resize:vertical;line-height:1.7;box-sizing:border-box" placeholder="예: 응답자가 솔직하게 답할까? / 표본이 30명밖에 안 되는데 괜찮을까?"></textarea>
+            </div>
+
+            <!-- ━━ PART E: AI 프롬프트 내보내기 (접힌 상태) ━━ -->
+            <div style="padding:18px;background:#F5F5F5;border-radius:14px;border:1px solid #E0E0E0;margin-bottom:18px">
+              <div onclick="document.getElementById('mrAiExportArea').style.display=document.getElementById('mrAiExportArea').style.display==='none'?'block':'none'" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:18px">🤖</span>
+                  <div>
+                    <div style="font-size:14px;font-weight:800;color:#333">AI 도움받기 (선택)</div>
+                    <div style="font-size:11px;color:var(--text3)">위에서 적은 내용을 AI에게 보내면, 설문지/실험계획서를 다듬어줍니다</div>
+                  </div>
+                </div>
+                <span style="font-size:16px;color:var(--text3)">▼</span>
+              </div>
+              <div id="mrAiExportArea" style="display:none;margin-top:14px">
+                <div style="padding:12px;background:#E3F2FD;border-radius:8px;margin-bottom:12px;font-size:12px;color:#1565C0;line-height:1.6">
+                  <strong>이렇게 활용하세요:</strong> 위에서 적은 나의 계획 + 질문을 AI에게 보내면 → 문항 표현 다듬기, 빠진 항목 보완, 구글 폼 형태로 정리해줍니다. 나의 아이디어가 먼저이고, AI는 보조!
+                </div>
+                <div style="display:grid;gap:8px;margin-bottom:12px">
+                  <label style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:white;border-radius:8px;cursor:pointer;border:1px solid #BBDEFB;font-size:12px">
+                    <input type="radio" name="mrPromptType" value="survey" checked style="accent-color:#1565C0"> 📋 <strong>설문지 다듬기</strong> — 내 질문을 설문 형태로 정리
+                  </label>
+                  <label style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:white;border-radius:8px;cursor:pointer;border:1px solid #BBDEFB;font-size:12px">
+                    <input type="radio" name="mrPromptType" value="experiment" style="accent-color:#1565C0"> 🧪 <strong>실험계획서 보완</strong> — 내 실험 설계 정리+보완
+                  </label>
+                  <label style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:white;border-radius:8px;cursor:pointer;border:1px solid #BBDEFB;font-size:12px">
+                    <input type="radio" name="mrPromptType" value="data" style="accent-color:#1565C0"> 📊 <strong>연습용 가상 데이터</strong> — StatPlay 연습용 데이터 생성
+                  </label>
+                  <label style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:white;border-radius:8px;cursor:pointer;border:1px solid #BBDEFB;font-size:12px">
+                    <input type="radio" name="mrPromptType" value="full" style="accent-color:#1565C0"> 🎯 <strong>전부 다</strong> — 설문 + 실험 + 가상데이터 종합
+                  </label>
+                </div>
+                <textarea id="mrMemoExtra" placeholder="AI에게 추가로 알려줄 것 (예: 우리 학교는 남녀공학이고, 대상은 2학년입니다)" style="width:100%;min-height:40px;border:1px solid #BBDEFB;border-radius:8px;padding:8px;font-size:12px;font-family:Pretendard;resize:vertical;box-sizing:border-box;margin-bottom:10px"></textarea>
+                <button class="btn btn-primary btn-sm" onclick="mrGeneratePrompt()" style="background:#1565C0;border-color:#1565C0;font-size:13px;width:100%">🤖 AI 프롬프트 생성하기</button>
+
+                <!-- 생성된 프롬프트 -->
+                <div id="mrPromptPreview" style="display:none;margin-top:14px">
+                  <div style="padding:14px;background:#1A1A2E;border-radius:10px;margin-bottom:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                      <span style="font-size:11px;font-weight:700;color:#A29BFE">복사해서 ChatGPT / Claude / Gemini에 붙여넣기</span>
+                      <button class="btn btn-sm" onclick="mrCopyPrompt()" style="font-size:11px;background:#6C5CE7;color:white;border:none;padding:4px 12px;border-radius:6px;font-weight:700">📋 복사</button>
+                    </div>
+                    <pre id="mrPromptText" style="font-size:11px;line-height:1.6;color:#E8E8E8;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto;margin:0;font-family:Pretendard,monospace"></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ━━ 최종 요약 + 내보내기 ━━ -->
+            <div id="mrFinalSummary" style="padding:20px;background:linear-gradient(135deg,#E8F5E9,#E0FFFE);border-radius:14px;border:2px solid #4CAF50">
               <div style="font-size:16px;font-weight:800;color:#2E7D32;margin-bottom:12px">🎉 나만의 연구 설계 완성!</div>
               <div id="mrFinalContent" style="font-size:13px;line-height:1.8"></div>
-              <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
                 <button class="btn btn-primary btn-sm" onclick="mrCopyAll()" style="font-size:12px;background:#2E7D32;border-color:#2E7D32">📋 전체 복사</button>
                 <button class="btn btn-sm" onclick="mrExportPDF()" style="font-size:12px;background:#C62828;color:white;border:none;border-radius:8px;font-weight:700">📄 PDF 다운로드</button>
                 <button class="btn btn-outline btn-sm" onclick="mrExportDesign()" style="font-size:12px">📐 연구설계서로 보내기</button>
                 <button class="btn btn-sm" onclick="mrGoToAnalyze()" style="font-size:12px;background:#1565C0;color:white;border:none;border-radius:8px;font-weight:700">📊 데이터 분석하러 가기 →</button>
               </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:16px">
+              <button class="btn btn-outline btn-sm" onclick="mrGoStep(4)" style="font-size:12px">← 변수 수정</button>
             </div>
           </div>
 
@@ -5151,13 +5248,20 @@ function advCheck(qNum, answer, btn) {
   if(!el) return;
   const isCorrect = (answer === info.correct);
   el.style.display = 'block';
-  el.innerHTML = isCorrect
-    ? '<span style="color:#2E7D32;font-weight:700">✅ 정답!</span> ' + info.explain
-    : '<span style="color:#C62828;font-weight:700">❌ 다시 생각해보세요.</span> ' + info.explain;
-  el.style.background = isCorrect ? '#E8F5E9' : '#FFEBEE';
-  // disable all buttons in same question
-  const parent = btn.parentElement;
-  if(parent) parent.querySelectorAll('button').forEach(b => b.disabled = true);
+
+  if(isCorrect) {
+    el.innerHTML = '<span style="color:#2E7D32;font-weight:700">✅ 정답!</span> ' + info.explain;
+    el.style.background = '#E8F5E9';
+    // 정답이면 모든 버튼 비활성화
+    const parent = btn.parentElement;
+    if(parent) parent.querySelectorAll('button').forEach(b => b.disabled = true);
+  } else {
+    el.innerHTML = '<span style="color:#C62828;font-weight:700">❌ 다시 생각해보세요!</span> 다른 보기를 눌러보세요.';
+    el.style.background = '#FFEBEE';
+    // 오답이면 해당 버튼만 비활성화 (재시도 가능)
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -9943,7 +10047,138 @@ const _researchDB = [
     "measure": "동형 검사지(40문항), IRT 2모수 모형, 검사 시간 기록",
     "analysis": "차별기능문항(DIF) 분석, IRT 모수 비교, t-검정",
     "result": "전체 점수 차이 비유의(t=0.87, p=0.38), DIF 항목 3개(7.5%), CBT 소요시간 8.3% 짧음(p<0.01)"
-}
+},
+  // ═══ 물리 탐구 (추가) ═══
+  {cat:'과학',tags:['물리','열','전도','대류','복사','단열','보온'],title:'물질별 열전도율 비교 실험',
+   hypo:['물질의 종류에 따라 열전도 속도가 다를 것이다','금속이 비금속보다 열전도율이 높을 것이다'],
+   vars:{indep:'물질 종류(구리, 알루미늄, 나무, 플라스틱, 유리)',dep:'온도 변화(°C/분)',control:'초기 온도, 막대 길이/단면적, 열원 온도'},
+   measure:'직접 측정: 열전도 막대 끝에 온도 센서(또는 적외선 온도계), 30초 간격 5분간 기록',
+   analysis:'ANOVA(물질별), 시계열 그래프(시간-온도), 회귀분석(전도율 계산)'},
+  {cat:'과학',tags:['물리','빛','굴절','렌즈','스넬법칙','광학'],title:'빛의 굴절과 렌즈의 초점거리',
+   hypo:['매질의 굴절률이 클수록 굴절각이 작아질 것이다','렌즈의 곡률이 클수록 초점거리가 짧아질 것이다'],
+   vars:{indep:'입사각(°) / 렌즈 곡률',dep:'굴절각(°) / 초점거리(cm)',control:'광원 종류, 매질 두께'},
+   measure:'직접 측정: 레이저 포인터+각도기+반원 수조(굴절), 렌즈+광학대(초점거리)',
+   analysis:'회귀분석(스넬 법칙 검증), 상관분석(곡률-초점거리)'},
+  {cat:'과학',tags:['물리','소리','진동','공명','주파수','음파','파동'],title:'소리의 주파수와 공명 실험',
+   hypo:['관의 길이가 길수록 공명 주파수가 낮아질 것이다'],
+   vars:{indep:'관 길이(cm)',dep:'공명 주파수(Hz)',control:'관 지름, 온도(음속 영향)'},
+   measure:'직접 측정: 길이 다른 PVC관 + 스마트폰 주파수 분석 앱(Spectroid 등)',
+   analysis:'회귀분석(길이-주파수), 이론값 비교(f=v/2L)'},
+  {cat:'과학',tags:['물리','전기','저항','옴의법칙','회로','전류','전압'],title:'옴의 법칙 검증과 저항 실험',
+   hypo:['전압이 일정할 때 저항이 클수록 전류가 작아질 것이다','도선 길이가 길수록 저항이 커질 것이다'],
+   vars:{indep:'저항값(Ω) / 도선 길이(cm)',dep:'전류(A)',control:'전압, 도선 재질, 온도'},
+   measure:'직접 측정: 전원장치+전압계+전류계+저항기 또는 니크롬선 길이 변화',
+   analysis:'회귀분석(V=IR 검증), 상관분석(길이-저항)'},
+  {cat:'과학',tags:['물리','탄성','용수철','후크법칙','힘','변형'],title:'용수철의 탄성과 후크 법칙',
+   hypo:['매달린 질량이 클수록 용수철 늘어남이 비례할 것이다(탄성 한계 내)'],
+   vars:{indep:'매달린 질량(g)',dep:'용수철 늘어남(cm)',control:'용수철 종류, 측정 시간(진동 안정 후)'},
+   measure:'직접 측정: 용수철+추+자, 5g 간격으로 추 추가, 각 3회 측정 평균',
+   analysis:'회귀분석(F=kx 검증), R² 계산(선형성 확인)'},
+
+  // ═══ 화학 탐구 (추가) ═══
+  {cat:'과학',tags:['화학','촉매','효소','과산화수소','반응속도','생화학'],title:'촉매(효소)와 반응 속도',
+   hypo:['감자즙(카탈라아제)을 넣으면 과산화수소 분해 속도가 빨라질 것이다','온도가 높을수록 효소 활성이 증가하다가 일정 온도 이후 감소할 것이다'],
+   vars:{indep:'촉매 유무 및 종류, 온도(°C)',dep:'산소 발생량(mL/분)',control:'과산화수소 농도, 용액 부피'},
+   measure:'직접 측정: 과산화수소+감자즙+MnO₂, 수상치환으로 산소 포집, 메스실린더',
+   analysis:'t검정(촉매 유무), ANOVA(온도별), 그래프(온도-활성 곡선)'},
+  {cat:'과학',tags:['화학','비타민C','산화','적정','식품화학','아스코르브산'],title:'과일별 비타민C 함량 비교',
+   hypo:['과일 종류에 따라 비타민C 함량이 다를 것이다','가열하면 비타민C 함량이 감소할 것이다'],
+   vars:{indep:'과일 종류(레몬,오렌지,키위,사과,딸기)',dep:'비타민C 함량(mg/100g)',control:'과일 신선도, 추출 방법'},
+   measure:'직접 측정: 요오드 적정법 — 과일즙 + 전분지시약 + 요오드 용액, 색 변화 시 부피 기록',
+   analysis:'ANOVA(과일별), t검정(가열 전후), 막대그래프'},
+  {cat:'과학',tags:['화학','물','정수','여과','수질','환경화학'],title:'간이 정수기 여과 효과 비교',
+   hypo:['여과 재료에 따라 탁도 제거율이 다를 것이다','여과 횟수가 많을수록 수질이 개선될 것이다'],
+   vars:{indep:'여과재료(모래, 숯, 자갈, 솜), 여과 횟수',dep:'탁도(NTU), pH',control:'오염수 초기 탁도, 여과 속도'},
+   measure:'직접 측정: 페트병 정수기 제작, 탁도계(또는 빛 투과도 앱), pH 시험지',
+   analysis:'ANOVA(재료별), 반복측정(횟수별), 회귀분석'},
+
+  // ═══ 생물 탐구 (추가) ═══
+  {cat:'과학',tags:['생물','미생물','세균','항균','손씻기','위생'],title:'손 씻기 방법별 세균 수 비교',
+   hypo:['비누로 30초 이상 씻은 손이 물만 씻은 손보다 세균 수가 적을 것이다'],
+   vars:{indep:'손 씻기 방법(안 씻음/물만/비누 15초/비누 30초/손소독제)',dep:'세균 콜로니 수',control:'배양 온도, 시간, 배지 종류'},
+   measure:'직접 측정: 한천 배지에 손가락 찍기 → 37°C 24~48시간 배양 → 콜로니 카운트',
+   analysis:'ANOVA(방법별), t검정(비누/물), 사진 기록+카운트'},
+  {cat:'과학',tags:['생물','발효','효모','이산화탄소','온도','생명과학'],title:'효모 발효와 온도의 관계',
+   hypo:['온도가 높을수록 효모의 CO₂ 발생량이 증가하되, 일정 온도 이후 감소할 것이다'],
+   vars:{indep:'온도(0°C, 20°C, 35°C, 50°C, 70°C)',dep:'CO₂ 발생량(풍선 둘레 cm)',control:'설탕 농도, 효모 양, 시간'},
+   measure:'직접 측정: 페트병+효모+설탕물+풍선, 각 온도에서 30분 후 풍선 둘레 측정',
+   analysis:'ANOVA(온도별), 그래프(온도-발생량 곡선), 최적온도 도출'},
+  {cat:'과학',tags:['생물','광합성','빛','수초','산소','엘로데아'],title:'빛의 세기와 광합성 속도',
+   hypo:['빛이 강할수록 수초의 산소 기포 발생 수가 많을 것이다 (광포화점까지)'],
+   vars:{indep:'광원 거리(cm) → 빛의 세기',dep:'1분당 기포 수',control:'수온, CO₂ 농도(탄산수소나트륨), 수초 크기'},
+   measure:'직접 측정: 엘로데아(검정말)+비커+스탠드조명, 거리 변화(10/20/30/40/50cm), 1분간 기포 카운트',
+   analysis:'회귀분석(거리-기포수), 상관분석, 광포화점 추정'},
+
+  // ═══ 지구과학 탐구 ═══
+  {cat:'과학',tags:['지구과학','날씨','기압','습도','기상','구름','예보'],title:'기압·습도와 날씨 변화 예측',
+   hypo:['기압이 급격히 떨어지면 비가 올 확률이 높아질 것이다'],
+   vars:{indep:'기압 변화량(hPa/6시간), 상대습도(%)',dep:'강수 여부(비/맑음)',control:'계절, 지역'},
+   measure:'기상청 공공데이터(시간별 기압·습도·강수량) 또는 학교 기상관측 장비',
+   analysis:'로지스틱회귀(강수 예측), 상관분석(기압변화-강수), 카이제곱(습도구간별)'},
+  {cat:'과학',tags:['지구과학','지진','진동','P파','S파','지질'],title:'간이 지진계와 진동 전달',
+   hypo:['매질의 밀도가 클수록 진동 전달 속도가 빠를 것이다'],
+   vars:{indep:'매질 종류(모래, 흙, 자갈, 물)',dep:'진동 도달 시간(초)',control:'진동 세기(일정한 타격), 거리'},
+   measure:'직접 측정: 스마트폰 가속도 센서(phyphox 앱) + 일정 거리에서 망치 타격',
+   analysis:'ANOVA(매질별), 속도 계산(v=d/t), 이론값 비교'},
+  {cat:'과학',tags:['지구과학','토양','침식','물','지형','지리'],title:'토양 종류별 물 침투·침식 비교',
+   hypo:['모래 토양이 점토 토양보다 물 침투 속도가 빠를 것이다','식생이 있는 토양이 침식에 더 강할 것이다'],
+   vars:{indep:'토양 종류(모래, 황토, 점토, 부엽토), 식생 유무',dep:'물 침투 시간(초), 유실 토양량(g)',control:'물 양, 경사각'},
+   measure:'직접 측정: 페트병 토양 컬럼(거름종이+토양), 일정량 물 부은 후 침투 시간 + 유출수 탁도',
+   analysis:'ANOVA(토양별), t검정(식생 유무), 이원분산분석'},
+
+  // ═══ 지리 ═══
+  {cat:'지리',tags:['지리','도시','인구','도시화','인구밀도','공간'],title:'우리 동네 인구밀도와 생활편의시설',
+   hypo:['인구밀도가 높은 지역일수록 편의시설(편의점, 카페) 수가 많을 것이다'],
+   vars:{indep:'행정동별 인구밀도(명/km²)',dep:'편의시설 수(개)',control:'지역 면적, 상업지역 비율'},
+   measure:'공공데이터: 통계청 인구데이터 + 카카오맵/네이버지도 API에서 편의시설 검색',
+   analysis:'상관분석, 회귀분석, 산점도+회귀선'},
+  {cat:'지리',tags:['지리','교통','통학','거리','접근성','GIS'],title:'통학 거리와 학교생활 만족도',
+   hypo:['통학 거리가 길수록 학교생활 만족도가 낮을 것이다'],
+   vars:{indep:'통학 거리(km), 통학 시간(분)',dep:'학교생활 만족도, 수업 지각 빈도',control:'통학 수단, 학년'},
+   measure:'설문: 집-학교 거리(카카오맵 측정 요청), 통학 시간, 만족도 5점 리커트',
+   analysis:'상관분석, t검정(근거리/원거리), 회귀분석'},
+  {cat:'지리',tags:['지리','열섬','온도','도시열섬','녹지','도시환경'],title:'도시 열섬 효과 — 녹지와 기온 차이',
+   hypo:['녹지 비율이 높은 지역이 아스팔트 지역보다 기온이 낮을 것이다'],
+   vars:{indep:'지표면 유형(녹지/아스팔트/건물옥상/수변)',dep:'지표면 온도(°C)',control:'측정 시간, 날씨'},
+   measure:'직접 측정: 적외선 온도계로 학교 주변 10지점 지표면 온도 측정(오후 2시, 맑은 날 3일 평균)',
+   analysis:'ANOVA(지표면별), t검정(녹지/비녹지), 위치별 히트맵'},
+  {cat:'지리',tags:['지리','하천','수질','오염','환경','BOD','COD'],title:'하천 상·하류 수질 비교',
+   hypo:['하류로 갈수록 수질이 나빠질 것이다','도시 구간을 지나면 오염도가 급증할 것이다'],
+   vars:{indep:'측정 지점(상류/중류/하류/도시구간)',dep:'pH, 탁도, 용존산소(DO)',control:'측정 시간, 날씨, 유량'},
+   measure:'직접 측정: 수질 간이키트(pH, DO, 탁도), 하천 5~6지점에서 채수, 각 지점 3회',
+   analysis:'ANOVA(지점별), 시계열(위치 순서), 상관분석'},
+  {cat:'지리',tags:['지리','기후','강수량','가뭄','홍수','지역비교'],title:'지역별 강수 패턴과 재해 빈도',
+   hypo:['연강수량 편차가 큰 지역이 가뭄/홍수 재해 빈도가 높을 것이다'],
+   vars:{indep:'지역별 연강수량 편차(mm)',dep:'자연재해 발생 건수',control:'지형, 하천 유무'},
+   measure:'공공데이터: 기상청 30년 강수 데이터 + 행안부 재해연감',
+   analysis:'상관분석, 회귀분석, 지역비교 그래프'},
+
+  // ═══ 사회+과학 융합 ═══
+  {cat:'사회',tags:['환경','에너지','전기','절약','탄소','기후변화','융합'],title:'가정 에너지 소비와 탄소발자국',
+   hypo:['가정 전기 사용량이 많을수록 탄소발자국이 크고, 에너지 절약 인식이 낮을 것이다'],
+   vars:{indep:'월 전기사용량(kWh) — 고지서 확인',dep:'에너지 절약 인식 점수, 절약 행동 점수',control:'가구원 수, 주거 형태'},
+   measure:'설문(절약 인식·행동 10문항) + 전기요금 고지서 사진 수집(kWh 확인)',
+   analysis:'상관분석(사용량-인식), 회귀분석, t검정(절약실천 상하위)'},
+  {cat:'사회',tags:['과학','기술','AI','인공지능','윤리','인식','융합'],title:'AI 기술에 대한 청소년 인식과 윤리관',
+   hypo:['AI 사용 경험이 많을수록 AI에 대한 긍정적 인식이 높을 것이다','AI 윤리 교육 경험이 인식에 영향을 미칠 것이다'],
+   vars:{indep:'AI 사용 빈도, AI 윤리교육 경험 유무',dep:'AI 신뢰도, AI 윤리 인식 점수',control:'성별, 학년, 정보 교과 이수'},
+   measure:'설문: AI 사용 빈도(주당), 활용 분야(복수선택), AI 신뢰 척도(8문항), 윤리 인식(8문항)',
+   analysis:'t검정(교육유무), 상관분석, 다중회귀'},
+  {cat:'사회',tags:['과학','재난','방재','안전','대피','지진대비','융합'],title:'자연재해 대비 인식과 대피 역량',
+   hypo:['재난안전교육을 받은 학생이 대피 역량 점수가 더 높을 것이다'],
+   vars:{indep:'재난안전교육 경험(유무/횟수)',dep:'대피 역량 점수, 재난 인식도',control:'성별, 거주지역(재해빈도)'},
+   measure:'설문: 교육 경험, 대피 역량 척도(10문항): "지진 시 행동요령을 알고 있다" 등 5점 리커트',
+   analysis:'t검정(교육유무), ANOVA(횟수별), 상관분석'},
+  {cat:'사회',tags:['환경','플라스틱','미세플라스틱','해양','오염','융합'],title:'미세플라스틱 인식과 일회용품 사용',
+   hypo:['미세플라스틱 위험성 인식이 높을수록 일회용 플라스틱 사용이 적을 것이다'],
+   vars:{indep:'미세플라스틱 인식 점수',dep:'주간 일회용품 사용 횟수',control:'성별, 환경교육 경험'},
+   measure:'설문: 인식 척도(8문항) + 1주일 일회용품 사용 일지(텀블러/비닐/빨대 등 카운트)',
+   analysis:'상관분석, 회귀분석, t검정(인식 상하위)'},
+  {cat:'사회',tags:['지리','음식','로컬푸드','탄소','먹거리','식량','융합'],title:'먹거리 이동거리(Food Miles)와 탄소배출',
+   hypo:['수입 식품이 국산 식품보다 탄소배출량이 높을 것이다'],
+   vars:{indep:'식품 원산지(국내산/수입산), 이동거리(km)',dep:'추정 탄소배출량(gCO₂)',control:'식품 종류, 운송 수단'},
+   measure:'마트 라벨 조사: 원산지 확인 → 구글맵 거리 측정 → 운송수단별 CO₂ 배출계수 적용',
+   analysis:'t검정(국산/수입), 상관분석(거리-탄소), 품목별 비교'}
 ];
 
 function initTopicsLesson() {
@@ -10009,8 +10244,8 @@ function renderResearchResults(items) {
     return;
   }
   container.innerHTML = items.map((item, idx) => {
-    const catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C'};
-    const catIcons = {학교:'🏫',건강:'💪',심리:'🧠',과학:'🔬',사회:'🌏',미디어:'📱',진로:'🎯',의학:'🏥',생명:'🧬',행정:'🏛️',교육:'📚',경제:'📈',경영:'💼',건축:'🏗️',마케팅:'📣',우주:'🚀',화학:'⚗️',전자공학:'💡',기계공학:'⚙️',보건:'🩺',환경:'🌿',체육:'🏃',식품:'🍽️',농업:'🌾',수학:'🔢'};
+    const catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C',지리:'#0D47A1'};
+    const catIcons = {학교:'🏫',건강:'💪',심리:'🧠',과학:'🔬',사회:'🌏',미디어:'📱',진로:'🎯',의학:'🏥',생명:'🧬',행정:'🏛️',교육:'📚',경제:'📈',경영:'💼',건축:'🏗️',마케팅:'📣',우주:'🚀',화학:'⚗️',전자공학:'💡',기계공학:'⚙️',보건:'🩺',환경:'🌿',체육:'🏃',식품:'🍽️',농업:'🌾',수학:'🔢',지리:'🗺️'};
     const color = catColors[item.cat] || '#333';
     const icon = catIcons[item.cat] || '📋';
     return '<div style="border:1px solid #E0E0E0;border-radius:10px;overflow:hidden">' +
@@ -10039,7 +10274,7 @@ function renderResearchResults(items) {
           '<div style="padding:8px;background:white;border-radius:6px;color:var(--text2);line-height:1.7">' + item.measure + '</div>' +
         '</div>' +
         '<div><div style="font-weight:700;color:' + color + ';margin-bottom:4px">📊 추천 분석</div>' +
-        '<div style="font-size:10px;color:#1565C0;margin-bottom:4px;font-weight:600">' + (function(a){var m={"상관분석":"최소 20명","t검정":"각 그룹 10명+ (총20)","독립표본 t-검정":"각 그룹 10명+","대응표본 t검정":"최소 15쌍","ANOVA":"각 그룹 10명+ (총30)","카이제곱":"총 30명+","회귀분석":"최소 30명","빈도분석":"최소 20명"};for(var k in m)if(a.indexOf(k)>=0)return"👥 "+m[k];return"👥 최소 20명 권장"})(r.analysis) + '</div>' +
+        '<div style="font-size:10px;color:#1565C0;margin-bottom:4px;font-weight:600">' + (function(a){var m={"상관분석":"최소 20명","t검정":"각 그룹 10명+ (총20)","독립표본 t-검정":"각 그룹 10명+","대응표본 t검정":"최소 15쌍","ANOVA":"각 그룹 10명+ (총30)","카이제곱":"총 30명+","회귀분석":"최소 30명","빈도분석":"최소 20명"};for(var k in m)if(a.indexOf(k)>=0)return"👥 "+m[k];return"👥 최소 20명 권장"})(item.analysis) + '</div>' +
           '<div style="padding:8px;background:white;border-radius:6px;color:var(--text2)">' + item.analysis + '</div>' +
         '</div>' +
         (item.result ? '<div style="margin-top:10px"><div style="font-weight:700;color:' + color + ';margin-bottom:4px">📌 핵심 결과</div><div style="padding:8px;background:white;border-radius:6px;color:var(--text2)">' + item.result + '</div></div>' : '') +
@@ -11013,17 +11248,22 @@ function drawDist() {
   
   ctx.clearRect(0, 0, W, H);
   
-  // x축 범위
+  // x축 범위 — 곡선이 캔버스를 채우도록 동적
   const xMin = mu - 4*sd;
   const xMax = mu + 4*sd;
-  
+
   // 정규분포 함수
   function normalPDF(x) {
     return (1/(sd*Math.sqrt(2*Math.PI))) * Math.exp(-0.5*Math.pow((x-mu)/sd, 2));
   }
-  
-  // y축 최대
-  const yMax = normalPDF(mu) * 1.15;
+
+  // y축 — 현재 곡선 피크가 항상 캔버스 안에 들어오도록 동적 계산
+  const _sc0 = document.querySelector('[id^="ds-"].selected');
+  const _sk0 = _sc0 ? _sc0.id.replace('ds-','') : 'exam';
+  const refSd = (DIST_SCENARIOS[_sk0] && DIST_SCENARIOS[_sk0].sd) || 10;
+  const refPeak = 1/(refSd*Math.sqrt(2*Math.PI));
+  const curPeak = 1/(sd*Math.sqrt(2*Math.PI));
+  const yMax = Math.max(refPeak, curPeak) * 1.25;
   
   function toCanvasX(x) { return pad.left + ((x - xMin)/(xMax - xMin)) * gW; }
   function toCanvasY(y) { return pad.top + gH - (y/yMax) * gH; }
@@ -11145,20 +11385,23 @@ function drawDist() {
   `;
 }
 
+let _currentDistQuiz = null;
+
 function loadDistQuiz() {
   distQuizAnswered = false;
   const quizzes = [
     { q: '시험 평균이 70점이고 SD가 10일 때, 90점 이상 학생은 전체의 약 몇 %일까요?', opts: ['약 2.5%','약 16%','약 32%'], correct: 0, explain: '90점 = μ+2σ. μ+2σ 이상은 전체의 약 2.5%입니다. (95%가 μ±2σ 안에 있으므로, 나머지 5%의 절반)' },
     { q: 'SD가 5인 반과 SD가 20인 반, 어느 쪽이 학생들의 수준이 더 고른가요?', opts: ['SD=5인 반','SD=20인 반','알 수 없다'], correct: 0, explain: 'SD가 작을수록 평균 근처에 몰려 있으므로, SD=5인 반의 수준이 더 고릅니다.' },
-    { q: '평균이 바뀌면 정규분포 곡선은 어떻게 변하나요?', opts: ['높이가 변한다','좌우로 이동한다','폭이 변한다'], correct: 1, explain: '평균(μ)은 분포의 "중심" 위치입니다. 바뀌면 종 모양이 좌우로 이동합니다. 모양 자체는 그대로!' }
+    { q: '평균이 바뀌면 정규분포 곡선은 어떻게 변하나요?', opts: ['높이가 변한다','좌우로 이동한다','폭이 변한다'], correct: 1, explain: '평균(μ)은 분포의 중심 위치입니다. 바뀌면 종 모양이 좌우로 이동합니다. 모양 자체는 그대로!' }
   ];
-  const q = quizzes[Math.floor(Math.random()*quizzes.length)];
+  _currentDistQuiz = quizzes[Math.floor(Math.random()*quizzes.length)];
+  const q = _currentDistQuiz;
   document.getElementById('distQuiz').innerHTML = `
     <div style="padding:16px;background:#F0FDF4;border-radius:10px;border:1px solid var(--green)">
       <p style="font-size:14px;font-weight:700;color:var(--green)">${q.q}</p>
       <div style="margin-top:10px">
         ${q.opts.map((o,i) => `
-          <button class="btn ${i===0?'btn-outline':i===1?'btn-outline':'btn-outline'} btn-sm" style="display:block;width:100%;margin:6px 0;text-align:left" onclick="checkDistQuiz(this,${i},${q.correct},'${q.explain.replace(/'/g,"\\'")}')">${String.fromCharCode(9312+i)} ${o}</button>
+          <button class="btn btn-outline btn-sm" style="display:block;width:100%;margin:6px 0;text-align:left" onclick="checkDistQuiz(this,${i})">${String.fromCharCode(9312+i)} ${o}</button>
         `).join('')}
       </div>
       <div id="distQuizFeedback" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;line-height:1.8"></div>
@@ -11166,23 +11409,36 @@ function loadDistQuiz() {
   `;
 }
 
-function checkDistQuiz(btn, idx, correct, explain) {
-  if(distQuizAnswered) return;
-  distQuizAnswered = true;
+function checkDistQuiz(btn, idx) {
+  if(distQuizAnswered || !_currentDistQuiz) return;
+  const correct = _currentDistQuiz.correct;
+  const explain = _currentDistQuiz.explain;
   const isCorrect = idx === correct;
-  const fb = document.getElementById('distQuizFeedback');
-  fb.style.display = 'block';
-  fb.style.background = isCorrect ? '#D4EFDF' : '#FFE8E8';
-  fb.style.color = isCorrect ? 'var(--green)' : 'var(--coral)';
-  fb.innerHTML = `<strong>${isCorrect?'✅ 정답!':'❌ 오답!'}</strong> ${explain}<br><button class="btn btn-outline btn-sm" onclick="loadDistQuiz()" style="margin-top:8px">🔄 다른 문제</button>`;
-  
-  const allBtns = btn.parentElement.querySelectorAll('button');
-  allBtns.forEach((b,i) => {
-    b.disabled = true;
-    b.style.opacity = '0.6';
-    if(i === correct) { b.style.borderColor = 'var(--green)'; b.style.background = 'var(--green-light)'; b.style.opacity = '1'; }
-    if(i === idx && !isCorrect) { b.style.borderColor = 'var(--coral)'; b.style.background = 'var(--coral-light)'; b.style.opacity = '1'; }
-  });
+
+  if(isCorrect) {
+    distQuizAnswered = true;
+    const fb = document.getElementById('distQuizFeedback');
+    fb.style.display = 'block';
+    fb.style.background = '#D4EFDF';
+    fb.style.color = 'var(--green)';
+    fb.innerHTML = `<strong>✅ 정답!</strong> ${explain}<br><button class="btn btn-outline btn-sm" onclick="loadDistQuiz()" style="margin-top:8px">🔄 다른 문제</button>`;
+    const allBtns = btn.parentElement.querySelectorAll('button');
+    allBtns.forEach((b,i) => {
+      b.disabled = true;
+      b.style.opacity = '0.6';
+      if(i === correct) { b.style.borderColor = 'var(--green)'; b.style.background = 'var(--green-light)'; b.style.opacity = '1'; }
+    });
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.borderColor = 'var(--coral)';
+    btn.style.background = 'var(--coral-light)';
+    const fb = document.getElementById('distQuizFeedback');
+    fb.style.display = 'block';
+    fb.style.background = '#FFE8E8';
+    fb.style.color = 'var(--coral)';
+    fb.innerHTML = '<strong>❌ 다시 생각해보세요!</strong> 다른 보기를 눌러보세요.';
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -14953,8 +15209,8 @@ function mrInitStep1() {
   // Build category buttons
   var btnContainer = document.getElementById('mrCatBtns');
   if(!btnContainer || btnContainer.children.length > 0) return;
-  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C'};
-  var catIcons = {학교:'🏫',건강:'💪',심리:'🧠',과학:'🔬',사회:'🌏',미디어:'📱',진로:'🎯',의학:'🏥',생명:'🧬',행정:'🏛️',교육:'📚',경제:'📈',경영:'💼',건축:'🏗️',마케팅:'📣',우주:'🚀',화학:'⚗️',전자공학:'💡',기계공학:'⚙️',보건:'🩺',환경:'🌿',체육:'🏃',식품:'🍽️',농업:'🌾',수학:'🔢'};
+  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C',지리:'#0D47A1'};
+  var catIcons = {학교:'🏫',건강:'💪',심리:'🧠',과학:'🔬',사회:'🌏',미디어:'📱',진로:'🎯',의학:'🏥',생명:'🧬',행정:'🏛️',교육:'📚',경제:'📈',경영:'💼',건축:'🏗️',마케팅:'📣',우주:'🚀',화학:'⚗️',전자공학:'💡',기계공학:'⚙️',보건:'🩺',환경:'🌿',체육:'🏃',식품:'🍽️',농업:'🌾',수학:'🔢',지리:'🗺️'};
   var cats = {};
   _researchDB.forEach(function(e){cats[e.cat]=(cats[e.cat]||0)+1;});
   var html = '<button class="btn btn-outline btn-sm" onclick="mrFilterCat(\'\')" style="font-size:10px;padding:4px 8px">전체('+_researchDB.length+')</button>';
@@ -14963,6 +15219,40 @@ function mrInitStep1() {
   });
   btnContainer.innerHTML = html;
   mrRenderList(_researchDB);
+}
+
+// ━━ 연구방법 유형 자동 판별 ━━
+function _getMethodInfo(item) {
+  var m = ((item.measure||'')+(item.analysis||'')).toLowerCase();
+  var t = (item.title||'').toLowerCase();
+  var tags = (item.tags||[]).join(' ').toLowerCase();
+  // 실험 판별 — 직접 조작/측정이 핵심
+  var isExperiment = /직접.?측정|실험|뷰렛|스톱워치|ph미터|온도계|프레임 분석|비료|농도.*수준|경사면|중화|반응속도/.test(m+t);
+  // 공공데이터 판별
+  var isSecondary = /공공데이터|기상청|에어코리아|건강행태조사|패널.*종단|통계자료|행태온라인조사/.test(m);
+  // 관찰/앱측정 판별
+  var isObservation = /앱.*측정|스크린타임.*캡처|소음측정앱|동영상.*분석|24시간 회상법/.test(m);
+  // 척도/설문 판별
+  var isSurvey = /설문|척도|리커트|자기보고|체크리스트|빈도조사/.test(m);
+
+  var methods = [];
+  if(isExperiment) methods.push({type:'실험',icon:'🧪',color:'#E65100',
+    desc:'변수를 직접 조작하고 결과를 측정하는 방법. 인과관계를 알 수 있는 가장 강력한 방법!',
+    tip:'통제 조건을 반드시 만들고, 반복 측정(3회 이상)으로 신뢰도를 높이세요.',
+    aiType:'실험설계'});
+  if(isSecondary) methods.push({type:'공공데이터 분석',icon:'📂',color:'#1565C0',
+    desc:'이미 수집된 대규모 데이터(정부·기관)를 분석하는 방법. 표본이 커서 통계적 힘이 강함!',
+    tip:'데이터 출처를 명확히 밝히고, 변수 정의를 원자료 코드북에서 확인하세요.',
+    aiType:'가상데이터'});
+  if(isObservation) methods.push({type:'관찰/측정',icon:'👁️',color:'#00838F',
+    desc:'앱이나 도구로 실제 행동·환경을 직접 기록하는 방법. 자기보고보다 객관적!',
+    tip:'측정 도구의 정확도를 먼저 확인하고, 동일 조건에서 측정하세요.',
+    aiType:'관찰측정'});
+  if(isSurvey || methods.length===0) methods.push({type:'설문조사',icon:'📝',color:'#6A1B9A',
+    desc:'질문지로 응답자의 인식·태도·행동을 수집하는 방법. 가장 많이 쓰이고 실행이 쉬움!',
+    tip:'리커트 5점 척도를 활용하고, 문항 수는 15~30개가 적당합니다.',
+    aiType:'설문지'});
+  return methods;
 }
 
 function mrSearchDB() {
@@ -14984,7 +15274,7 @@ function mrFilterCat(cat) {
 function mrRenderList(items) {
   var container = document.getElementById('mrResearchList');
   if(!container) return;
-  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C'};
+  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C',지리:'#0D47A1'};
   var html = '';
   items.slice(0,30).forEach(function(item,i) {
     var color = catColors[item.cat]||'#333';
@@ -14996,6 +15286,7 @@ function mrRenderList(items) {
       '<div style="font-size:13px;font-weight:700;margin-bottom:4px">'+item.title+'</div>' +
       '<div style="font-size:11px;color:var(--text2)">'+item.tags.map(function(t){return'#'+t;}).join(' ')+'</div>' +
       '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">' +
+      _getMethodInfo(item).map(function(mi){return '<span style="font-size:10px;background:'+mi.color+'15;color:'+mi.color+';padding:2px 6px;border-radius:4px;font-weight:700">'+mi.icon+' '+mi.type+'</span>';}).join('') +
       '<span style="font-size:10px;background:#E3F2FD;padding:2px 6px;border-radius:4px">독립: '+(item.vars?item.vars.indep:'').substring(0,25)+'</span>' +
       '<span style="font-size:10px;background:#FFEBEE;padding:2px 6px;border-radius:4px">종속: '+(item.vars?item.vars.dep:'').substring(0,25)+'</span></div>' +
       '<button class="btn btn-sm" onclick="event.stopPropagation();mrSelectResearch('+idx+')" style="margin-top:8px;background:'+color+';color:white;border:none;font-size:11px;padding:4px 12px">이 연구에서 시작하기 →</button>' +
@@ -15019,7 +15310,7 @@ function mrSelectResearch(idx) {
 
 function mrBuildRefCard(r) {
   // 연구주제 탐색과 동일한 수준의 풍부한 영감 카드 생성
-  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C'};
+  var catColors = {학교:'#1565C0',건강:'#2E7D32',심리:'#6A1B9A',과학:'#E65100',사회:'#C62828',미디어:'#00838F',진로:'#F57F17',의학:'#AD1457',생명:'#00695C',행정:'#4527A0',교육:'#EF6C00',경제:'#1B5E20',경영:'#283593',건축:'#6D4C41',마케팅:'#00838F',우주:'#1A237E',화학:'#FF6F00',전자공학:'#0277BD',기계공학:'#558B2F',보건:'#C2185B',환경:'#2E7D32',체육:'#E64A19',식품:'#F9A825',농업:'#33691E',수학:'#4A148C',지리:'#0D47A1'};
   var color = catColors[r.cat] || '#333';
   var html = '';
 
@@ -15045,6 +15336,19 @@ function mrBuildRefCard(r) {
     '<div style="padding:4px 8px;background:white;border-radius:6px;font-size:12px"><strong style="color:#C62828">종속변수:</strong> '+(r.vars?r.vars.dep:'')+'</div>' +
     '<div style="padding:4px 8px;background:white;border-radius:6px;font-size:12px"><strong style="color:#6A1B9A">통제변수:</strong> '+(r.vars?r.vars.control:'')+'</div>' +
     '</div></div>';
+
+  // 추천 연구방법 유형
+  var _methods = _getMethodInfo(r);
+  html += '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:4px">🔬 추천 연구방법</div>' +
+    '<div style="display:grid;gap:4px">';
+  _methods.forEach(function(mi) {
+    html += '<div style="padding:8px 10px;background:'+mi.color+'08;border-radius:8px;border-left:3px solid '+mi.color+'">' +
+      '<div style="font-size:12px;font-weight:700;color:'+mi.color+'">'+mi.icon+' '+mi.type+'</div>' +
+      '<div style="font-size:11px;color:var(--text2);margin-top:2px">'+mi.desc+'</div>' +
+      '<div style="font-size:10px;color:'+mi.color+';margin-top:3px;font-style:italic">💡 '+mi.tip+'</div>' +
+      '</div>';
+  });
+  html += '</div></div>';
 
   // 측정 방법
   if(r.measure) {
@@ -15159,15 +15463,323 @@ function mrInitStep4() {
 }
 
 function mrInitStep5() {
-  var xName = document.getElementById('mrVarXName');
-  var yName = document.getElementById('mrVarYName');
-  var title = document.getElementById('mrSurveyTitle');
-  if(title && xName && yName && !title.value) {
-    title.value = (xName.value||'독립변수')+'과(와) '+(yName.value||'종속변수')+'에 관한 설문조사';
+  var topic = (document.getElementById('mrUserTopic')||{}).value || '';
+  var hypo = (document.getElementById('mrHypoFinal')||{}).value || '';
+  var xName = (document.getElementById('mrVarXName')||{}).value || '(미입력)';
+  var yName = (document.getElementById('mrVarYName')||{}).value || '(미입력)';
+  var control = (document.getElementById('mrVarControl')||{}).value || '';
+  var sampleWho = (document.getElementById('mrSampleWho')||{}).value || '';
+  var sampleN = (document.getElementById('mrSampleN')||{}).value || '';
+
+  // ━━ PART A: 원본 연구 방법론 상세 표시 ━━
+  var r = mrSelectedResearch;
+  var detailEl = document.getElementById('mrOrigMethodDetail');
+  var emptyEl = document.getElementById('mrOrigMethodEmpty');
+  if(r && detailEl) {
+    var card = function(icon,label,color,content) {
+      return '<div style="padding:10px 12px;background:white;border-radius:8px;border-left:3px solid '+color+'">' +
+        '<div style="font-size:11px;font-weight:700;color:'+color+'">'+icon+' '+label+'</div>' +
+        '<div style="font-size:12px;color:#333;margin-top:3px;line-height:1.7">'+content+'</div></div>';
+    };
+    var html = '';
+    if(r.measure) html += card('📋','이 연구의 측정 방법','#1565C0',r.measure);
+    if(r.analysis) html += card('📊','사용한 분석 방법','#6A1B9A',r.analysis);
+    if(r.result) html += card('📌','핵심 결과','#2E7D32',r.result);
+    if(r.sample) html += card('👥','연구 대상','#E65100',r.sample);
+    if(r.source) html += card('📄','출처','#78909C',r.source);
+    detailEl.innerHTML = html;
+    if(emptyEl) emptyEl.style.display = html ? 'none' : 'block';
+
+    // ━━ 추천 연구방법 배지 ━━
+    var methods = _getMethodInfo(r);
+    var badgesEl = document.getElementById('mrMethodBadges');
+    if(badgesEl) {
+      badgesEl.innerHTML = '<span style="font-size:12px;font-weight:700;color:#E65100;margin-right:4px">이 연구에 추천:</span>' +
+        methods.map(function(mi){
+          return '<span style="display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;background:'+mi.color+'12;color:'+mi.color+';border:1px solid '+mi.color+'30">'+mi.icon+' '+mi.type+'</span>';
+        }).join('');
+      // 추천 기반 라디오 기본값
+      var typeMap = {'설문지':'survey','실험설계':'experiment','가상데이터':'secondary','관찰측정':'observation'};
+      var radioVal = typeMap[methods[0].aiType] || 'survey';
+      var radio = document.querySelector('input[name="mrMethodType"][value="'+radioVal+'"]');
+      if(radio) radio.checked = true;
+    }
+  }
+
+  // ━━ 브레인스토밍 가이드 초기화 ━━
+  mrShowMethodGuide();
+
+  // ━━ 최종 요약 자동 업데이트 ━━
+  var finalEl = document.getElementById('mrFinalContent');
+  if(finalEl) {
+    var rows = [];
+    if(topic) rows.push('<strong>주제:</strong> ' + topic);
+    if(hypo) rows.push('<strong>가설:</strong> ' + hypo);
+    rows.push('<strong>독립변수(X):</strong> ' + xName);
+    rows.push('<strong>종속변수(Y):</strong> ' + yName);
+    if(control) rows.push('<strong>통제변수:</strong> ' + control);
+    if(sampleWho||sampleN) rows.push('<strong>대상:</strong> ' + (sampleWho||'미정') + (sampleN ? ' '+sampleN+'명' : ''));
+    finalEl.innerHTML = '<div style="display:grid;gap:4px">' + rows.map(function(r){return '<div>'+r+'</div>';}).join('') + '</div>';
   }
 }
 
-function mrGenerateSurvey() {
+// 방법별 브레인스토밍 가이드 표시 — 선택한 연구 정보가 힌트로 들어감
+function mrShowMethodGuide() {
+  var type = (document.querySelector('input[name="mrMethodType"]:checked')||{}).value || 'survey';
+  var titleEl = document.getElementById('mrGuideTitle');
+  var contentEl = document.getElementById('mrGuideContent');
+  if(!contentEl) return;
+
+  var xName = (document.getElementById('mrVarXName')||{}).value || 'X';
+  var yName = (document.getElementById('mrVarYName')||{}).value || 'Y';
+  var control = (document.getElementById('mrVarControl')||{}).value || '';
+  var hypo = (document.getElementById('mrHypoFinal')||{}).value || '';
+  var topic = (document.getElementById('mrUserTopic')||{}).value || '';
+
+  // 원본 연구에서 힌트 추출
+  var r = mrSelectedResearch || {};
+  var origMeasure = r.measure || '';
+  var origAnalysis = r.analysis || '';
+  var origIndep = (r.vars && r.vars.indep) || '';
+  var origDep = (r.vars && r.vars.dep) || '';
+  var origControl = (r.vars && r.vars.control) || '';
+
+  // 측정 방법에서 척도 유형 추출 (힌트용)
+  var hasLikert = /리커트|likert|5점|7점|4점/.test(origMeasure);
+  var hasFreq = /빈도|횟수|시간|분|잔|회/.test(origMeasure);
+  var hasDirect = /직접.*측정|자|스톱워치|온도계|뷰렛/.test(origMeasure);
+  var hasApp = /앱|스크린타임|에어코리아|기상청|통계청|공공데이터|카카오맵|네이버지도|재해연감|행안부/.test(origMeasure);
+
+  var qBox = function(num, q, origHint, myHint) {
+    var h = '';
+    if(origHint) h += '<div style="font-size:11px;padding:4px 8px;background:#FFF8E1;border-radius:4px;border-left:2px solid #FFB300;color:#795548;margin:4px 0">📖 원래 연구: '+origHint+'</div>';
+    h += '<div style="font-size:11px;color:var(--text3);margin-top:3px">💡 '+myHint+'</div>';
+    return '<div style="padding:10px 12px;background:white;border-radius:8px">' +
+      '<div style="font-size:12px;font-weight:700;color:#4A148C">' + num + '. ' + q + '</div>' +
+      h + '</div>';
+  };
+
+  var html = '';
+  if(type === 'survey') {
+    if(titleEl) titleEl.textContent = '설문 설계 브레인스토밍';
+    // ① X 측정
+    var xOrigHint = origIndep ? '"'+origIndep+'"을 측정함' : '';
+    if(hasLikert) xOrigHint += ' (리커트 척도 사용)';
+    if(hasFreq) xOrigHint += ' (빈도/시간으로 측정)';
+    html += qBox('①', '"'+xName+'" 을(를) 어떻게 물어볼까?',
+      xOrigHint,
+      '숫자로 잴 수 있게! 예: "하루 평균 '+xName+'은?" → ①1시간미만 ②1~2시간 ③2~3시간 ④3시간이상');
+
+    // ② Y 측정
+    var yOrigHint = origDep ? '"'+origDep+'"을 측정함' : '';
+    html += qBox('②', '"'+yName+'" 을(를) 어떤 질문으로 측정할까?',
+      yOrigHint + (origMeasure ? '. 방법: '+origMeasure.substring(0,80) : ''),
+      hasLikert ? '원래 연구처럼 리커트 척도(1~5점)로 여러 문항 만들기가 좋아요' : '예: "'+yName+'에 만족한다" → 전혀아니다(1)~매우그렇다(5)');
+
+    // ③ 역문항
+    html += qBox('③', '역문항을 만든다면?', '',
+      '역문항 = 반대로 물어서 대충 답하는 사람 걸러내기. 예: "'+yName+'이(가) 없다고 느낀다"(R)');
+
+    // ④ 통제변수
+    var ctrlHint = origControl ? '"'+origControl+'"을 통제함' : '';
+    html += qBox('④', (control||'통제변수')+' 도 질문에 넣을까?',
+      ctrlHint,
+      control ? '"'+control+'"도 1~2문항씩 물어야 진짜 X→Y 관계인지 확인 가능!' : '성별, 학년 같은 기본 정보 + 결과에 영향줄 수 있는 다른 요인');
+
+    // ⑤ 배포
+    html += qBox('⑤', '어디서 누구에게? 몇 문항?',
+      r.sample ? '원래 연구: '+r.sample : '',
+      '팁: 인구통계 3~4개 + X 5~7개 + Y 5~7개 = 15~20문항(5~7분). 구글폼 QR코드가 가장 편함');
+
+    // ⑥ 분석 미리보기
+    html += qBox('⑥', '이 데이터로 무슨 분석을 할 수 있을까?',
+      origAnalysis ? '원래 연구: '+origAnalysis : '',
+      'X가 숫자+Y가 숫자 → 상관분석·회귀분석 / X가 그룹(남/여) → t검정 / X가 3그룹+ → ANOVA');
+
+  } else if(type === 'experiment') {
+    if(titleEl) titleEl.textContent = '실험 설계 브레인스토밍';
+    html += qBox('①', '"'+xName+'" 을(를) 어떻게 조작할까?',
+      origIndep ? '원래 연구의 독립변수: "'+origIndep+'"' : '',
+      '몇 단계로 나눌지 정하기. 예: 3단계(0, 50, 100) → 실험집단 3개');
+    html += qBox('②', '"'+yName+'" 을(를) 어떻게 측정할까?',
+      hasDirect ? '원래 연구: 직접 측정 도구 사용 ('+origMeasure.substring(0,60)+')' : (origMeasure ? '원래 연구: '+origMeasure.substring(0,60) : ''),
+      '어떤 도구로? 단위는? 몇 회 반복 측정?');
+    html += qBox('③', '통제 조건은?',
+      origControl ? '원래 연구가 통제한 것: "'+origControl+'"' : '',
+      '바꾸면 안 되는 것 목록. 하나라도 빠지면 "그건 X 때문이 아니라 다른 게 달라서 아님?" 반론에 막힘');
+    html += qBox('④', '몇 번 반복? 기간은?', '',
+      '팁: 최소 3회 반복 × 조건 수. 2주 이상 권장. 측정은 같은 시간대에!');
+    html += qBox('⑤', '대조군(통제집단)은?', '',
+      '아무 처리도 안 한 집단이 있어야 "내 처리 때문이다"라고 말할 수 있음');
+
+  } else if(type === 'observation') {
+    if(titleEl) titleEl.textContent = '관찰/앱 측정 브레인스토밍';
+    html += qBox('①', '"'+xName+'" 을(를) 어떤 도구로 측정할까?',
+      hasApp ? '원래 연구: 앱/공공데이터 활용 ('+origMeasure.substring(0,60)+')' : (origMeasure ? '원래 연구: '+origMeasure.substring(0,60) : ''),
+      '예: 스크린타임 앱, 소음측정 앱, 만보기, 에어코리아, 기상청 데이터');
+    html += qBox('②', '"'+yName+'" 도 관찰로 잴 수 있을까?',
+      origDep ? '원래 연구의 종속변수: "'+origDep+'"' : '',
+      '못 재면 설문과 혼합(🔀)도 고려!');
+    html += qBox('③', '언제, 얼마나 자주?', '',
+      '예: 매일 취침 전 기록 / 매 수업시간 / 2주간. 일정하게 해야 비교 가능');
+    html += qBox('④', '기록·저장 방법은?', '',
+      '구글 스프레드시트, 사진 캡처, 엑셀 등. StatPlay에 넣으려면 숫자로 정리!');
+
+  } else if(type === 'secondary') {
+    if(titleEl) titleEl.textContent = '공공데이터 분석 브레인스토밍';
+    html += qBox('①', '어떤 공공데이터를 쓸까?',
+      hasApp ? '원래 연구: '+origMeasure.substring(0,80) : (origMeasure ? '원래 연구: '+origMeasure.substring(0,80) : ''),
+      '통계청(KOSIS), 기상청(기상자료개방포털), 에어코리아, 행안부 재해연감, 교육통계 등. "공공데이터포털(data.go.kr)"에서 키워드 검색!');
+    html += qBox('②', '"'+xName+'"은 데이터의 어떤 열(변수)에 해당할까?',
+      origIndep ? '원래 연구의 독립변수: "'+origIndep+'"' : '',
+      '공공데이터 열 이름은 공식명칭이라 내 변수와 다를 수 있음. 코드북/메타데이터 꼭 확인!');
+    html += qBox('③', '"'+yName+'"은 어떤 열에 해당할까?',
+      origDep ? '원래 연구의 종속변수: "'+origDep+'"' : '',
+      '데이터에 직접 없으면 계산으로 만들 수 있는지 확인 (예: 비율 = A/B × 100)');
+    html += qBox('④', '분석 단위와 기간은?',
+      r.sample ? '원래 연구: '+r.sample : '',
+      '예: 17개 시도 × 5년 = 85개 관측치. 기간이 길수록 추세 분석 가능');
+    html += qBox('⑤', '이 데이터의 한계는?',
+      '',
+      '공공데이터는 인과관계가 아닌 상관관계만 확인 가능. "제3의 변수" 문제 생각하기. 예: 아이스크림 판매↑와 익사사고↑ → 원인은 더위');
+    html += qBox('⑥', '어떤 분석을 할 수 있을까?',
+      origAnalysis ? '원래 연구: '+origAnalysis : '',
+      'X,Y 모두 숫자 → 상관/회귀. 지역비교 → ANOVA. 시계열 → 추세분석. 예/아니오 → 로지스틱회귀');
+
+  } else { // mixed
+    if(titleEl) titleEl.textContent = '혼합 연구 브레인스토밍';
+    html += qBox('①', '설문으로 측정할 것 (주관적)',
+      origMeasure ? '원래 연구: '+origMeasure.substring(0,80) : '',
+      '"'+yName+'"은 설문이 나을까 관찰이 나을까? 인식·태도·만족도 → 설문');
+    html += qBox('②', '관찰/앱으로 측정할 것 (객관적)',
+      origIndep ? '원래 연구의 독립변수: "'+origIndep+'"' : '',
+      '"'+xName+'"은 앱으로 잴 수 있을까? 실제 행동 데이터가 더 정확');
+    html += qBox('③', '두 데이터를 어떻게 연결?', '',
+      '같은 학생의 설문응답 + 앱기록을 학생번호로 매칭. 익명이면 코드번호 사용');
+    html += qBox('④', '수집 순서와 기간은?', '',
+      '예: 1주일 앱 기록 → 마지막 날 설문 실시 → 데이터 합치기');
+  }
+  contentEl.innerHTML = html;
+}
+
+function mrGeneratePrompt() {
+  var topic = (document.getElementById('mrUserTopic')||{}).value || '(주제 미입력)';
+  var hypo = (document.getElementById('mrHypoFinal')||{}).value || '';
+  var xName = (document.getElementById('mrVarXName')||{}).value || '독립변수';
+  var yName = (document.getElementById('mrVarYName')||{}).value || '종속변수';
+  var control = (document.getElementById('mrVarControl')||{}).value || '';
+  var xDef = (document.getElementById('mrVarXDef')||{}).value || '';
+  var yDef = (document.getElementById('mrVarYDef')||{}).value || '';
+  var xScale = (document.getElementById('mrVarXScale')||{}).value || 'likert5';
+  var yScale = (document.getElementById('mrVarYScale')||{}).value || 'likert5';
+  var sampleWho = (document.getElementById('mrSampleWho')||{}).value || '';
+  var sampleN = (document.getElementById('mrSampleN')||{}).value || '';
+  var memo = (document.getElementById('mrMemoExtra')||{}).value || '';
+  var methodType = (document.querySelector('input[name="mrMethodType"]:checked')||{}).value || 'survey';
+  var methodPlan = (document.getElementById('mrMyMethodPlan')||{}).value || '';
+  var myQuestions = (document.getElementById('mrMyQuestions')||{}).value || '';
+  var type = (document.querySelector('input[name="mrPromptType"]:checked')||{}).value || 'survey';
+
+  var scaleNames = {likert5:'5점 리커트 척도',likert7:'7점 리커트 척도',frequency:'빈도/수치 측정',semantic:'의미분별 척도',category:'범주형 선택',yesno:'예/아니오',ranking:'순위형',open:'주관식'};
+
+  // 연구 배경 블록 (공통)
+  var base = '# 연구 설계 정보\n\n';
+  base += '- 연구 주제: ' + topic + '\n';
+  if(hypo) base += '- 연구 가설: ' + hypo + '\n';
+  base += '- 독립변수(X): ' + xName + (xDef ? ' (' + xDef + ')' : '') + '\n';
+  base += '- 종속변수(Y): ' + yName + (yDef ? ' (' + yDef + ')' : '') + '\n';
+  if(control) base += '- 통제변수: ' + control + '\n';
+  if(sampleWho || sampleN) base += '- 조사 대상: ' + sampleWho + (sampleN ? ' ' + sampleN + '명' : '') + '\n';
+  base += '- X 측정 척도: ' + (scaleNames[xScale]||xScale) + '\n';
+  base += '- Y 측정 척도: ' + (scaleNames[yScale]||yScale) + '\n';
+  var methodTypeNames = {survey:'설문조사',experiment:'실험',observation:'관찰/앱측정',secondary:'공공데이터 분석',mixed:'혼합(설문+실험/관찰)'};
+  base += '- 데이터 수집 방법: ' + (methodTypeNames[methodType]||methodType) + '\n';
+  if(methodPlan) base += '\n# 학생이 계획한 연구 방법\n' + methodPlan + '\n';
+  if(myQuestions) base += '\n# 학생이 구상한 핵심 질문/측정 항목\n' + myQuestions + '\n';
+  if(memo) base += '\n# 추가 맥락\n' + memo + '\n';
+
+  var prompt = '';
+
+  if(type === 'survey') {
+    prompt = '당신은 고등학생 통계 연구를 돕는 전문가입니다.\n아래 연구 설계와 학생이 직접 구상한 계획을 바탕으로, 설문지를 완성해주세요.\n학생의 아이디어를 최대한 살리되, 부족한 부분을 보완해주세요.\n\n' + base;
+    prompt += '\n# 요청사항\n';
+    prompt += '1. 인구통계 문항 3~4개 (성별, 학년 등)\n';
+    prompt += '2. 독립변수(' + xName + ') 측정 문항 5~7개\n';
+    prompt += '3. 종속변수(' + yName + ') 측정 문항 5~7개\n';
+    if(control) prompt += '4. 통제변수(' + control + ') 측정 문항 각 1~2개\n';
+    if(myQuestions) prompt += '\n⚠️ 중요: 위 "학생이 구상한 핵심 질문"을 반드시 포함하고, 필요하면 문항 표현만 다듬어주세요.\n';
+    prompt += '\n# 설문 작성 규칙\n';
+    prompt += '- 한 문항에 한 가지만 물을 것\n';
+    prompt += '- 유도 질문 금지\n';
+    prompt += '- 5문항 이상이면 역문항(R) 1~2개 포함\n';
+    prompt += '- 각 문항에 응답 보기를 명시할 것\n';
+    prompt += '- 구글 폼에 바로 옮길 수 있는 형태로 출력할 것\n';
+  } else if(type === 'experiment') {
+    prompt = '당신은 고등학생 과학탐구 실험 설계를 돕는 전문가입니다.\n아래 연구 설계와 학생이 직접 구상한 실험 계획을 바탕으로, 실험 계획서를 완성해주세요.\n학생의 아이디어를 최대한 살리되, 빠진 부분을 보완해주세요.\n\n' + base;
+    prompt += '\n# 요청사항\n';
+    prompt += '1. 실험 집단과 통제 집단 구성 방법\n';
+    prompt += '2. 독립변수(' + xName + ') 조작 방법 — 구체적 수준/조건\n';
+    prompt += '3. 종속변수(' + yName + ') 측정 방법 — 도구, 시점, 횟수\n';
+    if(control) prompt += '4. 통제변수(' + control + ') 통제 방법\n';
+    prompt += '5. 실험 절차 (단계별)\n';
+    prompt += '6. 예상 소요 시간\n';
+    prompt += '7. 윤리적 고려사항\n';
+  } else if(type === 'data') {
+    prompt = '당신은 통계 교육용 가상 데이터를 만드는 전문가입니다.\n아래 연구 설계와 학생이 계획한 측정 방법을 바탕으로 가상 데이터(CSV)를 만들어주세요.\n\n' + base;
+    prompt += '\n# 요청사항\n';
+    prompt += '1. ' + (sampleN || '30') + '명분의 가상 데이터를 TSV(탭 구분) 형태로 출력\n';
+    prompt += '2. 첫 행은 헤더: 학생번호, ' + xName + ', ' + yName + (control ? ', ' + control : '') + '\n';
+    prompt += '3. 가설에 맞게 X와 Y 사이에 적당한 상관/차이가 있도록 (r ≈ 0.3~0.6)\n';
+    prompt += '4. 너무 깔끔하지 않게 — 현실적인 노이즈 포함\n';
+    prompt += '5. 이상치(outlier) 1~2개 포함\n';
+    prompt += '6. StatPlay(웹 통계 도구)에 바로 붙여넣을 수 있게 출력\n';
+  } else { // full
+    prompt = '당신은 고등학생 통계 연구 프로젝트를 종합 지원하는 전문가입니다.\n아래 연구 설계와 학생이 직접 구상한 계획을 바탕으로 다음을 모두 만들어주세요.\n학생의 아이디어를 최대한 살리고 보완하는 방향으로 작성해주세요.\n\n' + base;
+    prompt += '\n# 요청사항 (순서대로)\n\n';
+    prompt += '## 1. 설문지\n';
+    prompt += '- 인구통계 3문항 + ' + xName + ' 측정 5문항 + ' + yName + ' 측정 5문항\n';
+    prompt += '- 역문항 포함, 구글 폼에 바로 옮길 수 있는 형태\n\n';
+    prompt += '## 2. 데이터 수집 계획\n';
+    prompt += '- 대상 모집 방법, 설문/실험 절차, 일정표\n\n';
+    prompt += '## 3. 가상 데이터 (' + (sampleN || '30') + '명)\n';
+    prompt += '- TSV 형태, 가설에 부합하는 적당한 효과 크기\n';
+    prompt += '- StatPlay에 바로 붙여넣을 수 있게\n\n';
+    prompt += '## 4. 추천 분석 방법\n';
+    prompt += '- 이 데이터에 적합한 통계 분석 방법과 이유\n';
+  }
+
+  document.getElementById('mrPromptText').textContent = prompt;
+  document.getElementById('mrPromptPreview').style.display = 'block';
+
+  // 최종 요약도 표시
+  var final_el = document.getElementById('mrFinalSummary');
+  var final_content = document.getElementById('mrFinalContent');
+  if(final_el && final_content) {
+    final_content.innerHTML =
+      '<div style="display:grid;gap:6px">' +
+      '<div><strong>주제:</strong> ' + topic + '</div>' +
+      (hypo ? '<div><strong>가설:</strong> ' + hypo + '</div>' : '') +
+      '<div><strong>독립변수(X):</strong> ' + xName + '</div>' +
+      '<div><strong>종속변수(Y):</strong> ' + yName + '</div>' +
+      '<div><strong>통제변수:</strong> ' + (control || '없음') + '</div>' +
+      '<div><strong>대상:</strong> ' + (sampleWho || '미정') + (sampleN ? ' ' + sampleN + '명' : '') + '</div>' +
+      '<div><strong>연구방법:</strong> ' + ((methodTypeNames||{})[methodType]||methodType) + '</div>' +
+      (methodPlan ? '<div><strong>나의 계획:</strong> ' + methodPlan.substring(0,100) + (methodPlan.length>100?'...':'') + '</div>' : '') +
+      '<div><strong>AI 프롬프트:</strong> ✅ 생성 완료</div>' +
+      '</div>';
+    final_el.style.display = 'block';
+  }
+}
+
+function mrCopyPrompt() {
+  var el = document.getElementById('mrPromptText');
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(function(){
+    alert('AI 프롬프트가 클립보드에 복사되었습니다!\nChatGPT, Claude, Gemini 등에 붙여넣기 하세요.');
+  });
+}
+
+function _mrGenerateSurvey_legacy() {
   var xName = (document.getElementById('mrVarXName').value||'독립변수');
   var yName = (document.getElementById('mrVarYName').value||'종속변수');
   var xScale = document.getElementById('mrVarXScale').value;
@@ -15466,10 +16078,16 @@ function mrPrintSurvey() {
 
 function mrCopyAll() {
   var el = document.getElementById('mrFinalContent');
-  var survey = document.getElementById('mrSurveyContent');
   if(!el) return;
   var text = '═══ 나의 연구 설계 ═══\n\n' + el.innerText;
-  if(survey) text += '\n\n═══ 설문지 ═══\n\n' + survey.innerText;
+  var plan = (document.getElementById('mrMyMethodPlan')||{}).value;
+  var questions = (document.getElementById('mrMyQuestions')||{}).value;
+  var worries = (document.getElementById('mrMyWorries')||{}).value;
+  if(plan) text += '\n\n═══ 데이터 수집 계획 ═══\n' + plan;
+  if(questions) text += '\n\n═══ 핵심 질문/측정 항목 ═══\n' + questions;
+  if(worries) text += '\n\n═══ 걱정/한계 ═══\n' + worries;
+  var prompt = document.getElementById('mrPromptPreview');
+  if(prompt && prompt.style.display!=='none' && prompt.textContent.trim()) text += '\n\n═══ AI 프롬프트 ═══\n\n' + document.getElementById('mrPromptText').textContent;
   navigator.clipboard.writeText(text).then(function(){alert('연구 설계 전체가 클립보드에 복사되었습니다!');});
 }
 
@@ -15678,6 +16296,83 @@ function azInterpFooter(analysisType) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 📄 PDF EXPORT ENGINE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ── PDF용 HTML→이미지 변환 유틸 (한글 깨짐 방지) ──
+async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageW = 210, pageH = 297, margin = 10;
+  const contentW = pageW - margin*2;
+  const pxPerMm = 3.78; // 96dpi 기준
+  const renderW = Math.round(contentW * pxPerMm * 2); // 2x 해상도
+
+  // 임시 div 생성 — 화면 밖에서 렌더링
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `position:fixed;left:-9999px;top:0;width:${renderW}px;background:white;font-family:Pretendard,sans-serif;padding:40px;box-sizing:border-box;line-height:1.7;color:#222;`;
+  wrap.innerHTML = htmlContent;
+  document.body.appendChild(wrap);
+
+  if(bar) bar.style.width = '40%';
+  if(status) status.textContent = '🖼️ 페이지 렌더링 중...';
+
+  try {
+    const canvas = await html2canvas(wrap, { scale: 2, backgroundColor: '#FFFFFF', logging: false, useCORS: true, windowWidth: renderW });
+    document.body.removeChild(wrap);
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const imgW = contentW;
+    const imgH = (canvas.height / canvas.width) * imgW;
+    const usableH = pageH - margin*2;
+
+    // 페이지 분할
+    let srcY = 0;
+    const totalSrcH = canvas.height;
+    const srcPageH = (usableH / imgH) * totalSrcH;
+    let pageNum = 0;
+
+    while(srcY < totalSrcH - 2) {
+      if(pageNum > 0) pdf.addPage();
+      const sliceH = Math.min(srcPageH, totalSrcH - srcY);
+
+      // 슬라이스 캔버스 생성
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = canvas.width;
+      sliceCanvas.height = Math.round(sliceH);
+      const sCtx = sliceCanvas.getContext('2d');
+      sCtx.fillStyle = '#FFFFFF';
+      sCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+      sCtx.drawImage(canvas, 0, Math.round(srcY), canvas.width, Math.round(sliceH), 0, 0, canvas.width, Math.round(sliceH));
+
+      const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+      const sliceImgH = (sliceH / canvas.width) * imgW;
+      pdf.addImage(sliceData, 'JPEG', margin, margin, imgW, sliceImgH);
+
+      srcY += srcPageH;
+      pageNum++;
+      if(bar) bar.style.width = (40 + 50 * (srcY / totalSrcH)) + '%';
+    }
+
+    // 페이지 번호
+    const totalPages = pdf.internal.getNumberOfPages();
+    for(let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(180,180,180);
+      pdf.text(i + ' / ' + totalPages, pageW - margin, pageH - 5, {align: 'right'});
+    }
+
+    if(bar) bar.style.width = '95%';
+    if(status) status.textContent = '💾 파일 저장 중...';
+    pdf.save(fileName);
+
+    if(bar) bar.style.width = '100%';
+    if(status) status.textContent = '✅ PDF 다운로드 완료!';
+    if(btn) { btn.textContent = '✅ 완료!'; setTimeout(() => { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; if(prog) prog.style.display = 'none'; }, 3000); }
+  } catch(e) {
+    document.body.removeChild(wrap);
+    throw e;
+  }
+}
+
 async function azExportPDF() {
   const btn = document.getElementById('azPdfBtn');
   const prog = document.getElementById('azPdfProgress');
@@ -15688,37 +16383,9 @@ async function azExportPDF() {
   btn.textContent = '⏳ 생성 중...';
   prog.style.display = 'block';
   bar.style.width = '10%';
-  status.textContent = '📊 차트 캡처 중...';
+  status.textContent = '📝 보고서 구성 중...';
 
   try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageW = 210, pageH = 297;
-    const margin = 15;
-    const contentW = pageW - margin * 2;
-    let y = margin;
-
-    const addText = (text, size, color, bold, align) => {
-      pdf.setFontSize(size);
-      pdf.setTextColor(...(color || [0,0,0]));
-      if(bold) pdf.setFont('helvetica','bold'); else pdf.setFont('helvetica','normal');
-      const lines = pdf.splitTextToSize(text, contentW);
-      if(y + lines.length * (size * 0.4) > pageH - margin) { pdf.addPage(); y = margin; }
-      pdf.text(lines, align === 'center' ? pageW/2 : margin, y, { align: align || 'left' });
-      y += lines.length * (size * 0.45) + 2;
-    };
-
-    const addLine = (thickness, color) => {
-      pdf.setDrawColor(...(color || [108,92,231]));
-      pdf.setLineWidth(thickness || 0.5);
-      pdf.line(margin, y, pageW - margin, y);
-      y += 3;
-    };
-
-    const checkPage = (needed) => {
-      if(y + needed > pageH - margin) { pdf.addPage(); y = margin; }
-    };
-
     const g = id => { const el = document.getElementById(id); return el ? (el.value || el.textContent || '').trim() : ''; };
 
     const title = g('rpt_title') || 'StatPlay 분석 보고서';
@@ -15743,136 +16410,85 @@ async function azExportPDF() {
     const varEls = ['azVarX','azVarY','azVarGroup','azVarPre','azVarPost'].map(id => document.getElementById(id));
     const vars = varEls.filter(el => el && el.value).map(el => el.value).join(', ');
     const n = AZ_DATA ? AZ_DATA.rows.length : 0;
+    const dateStr = new Date().toLocaleDateString('ko-KR');
+    const timeStr = new Date().toLocaleTimeString('ko-KR');
 
     bar.style.width = '20%';
-    status.textContent = '📝 보고서 작성 중...';
-
-    // Title bar
-    pdf.setFillColor(108, 92, 231);
-    pdf.rect(0, 0, pageW, 40, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(22);
-    pdf.setFont('helvetica', 'bold');
-    const titleLines = pdf.splitTextToSize(title, contentW - 10);
-    pdf.text(titleLines, pageW/2, 18, {align: 'center'});
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text("Goo's StatPlay  |  " + new Date().toLocaleDateString('ko-KR'), pageW/2, 34, {align: 'center'});
-    y = 50;
-    pdf.setTextColor(0, 0, 0);
-
-    // Section 1
-    addLine(1, [108, 92, 231]);
-    addText('I. 서론', 16, [108, 92, 231], true);
-    y += 2;
-    if(bg) { addText('연구 배경', 11, [100,100,100], true); addText(bg, 11, [50,50,50], false); y += 3; }
-    if(question) { addText('연구 질문', 11, [100,100,100], true); addText('"' + question + '"', 11, [50,50,50], false); y += 2; }
-    if(hypo) { addText('연구 가설', 11, [100,100,100], true); addText(hypo, 11, [50,50,50], false); y += 2; }
-
-    bar.style.width = '35%';
-
-    // Section 2
-    y += 5;
-    addLine(1, [0, 184, 148]);
-    addText('II. 연구 방법', 16, [0, 184, 148], true);
-    y += 2;
-    if(subj) addText('조사 대상: ' + subj, 11, [50,50,50], false);
-    if(n > 0) addText('표본 크기: n = ' + n, 11, [50,50,50], false);
-    if(vars) addText('분석 변수: ' + vars, 11, [50,50,50], false);
-    if(analysisName) addText('분석 방법: ' + analysisName, 11, [50,50,50], false);
-    if(reason) addText('선택 이유: ' + reason, 11, [50,50,50], false);
-
-    bar.style.width = '50%';
     status.textContent = '📊 차트 캡처 중...';
 
-    // Section 3
-    y += 5;
-    addLine(1, [255, 107, 107]);
-    addText('III. 결과', 16, [255, 107, 107], true);
-    y += 2;
-
-    // Capture chart
+    // 차트 이미지 캡처
+    let chartImgTag = '';
     const chartCanvas = document.getElementById('azChart1');
     if(chartCanvas && chartCanvas.offsetParent !== null) {
       try {
         const chartImg = chartCanvas.toDataURL('image/png', 1.0);
-        const chartAspect = chartCanvas.height / chartCanvas.width;
-        const chartW = Math.min(contentW, 140);
-        const chartH = chartW * chartAspect;
-        checkPage(chartH + 10);
-        pdf.addImage(chartImg, 'PNG', margin + (contentW - chartW)/2, y, chartW, chartH);
-        y += chartH + 8;
-      } catch(e) {
-        addText('[차트 캡처 실패]', 10, [150,150,150], false);
-      }
-    }
-
-    bar.style.width = '65%';
-    status.textContent = '📝 결과 작성 중...';
-
-    if(resultText) {
-      checkPage(30);
-      addText('분석 결과:', 11, [100,100,100], true);
-      addText(resultText, 11, [50,50,50], false);
-    }
-
-    // Capture stats card
-    const statsCards = document.querySelectorAll('#azResultContent .card');
-    if(statsCards.length > 0) {
-      try {
-        const statsCanvas = await html2canvas(statsCards[0], {
-          scale: 2, useCORS: true, backgroundColor: '#FFFFFF', logging: false
-        });
-        const imgData = statsCanvas.toDataURL('image/png');
-        const imgAspect = statsCanvas.height / statsCanvas.width;
-        const imgW = Math.min(contentW, 170);
-        const imgH = imgW * imgAspect;
-        checkPage(imgH + 5);
-        pdf.addImage(imgData, 'PNG', margin, y, imgW, imgH);
-        y += imgH + 5;
+        chartImgTag = `<div style="text-align:center;margin:16px 0"><img src="${chartImg}" style="max-width:90%;border:1px solid #eee;border-radius:8px"></div>`;
       } catch(e) {}
     }
 
-    bar.style.width = '80%';
-    status.textContent = '📝 결론 작성 중...';
-
-    // Section 4
-    checkPage(40);
-    y += 5;
-    addLine(1, [198, 40, 40]);
-    addText('IV. 결론', 16, [198, 40, 40], true);
-    y += 2;
-    if(verdict) addText('가설 판정: ' + verdict, 11, [50,50,50], true);
-    if(meaning) { addText('해석:', 11, [100,100,100], true); addText(meaning, 11, [50,50,50], false); }
-    if(limitation) { addText('한계점 및 제언:', 11, [100,100,100], true); addText(limitation, 11, [50,50,50], false); }
-
-    checkPage(20);
-    y += 8;
-    addLine(0.3, [180,180,180]);
-    pdf.setFontSize(9);
-    pdf.setTextColor(150,150,150);
-    pdf.text("* 상관관계가 인과관계를 의미하지는 않습니다.", margin, y); y += 4;
-    pdf.text("본 보고서는 Goo's StatPlay v1.8 통계 분석 도구를 활용하여 작성되었습니다.", margin, y); y += 4;
-    pdf.text('작성일: ' + new Date().toLocaleDateString('ko-KR') + ' ' + new Date().toLocaleTimeString('ko-KR'), margin, y);
-
-    const totalPages = pdf.internal.getNumberOfPages();
-    for(let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(9);
-      pdf.setTextColor(180,180,180);
-      pdf.text(i + ' / ' + totalPages, pageW - margin, pageH - 8, {align: 'right'});
+    // 통계 카드 이미지 캡처
+    let statsImgTag = '';
+    const statsCards = document.querySelectorAll('#azResultContent .card');
+    if(statsCards.length > 0) {
+      try {
+        const statsCanvas = await html2canvas(statsCards[0], { scale: 2, useCORS: true, backgroundColor: '#FFFFFF', logging: false });
+        statsImgTag = `<div style="margin:12px 0"><img src="${statsCanvas.toDataURL('image/png')}" style="max-width:100%;border-radius:8px"></div>`;
+      } catch(e) {}
     }
 
-    bar.style.width = '95%';
-    status.textContent = '💾 파일 저장 중...';
+    bar.style.width = '30%';
+
+    // ── HTML 보고서 생성 ──
+    const sectionStyle = 'margin-top:28px;padding-top:16px;';
+    const secTitle = (color, text) => `<div style="border-top:3px solid ${color};padding-top:12px;margin-bottom:8px"><span style="font-size:20px;font-weight:800;color:${color}">${text}</span></div>`;
+    const label = (text) => `<div style="font-size:12px;font-weight:700;color:#888;margin-top:10px">${text}</div>`;
+    const body = (text) => `<div style="font-size:14px;color:#333;margin-top:2px;line-height:1.8">${text}</div>`;
+
+    const html = `
+      <div style="background:linear-gradient(135deg,#6C5CE7,#4834D4);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
+        <div style="font-size:26px;font-weight:900;margin-bottom:8px">${title}</div>
+        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v1.8 &nbsp;|&nbsp; ${dateStr}</div>
+      </div>
+
+      <div style="${sectionStyle}">
+        ${secTitle('#6C5CE7','I. 서론')}
+        ${bg ? label('연구 배경') + body(bg) : ''}
+        ${question ? label('연구 질문') + body('&ldquo;' + question + '&rdquo;') : ''}
+        ${hypo ? label('연구 가설') + body(hypo) : ''}
+      </div>
+
+      <div style="${sectionStyle}">
+        ${secTitle('#00B894','II. 연구 방법')}
+        ${subj ? label('조사 대상') + body(subj) : ''}
+        ${n > 0 ? label('표본 크기') + body('n = ' + n) : ''}
+        ${vars ? label('분석 변수') + body(vars) : ''}
+        ${analysisName ? label('분석 방법') + body(analysisName) : ''}
+        ${reason ? label('선택 이유') + body(reason) : ''}
+      </div>
+
+      <div style="${sectionStyle}">
+        ${secTitle('#FF6B6B','III. 결과')}
+        ${chartImgTag}
+        ${resultText ? label('분석 결과') + body(resultText) : ''}
+        ${statsImgTag}
+      </div>
+
+      <div style="${sectionStyle}">
+        ${secTitle('#C62828','IV. 결론')}
+        ${verdict ? label('가설 판정') + body('<strong>' + verdict + '</strong>') : ''}
+        ${meaning ? label('해석') + body(meaning) : ''}
+        ${limitation ? label('한계점 및 제언') + body(limitation) : ''}
+      </div>
+
+      <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
+        * 상관관계가 인과관계를 의미하지는 않습니다.<br>
+        본 보고서는 Goo's StatPlay v1.8 통계 분석 도구를 활용하여 작성되었습니다.<br>
+        작성일: ${dateStr} ${timeStr}
+      </div>
+    `;
 
     const fileName = (title.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,30) || 'StatPlay_Report') + '_' + new Date().toISOString().slice(0,10) + '.pdf';
-    pdf.save(fileName);
-
-    bar.style.width = '100%';
-    status.textContent = '✅ PDF 다운로드 완료!';
-    btn.textContent = '✅ 완료!';
-    setTimeout(() => { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; prog.style.display = 'none'; }, 3000);
+    await _pdfFromHtml(html, fileName, btn, prog, bar, status);
 
   } catch(err) {
     console.error('PDF export error:', err);
@@ -15890,34 +16506,6 @@ async function mrExportPDF() {
   btn.textContent = '⏳ 생성 중...';
 
   try {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageW = 210, pageH = 297;
-    const margin = 15;
-    const contentW = pageW - margin * 2;
-    let y = margin;
-
-    const addText = (text, size, color, bold, align) => {
-      pdf.setFontSize(size);
-      pdf.setTextColor(...(color || [0,0,0]));
-      if(bold) pdf.setFont('helvetica','bold'); else pdf.setFont('helvetica','normal');
-      const lines = pdf.splitTextToSize(text, contentW);
-      if(y + lines.length * (size * 0.4) > pageH - margin) { pdf.addPage(); y = margin; }
-      pdf.text(lines, align === 'center' ? pageW/2 : margin, y, { align: align || 'left' });
-      y += lines.length * (size * 0.45) + 2;
-    };
-
-    const addLine = (thickness, color) => {
-      pdf.setDrawColor(...(color || [46, 125, 50]));
-      pdf.setLineWidth(thickness || 0.5);
-      pdf.line(margin, y, pageW - margin, y);
-      y += 3;
-    };
-
-    const checkPage = (needed) => {
-      if(y + needed > pageH - margin) { pdf.addPage(); y = margin; }
-    };
-
     const g = id => { const el = document.getElementById(id); return el ? (el.value || el.textContent || '').trim() : ''; };
 
     const topic = g('mrUserTopic') || '(연구 주제)';
@@ -15929,85 +16517,48 @@ async function mrExportPDF() {
     const depDef = g('mrDepDef') || '';
     const sampleWho = g('mrSampleWho') || '';
     const sampleN = g('mrSampleN') || '';
+    const dateStr = new Date().toLocaleDateString('ko-KR');
 
-    // Title
-    pdf.setFillColor(46, 125, 50);
-    pdf.rect(0, 0, pageW, 40, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('연구설계서', pageW/2, 16, {align: 'center'});
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'normal');
-    const topicLines = pdf.splitTextToSize(topic, contentW - 20);
-    pdf.text(topicLines, pageW/2, 26, {align: 'center'});
-    pdf.setFontSize(9);
-    pdf.text("Goo's StatPlay  |  " + new Date().toLocaleDateString('ko-KR'), pageW/2, 36, {align: 'center'});
-    y = 50;
-    pdf.setTextColor(0, 0, 0);
-
-    // 1. 연구 가설
-    addLine(1, [46, 125, 50]);
-    addText('1. 연구 가설', 14, [46, 125, 50], true);
-    y += 2;
-    if(hypoText) addText(hypoText, 11, [50,50,50], false);
-
-    // 2. 변수 정의
-    y += 5;
-    addLine(1, [21, 101, 192]);
-    addText('2. 변수 정의', 14, [21, 101, 192], true);
-    y += 2;
-    if(indepVar) addText('독립변수: ' + indepVar + (indepDef ? ' (' + indepDef + ')' : ''), 11, [50,50,50], false);
-    if(depVar) addText('종속변수: ' + depVar + (depDef ? ' (' + depDef + ')' : ''), 11, [50,50,50], false);
-    if(controlVar) addText('통제변수: ' + controlVar, 11, [50,50,50], false);
-
-    // 3. 조사 대상
-    y += 5;
-    addLine(1, [255, 107, 107]);
-    addText('3. 조사 대상', 14, [255, 107, 107], true);
-    y += 2;
-    if(sampleWho) addText('대상: ' + sampleWho, 11, [50,50,50], false);
-    if(sampleN) addText('인원: ' + sampleN + '명', 11, [50,50,50], false);
-
-    // 4. 설문지
-    const surveyArea = document.getElementById('mrSurveyOutput');
-    if(surveyArea && surveyArea.textContent.trim()) {
-      y += 5;
-      addLine(1, [173, 20, 87]);
-      addText('4. 설문지', 14, [173, 20, 87], true);
-      y += 2;
-      try {
-        const surveyCanvas = await html2canvas(surveyArea, { scale: 2, backgroundColor: '#FFFFFF', logging: false });
-        const imgData = surveyCanvas.toDataURL('image/png');
-        const imgAspect = surveyCanvas.height / surveyCanvas.width;
-        const imgW = Math.min(contentW, 170);
-        const imgH = imgW * imgAspect;
-        const maxPageH = pageH - margin * 2;
-        checkPage(Math.min(imgH, maxPageH));
-        pdf.addImage(imgData, 'PNG', margin, y, imgW, Math.min(imgH, maxPageH));
-        y += Math.min(imgH, maxPageH) + 5;
-      } catch(e) {
-        addText('[설문지는 별도 인쇄하세요]', 10, [150,150,150], false);
-      }
+    // AI 프롬프트 캡처
+    let promptSection = '';
+    const promptEl = document.getElementById('mrPromptPreview');
+    if(promptEl && promptEl.textContent.trim()) {
+      promptSection = `<div style="margin:12px 0;padding:16px;background:#1a1a2e;color:#e0e0e0;border-radius:8px;font-family:monospace;font-size:12px;line-height:1.7;white-space:pre-wrap">${promptEl.textContent}</div>`;
     }
 
-    checkPage(15);
-    y += 8;
-    addLine(0.3, [180,180,180]);
-    pdf.setFontSize(9);
-    pdf.setTextColor(150,150,150);
-    pdf.text("본 연구설계서는 Goo's StatPlay v1.8 '나만의 연구 만들기' 위저드로 작성되었습니다.", margin, y);
+    const secTitle = (color, text) => `<div style="border-top:3px solid ${color};padding-top:12px;margin-bottom:8px;margin-top:28px"><span style="font-size:20px;font-weight:800;color:${color}">${text}</span></div>`;
+    const label = (text) => `<div style="font-size:12px;font-weight:700;color:#888;margin-top:10px">${text}</div>`;
+    const body = (text) => `<div style="font-size:14px;color:#333;margin-top:2px;line-height:1.8">${text}</div>`;
 
-    const totalPages = pdf.internal.getNumberOfPages();
-    for(let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(9);
-      pdf.setTextColor(180,180,180);
-      pdf.text(i + ' / ' + totalPages, pageW - margin, pageH - 8, {align: 'right'});
-    }
+    const html = `
+      <div style="background:linear-gradient(135deg,#2E7D32,#1B5E20);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
+        <div style="font-size:24px;font-weight:900;margin-bottom:6px">연구설계서</div>
+        <div style="font-size:16px;font-weight:600;opacity:0.95;margin-bottom:8px">${topic}</div>
+        <div style="font-size:12px;opacity:0.8">Goo's StatPlay v1.8 &nbsp;|&nbsp; ${dateStr}</div>
+      </div>
+
+      ${secTitle('#2E7D32','1. 연구 가설')}
+      ${hypoText ? body(hypoText) : ''}
+
+      ${secTitle('#1565C0','2. 변수 정의')}
+      ${indepVar ? label('독립변수') + body(indepVar + (indepDef ? ' (' + indepDef + ')' : '')) : ''}
+      ${depVar ? label('종속변수') + body(depVar + (depDef ? ' (' + depDef + ')' : '')) : ''}
+      ${controlVar ? label('통제변수') + body(controlVar) : ''}
+
+      ${secTitle('#FF6B6B','3. 조사 대상')}
+      ${sampleWho ? label('대상') + body(sampleWho) : ''}
+      ${sampleN ? label('인원') + body(sampleN + '명') : ''}
+
+      ${promptSection ? secTitle('#AD1457','4. AI 프롬프트') + promptSection : ''}
+
+      <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
+        본 연구설계서는 Goo's StatPlay v1.8 '나만의 연구 만들기' 위저드로 작성되었습니다.<br>
+        작성일: ${dateStr}
+      </div>
+    `;
 
     const fileName = '연구설계서_' + topic.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,20) + '_' + new Date().toISOString().slice(0,10) + '.pdf';
-    pdf.save(fileName);
+    await _pdfFromHtml(html, fileName, btn, null, null, null);
 
     btn.textContent = '✅ 완료!';
     setTimeout(() => { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; }, 2000);
