@@ -5,12 +5,18 @@
   v2.0   (2026-03)  초기 릴리스: 학습·분석·연구설계 3모드, 연구DB 319항목
   v2.3   (2026-04)  연구DB 499항목(+180, 10개 신규 카테고리), KCI 2차 검증 63건 수정
   v2.3.1 (2026-04)  q7Check 부동소수점 비교 버그 수정, 카이제곱 셀 터치/마우스 드래그 인터랙션 추가
+  v2.3.2 (2026-04)  나만의 연구 자동저장 복원 타이밍 버그 수정, PDF 다운로드 크래시 수정
+  v2.3.3 (2026-04)  자동복원 동기화 완성(데이터 소실 근절), AI 프롬프트 변수측정방법·예상한계 누락 수정,
+                     회귀분석 p-value 정밀계산(_tDistP 기반), study 샘플 20→30명 확대,
+                     BOM/세미콜론 입력 지원, 그룹 최소크기 검증(n<3 차단), 단계 건너뛰기 방지,
+                     localStorage 용량초과 안내, 프롬프트 필수필드 검증
+  v2.4   (2026-04)  CSV 다운로드 기능 추가 (수행평가 원천데이터 제출용)
 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goo's StatPlay v2.3.1 — 놀면서 배우는 통계</title>
+<title>Goo's StatPlay v2.4 — 놀면서 배우는 통계</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -607,7 +613,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 <div class="header">
   <h1>Goo's <span>StatPlay</span></h1>
   <p>놀면서 배우는 통계</p>
-  <div class="ver">고등학생을 위한 교육용 통계 · v2.3.1</div>
+  <div class="ver">고등학생을 위한 교육용 통계 · v2.4</div>
 </div>
 
 <div class="main">
@@ -3090,7 +3096,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
               <div id="mrFinalContent" style="font-size:13px;line-height:1.8"></div>
               <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
                 <button class="btn btn-primary btn-sm" onclick="mrCopyAll()" style="font-size:12px;background:#2E7D32;border-color:#2E7D32">📋 전체 복사</button>
-                <button class="btn btn-sm" onclick="mrExportPDF()" style="font-size:12px;background:#C62828;color:white;border:none;border-radius:8px;font-weight:700">📄 PDF 다운로드</button>
+                <button class="btn btn-sm" onclick="mrExportPDF(event)" style="font-size:12px;background:#C62828;color:white;border:none;border-radius:8px;font-weight:700">📄 PDF 다운로드</button>
                 <button class="btn btn-outline btn-sm" onclick="mrExportDesign()" style="font-size:12px">📐 연구설계서로 보내기</button>
                 <button class="btn btn-sm" onclick="mrGoToAnalyze()" style="font-size:12px;background:#1565C0;color:white;border:none;border-radius:8px;font-weight:700">📊 데이터 분석하러 가기 →</button>
               </div>
@@ -5051,7 +5057,10 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                 📊 데이터 미리보기
                 <span id="azDataStats" style="font-weight:400;font-size:12px;color:var(--text2)"></span>
               </div>
-              <button class="btn btn-sm btn-outline" onclick="azShowCleanPanel()" style="font-size:11px">🧹 데이터 클리닝</button>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-sm btn-outline" onclick="azDownloadCSV()" style="font-size:11px" id="azCsvBtn">📥 CSV 저장</button>
+                <button class="btn btn-sm btn-outline" onclick="azShowCleanPanel()" style="font-size:11px">🧹 데이터 클리닝</button>
+              </div>
             </div>
             <div style="overflow-x:auto;margin-top:8px"><table class="preview-tbl" id="azPreviewTbl"></table></div>
           </div>
@@ -5251,6 +5260,8 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 // MODE SWITCHING
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function switchMode(mode) {
+  // v2.3.3: 모드 전환 시 나만의 연구 데이터 즉시 저장
+  if(typeof mrAutoSave === 'function' && mrCurrentStep > 0) { try { mrAutoSave(); } catch(e){} }
   document.getElementById('pageLearn').classList.toggle('active', mode==='learn');
   document.getElementById('pageAnalyze').classList.toggle('active', mode==='analyze');
   document.getElementById('modeLearn').classList.toggle('active', mode==='learn');
@@ -5294,6 +5305,8 @@ function openLesson(id) {
 }
 
 function backToMenu() {
+  // v2.3.3: 나만의 연구에서 나갈 때 현재 상태 즉시 저장
+  if(typeof mrAutoSave === 'function' && mrCurrentStep > 0) { try { mrAutoSave(); } catch(e){} }
   ['lessonCoin','lessonScatter','lessonFlow','lessonDist','lessonTtest','lessonChi','lessonAnova','lessonReport','lessonErrors','lessonDesign','lessonQuest','lessonTopics','lessonAdvanced','lessonMyresearch','lessonGuide','lessonPvalue'].forEach(l => { const e=document.getElementById(l); if(e) e.style.display = 'none'; });
   document.getElementById('learnMenu').style.display = 'block';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -12607,7 +12620,7 @@ let azChartInstance = null;
 
 const AZ_SAMPLES = {
   sns: `학생\tSNS사용시간\t수학성적\n학생1\t0.8\t93\n학생2\t1.3\t89\n학생3\t1.7\t86\n학생4\t2.1\t84\n학생5\t2.4\t81\n학생6\t2.9\t78\n학생7\t3.2\t76\n학생8\t1.0\t91\n학생9\t3.8\t72\n학생10\t4.3\t68\n학생11\t1.5\t88\n학생12\t5.1\t63\n학생13\t2.6\t80\n학생14\t0.5\t95\n학생15\t4.7\t66\n학생16\t5.6\t60\n학생17\t1.9\t85\n학생18\t3.5\t74\n학생19\t4.0\t70\n학생20\t0.7\t92\n학생21\t2.3\t82\n학생22\t3.1\t77\n학생23\t5.3\t62\n학생24\t1.1\t90\n학생25\t4.5\t67`,
-  study: `학생\t그룹\t점수\n학생1\t자기주도\t85\n학생2\t자기주도\t90\n학생3\t자기주도\t78\n학생4\t자기주도\t92\n학생5\t자기주도\t88\n학생6\t자기주도\t82\n학생7\t자기주도\t95\n학생8\t자기주도\t87\n학생9\t자기주도\t80\n학생10\t자기주도\t91\n학생11\t강의식\t72\n학생12\t강의식\t68\n학생13\t강의식\t75\n학생14\t강의식\t80\n학생15\t강의식\t70\n학생16\t강의식\t77\n학생17\t강의식\t65\n학생18\t강의식\t73\n학생19\t강의식\t78\n학생20\t강의식\t71`,
+  study: `학생\t그룹\t점수\n학생1\t자기주도\t85\n학생2\t자기주도\t90\n학생3\t자기주도\t78\n학생4\t자기주도\t92\n학생5\t자기주도\t88\n학생6\t자기주도\t82\n학생7\t자기주도\t95\n학생8\t자기주도\t87\n학생9\t자기주도\t80\n학생10\t자기주도\t91\n학생11\t자기주도\t84\n학생12\t자기주도\t89\n학생13\t자기주도\t81\n학생14\t자기주도\t93\n학생15\t자기주도\t86\n학생16\t강의식\t72\n학생17\t강의식\t68\n학생18\t강의식\t75\n학생19\t강의식\t80\n학생20\t강의식\t70\n학생21\t강의식\t77\n학생22\t강의식\t65\n학생23\t강의식\t73\n학생24\t강의식\t78\n학생25\t강의식\t71\n학생26\t강의식\t74\n학생27\t강의식\t69\n학생28\t강의식\t76\n학생29\t강의식\t66\n학생30\t강의식\t72`,
   sleep: `학생\t수면시간\t집중력점수\n학생1\t5.2\t58\n학생2\t5.8\t64\n학생3\t6.3\t72\n학생4\t6.7\t76\n학생5\t7.0\t80\n학생6\t7.3\t83\n학생7\t7.5\t85\n학생8\t7.8\t87\n학생9\t8.1\t86\n학생10\t8.5\t82\n학생11\t5.5\t61\n학생12\t6.0\t68\n학생13\t6.5\t74\n학생14\t7.2\t81\n학생15\t7.6\t84\n학생16\t8.0\t88\n학생17\t8.3\t84\n학생18\t5.0\t55\n학생19\t6.8\t77\n학생20\t7.4\t82`,
   media: `학생\t성별\t선호매체\n학생1\t남\t유튜브\n학생2\t여\t인스타그램\n학생3\t남\t유튜브\n학생4\t여\t네이버뉴스\n학생5\t남\t유튜브\n학생6\t여\t인스타그램\n학생7\t남\tTV뉴스\n학생8\t여\t유튜브\n학생9\t남\t네이버뉴스\n학생10\t여\t인스타그램\n학생11\t남\t유튜브\n학생12\t여\t인스타그램\n학생13\t남\tTV뉴스\n학생14\t여\t유튜브\n학생15\t남\t유튜브\n학생16\t여\t네이버뉴스\n학생17\t남\tTV뉴스\n학생18\t여\t인스타그램\n학생19\t남\t유튜브\n학생20\t여\t인스타그램\n학생21\t남\t네이버뉴스\n학생22\t여\t유튜브\n학생23\t남\t유튜브\n학생24\t여\t인스타그램\n학생25\t남\tTV뉴스\n학생26\t여\t네이버뉴스\n학생27\t남\t유튜브\n학생28\t여\t인스타그램\n학생29\t남\t유튜브\n학생30\t여\tTV뉴스`,
   class3: `학생\t반\t수학점수\n학생1\t1반\t85\n학생2\t1반\t80\n학생3\t1반\t78\n학생4\t1반\t88\n학생5\t1반\t82\n학생6\t1반\t84\n학생7\t1반\t79\n학생8\t1반\t86\n학생9\t1반\t81\n학생10\t1반\t83\n학생11\t1반\t76\n학생12\t2반\t65\n학생13\t2반\t70\n학생14\t2반\t62\n학생15\t2반\t68\n학생16\t2반\t72\n학생17\t2반\t66\n학생18\t2반\t64\n학생19\t2반\t71\n학생20\t2반\t69\n학생21\t2반\t67\n학생22\t2반\t63\n학생23\t3반\t92\n학생24\t3반\t95\n학생25\t3반\t88\n학생26\t3반\t90\n학생27\t3반\t94\n학생28\t3반\t91\n학생29\t3반\t87\n학생30\t3반\t93\n학생31\t3반\t89\n학생32\t3반\t96\n학생33\t3반\t90`,
@@ -12704,7 +12717,7 @@ const AZ_SCENARIOS = {
       '두 집단의 평균 차이가 얼마인가요?',
       'p < 0.05인가요? → 이 차이가 우연이 아닌 확률 95% 이상',
       'Cohen\'s d가 0.8 이상이면 → 실질적으로 큰 차이',
-      '표본이 각 10명이라 → 30명 이상이면 더 신뢰할 수 있습니다.'
+      '표본이 각 15명(총 30명) → 통계적으로 충분한 규모입니다.'
     ]
   },
   sleep: {
@@ -13008,9 +13021,9 @@ function azGoStep(n) {
 
 // ━━ Data parsing ━━
 function azParseData() {
-  const raw = document.getElementById('azDataInput').value.trim();
+  const raw = document.getElementById('azDataInput').value.replace(/^\uFEFF/, '').trim();
   if(!raw) return false;
-  const sep = raw.includes('\t') ? '\t' : ',';
+  const sep = raw.includes('\t') ? '\t' : raw.includes(';') ? ';' : ',';
   const lines = raw.split('\n').map(l => l.split(sep).map(c => c.trim()));
   if(lines.length < 2) return false;
   AZ_DATA.headers = lines[0];
@@ -13045,6 +13058,35 @@ function azParseData() {
   const guide = document.getElementById('azFirstTimeGuide');
   if(guide) guide.style.display = 'none';
   return true;
+}
+
+// v2.4: CSV 다운로드 — 학생이 입력/분석한 데이터를 원천 파일로 저장
+function azDownloadCSV() {
+  if(!AZ_DATA.headers || !AZ_DATA.rows || AZ_DATA.rows.length === 0) {
+    alert('저장할 데이터가 없습니다. 먼저 데이터를 입력해주세요!'); return;
+  }
+  // BOM + 헤더 + 행 조합
+  var csv = '\uFEFF' + AZ_DATA.headers.join(',') + '\n';
+  AZ_DATA.rows.forEach(function(row) {
+    csv += row.map(function(cell) {
+      // 셀에 쉼표나 줄바꿈이 있으면 따옴표로 감싸기
+      var s = String(cell);
+      if(s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }).join(',') + '\n';
+  });
+  var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var timestamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  a.download = 'StatPlay_데이터_' + timestamp + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function azParseAndNext() {
@@ -14140,44 +14182,10 @@ function azRunRegression(out) {
   const seBeta = se / Math.sqrt(ssXX);       // SE of slope
   const tStat = b / seBeta;                  // t-statistic
 
-  // p-value from t-distribution (approx)
+  // v2.3.3: p-value 정밀 계산 — 기존 _tDistP() 재사용 (incomplete beta 기반)
   const df = n - 2;
   const tAbs = Math.abs(tStat);
-  // Using incomplete beta function approximation
-  function betaInc(x, a, b) {
-    if(x <= 0) return 0; if(x >= 1) return 1;
-    let result = 0, term = 1;
-    for(let k=0;k<200;k++) {
-      if(k===0) term = Math.pow(x,a)/a;
-      else term *= x*(k-1+a+b-1 < 0 ? 1 : 1)*(a+k-1)/(k*(a+k));
-      result += term;
-      if(Math.abs(term) < 1e-10) break;
-    }
-    return result;
-  }
-  // Simplified p-value using normal approx for large df
-  let pValue;
-  if(df > 30) {
-    const z = tAbs * (1 - 1/(4*df)) / Math.sqrt(1 + tAbs*tAbs/(2*df));
-    pValue = 2 * (1 - 0.5 * (1 + Math.tanh(0.7988 * z * (1 + 0.04417 * z * z))));
-  } else {
-    const x = df / (df + tStat*tStat);
-    // Regularized incomplete beta approximation
-    let p = 1;
-    for(let k=0;k<100;k++) {
-      p *= x * (df/2+k) / (k+1);
-    }
-    // Use simple lookup-ish approach
-    const criticals = {1:12.706,2:4.303,3:3.182,4:2.776,5:2.571,6:2.447,7:2.365,8:2.306,9:2.262,10:2.228,15:2.131,20:2.086,25:2.060,30:2.042};
-    let nearest = 30;
-    Object.keys(criticals).forEach(k => { if(Math.abs(parseInt(k)-df) < Math.abs(nearest-df)) nearest = parseInt(k); });
-    pValue = tAbs > criticals[nearest] ? 0.01 : (tAbs > criticals[nearest]*0.7 ? 0.05 : 0.2);
-    // Better: use the same gammainc from existing code if available
-    if(typeof _gammainc === 'function') {
-      pValue = 1 - _gammainc(df/2, df/(df+tStat*tStat) * df/2);
-    }
-  }
-  // Clamp
+  let pValue = (df > 0) ? _tDistP(tAbs, df) : 1;
   if(pValue > 1) pValue = 1;
   if(pValue < 0.0001) pValue = 0.0001;
 
@@ -15296,6 +15304,9 @@ function azRunTTest(out) {
   const groups={};AZ_DATA.rows.forEach(r=>{const g=r[gIdx],v=parseFloat(r[yIdx]);if(!isNaN(v)&&g){if(!groups[g])groups[g]=[];groups[g].push(v);}});
   const gNames=Object.keys(groups);
   if(gNames.length<2){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ 집단이 2개 이상이어야 합니다.</p></div></div>`;return;}
+  // v2.3.3: 각 그룹 최소 3명 검증
+  const tooSmall=gNames.filter(g=>groups[g].length<3);
+  if(tooSmall.length>0){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ "${tooSmall.join('", "')}" 그룹의 데이터가 3개 미만입니다. 각 그룹 최소 3명 이상 필요합니다.</p></div></div>`;return;}
   if(gNames.length>2){AZ_ANALYSIS='anova';azRunANOVA(out);return;}
   const r=_independentT(groups[gNames[0]],groups[gNames[1]]),d=_cohensD(r.m1,r.m2,r.sd1,r.sd2),sig=r.p<0.05,higher=r.m1>r.m2?gNames[0]:gNames[1];
   out.innerHTML = `
@@ -15347,7 +15358,7 @@ function azRunPaired(out) {
   const preVar=document.getElementById('azVarPre').value, postVar=document.getElementById('azVarPost').value;
   const pre=azGetCol(preVar), post=azGetCol(postVar);
   const n=Math.min(pre.length,post.length);
-  if(n<2){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ 2개 이상의 짝 데이터가 필요합니다.</p></div></div>`;return;}
+  if(n<3){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ 3쌍 이상의 짝 데이터가 필요합니다. (현재 ${n}쌍)</p></div></div>`;return;}
   const r=_pairedT(pre,post), sig=r.p<0.05;
   const d=r.sdDiff>0?Math.abs(r.meanDiff)/r.sdDiff:0;
   const improved=r.meanDiff>0?'증가':'감소';
@@ -15492,6 +15503,9 @@ function azRunANOVA(out) {
   const groups={};AZ_DATA.rows.forEach(r=>{const g=r[gIdx],v=parseFloat(r[yIdx]);if(!isNaN(v)&&g){if(!groups[g])groups[g]=[];groups[g].push(v);}});
   const gNames=Object.keys(groups),k=gNames.length;
   if(k<2){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ 2개 이상 집단 필요.</p></div></div>`;return;}
+  // v2.3.3: 빈 그룹 및 최소 크기 검증
+  const aTooSmall=gNames.filter(g=>groups[g].length<3);
+  if(aTooSmall.length>0){out.innerHTML=`<div class="card"><div class="card-b"><p style="color:var(--coral)">⚠️ "${aTooSmall.join('", "')}" 그룹의 데이터가 3개 미만입니다. 각 그룹 최소 3명 이상 필요합니다.</p></div></div>`;return;}
   const allVals=gNames.flatMap(g=>groups[g]),N=allVals.length,gm=_mean(allVals);
   let SSB=0;gNames.forEach(g=>{SSB+=groups[g].length*Math.pow(_mean(groups[g])-gm,2);});
   let SSW=0;gNames.forEach(g=>{const m=_mean(groups[g]);groups[g].forEach(v=>SSW+=Math.pow(v-m,2));});
@@ -16129,6 +16143,7 @@ function initDesignLesson() {
 }
 
 var _mrSkipAutoLoad = false; // openDesignWithTopic에서 진입 시 autoLoad 방지
+var _mrLoadingInProgress = false; // mrAutoLoad 복원 중 autoSave 방지 플래그 (v2.3.2)
 
 function openDesignWithTopic(idx) {
   // 기존 저장된 연구가 있으면 확인
@@ -16688,11 +16703,12 @@ var MR_FIELD_IDS = [
   'mrHypoFinal','mrVarXName','mrVarXScale','mrVarXDetail',
   'mrVarYName','mrVarYScale','mrVarYDetail','mrVarControl',
   'mrSampleWho','mrSampleN','mrMyMethodPlan','mrMyQuestions','mrMyWorries',
-  'mrUserTopic'
+  'mrUserTopic','mrMemoExtra' // v2.3.3: AI 추가 맥락 메모 저장 누락 수정
 ];
 var MR_CHECK_IDS = ['mrChk1','mrChk2','mrChk3','mrChk4'];
 
 function mrAutoSave() {
+  if(_mrLoadingInProgress) return; // v2.3.2: 복원 중에는 빈 값으로 덮어쓰기 방지
   try {
     var data = { step: mrCurrentStep, ts: Date.now() };
     // 선택한 연구 인덱스 저장
@@ -16725,7 +16741,13 @@ function mrAutoSave() {
     // 저장 표시 업데이트
     var badge = document.getElementById('mrSaveBadge');
     if(badge) { badge.textContent = '💾 자동 저장됨'; badge.style.color = '#2E7D32'; setTimeout(function(){ badge.textContent = '💾 저장됨'; badge.style.color = '#78909C'; }, 1500); }
-  } catch(e) {}
+  } catch(e) {
+    // v2.3.3: 저장 실패 시 사용자 안내 (QuotaExceededError 등)
+    if(e && e.name === 'QuotaExceededError') {
+      var badge2 = document.getElementById('mrSaveBadge');
+      if(badge2) { badge2.textContent = '⚠️ 저장 공간 부족'; badge2.style.color = '#e74c3c'; }
+    }
+  }
 }
 
 function mrAutoLoad() {
@@ -16734,38 +16756,54 @@ function mrAutoLoad() {
     if(!raw) return false;
     var data = JSON.parse(raw);
     if(!data || !data.ts) return false;
+    // v2.3.3: 복원 중 autoSave 방지
+    _mrLoadingInProgress = true;
     // 연구 복원
     if(data.researchIdx >= 0 && data.researchIdx < _researchDB.length) {
       mrSelectedResearch = _researchDB[data.researchIdx];
     }
-    // 텍스트 필드 복원 (지연 — DOM이 준비된 후)
+    // v2.3.3: 동기 복원 먼저 (DOM이 이미 존재하는 필드)
+    _mrRestoreFields(data);
+    // 동적 필드(브레인스토밍 등)는 지연 복원 + step init 재실행
     setTimeout(function() {
-      MR_FIELD_IDS.forEach(function(id) {
-        var el = document.getElementById(id);
-        if(el && data[id] !== undefined) el.value = data[id];
-      });
-      MR_CHECK_IDS.forEach(function(id) {
-        var el = document.getElementById(id);
-        if(el && data[id] !== undefined) el.checked = data[id];
-      });
-      if(data.mrMethodType) {
-        var radio = document.querySelector('input[name="mrMethodType"][value="'+data.mrMethodType+'"]');
-        if(radio) radio.checked = true;
-      }
-      if(data.mrHypoType) {
-        var hypoRadio = document.querySelector('input[name="mrHypoType"][value="'+data.mrHypoType+'"]');
-        if(hypoRadio) { hypoRadio.checked = true; mrSelectHypoType(data.mrHypoType); }
-      }
-      // 브레인스토밍 동적 필드 복원
-      if(data.brains) {
-        Object.keys(data.brains).forEach(function(id) {
-          var el = document.getElementById(id);
-          if(el) el.value = data.brains[id];
-        });
-      }
-    }, 300);
+      _mrRestoreFields(data); // 이중 안전장치 — 누락 방지
+      _mrLoadingInProgress = false;
+      mrAutoSave();
+      // v2.3.3: step init 함수 재실행으로 리마인더/요약 카드 갱신
+      var step = data.step || 1;
+      if(step >= 2) mrInitStep2();
+      if(step >= 3) mrInitStep3();
+      if(step >= 4) mrInitStep4();
+      if(step >= 5) mrInitStep5();
+    }, 350);
     return data.step || 1;
-  } catch(e) { return false; }
+  } catch(e) { _mrLoadingInProgress = false; return false; }
+}
+
+// v2.3.3: 필드 복원 헬퍼 (동기 + 지연 양쪽에서 재사용)
+function _mrRestoreFields(data) {
+  MR_FIELD_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el && data[id] !== undefined) el.value = data[id];
+  });
+  MR_CHECK_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el && data[id] !== undefined) el.checked = data[id];
+  });
+  if(data.mrMethodType) {
+    var radio = document.querySelector('input[name="mrMethodType"][value="'+data.mrMethodType+'"]');
+    if(radio) radio.checked = true;
+  }
+  if(data.mrHypoType) {
+    var hypoRadio = document.querySelector('input[name="mrHypoType"][value="'+data.mrHypoType+'"]');
+    if(hypoRadio) { hypoRadio.checked = true; mrSelectHypoType(data.mrHypoType); }
+  }
+  if(data.brains) {
+    Object.keys(data.brains).forEach(function(id) {
+      var el = document.getElementById(id);
+      if(el) el.value = data.brains[id];
+    });
+  }
 }
 
 function mrReset() {
@@ -16831,6 +16869,15 @@ function mrAttachAutoSave() {
 }
 
 function mrGoStep(step) {
+  // v2.3.3: 단계 건너뛰기 방지 — 완료된 단계+1까지만 이동 허용 (복원 시 제외)
+  if(!_mrLoadingInProgress && step > mrCurrentStep + 1) {
+    var toast = document.createElement('div');
+    toast.textContent = '📌 이전 단계를 먼저 완료해주세요!';
+    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:#fff;padding:10px 20px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 2000);
+    return;
+  }
   mrCurrentStep = step;
   mrAutoSave();
   for(var i=1;i<=5;i++) {
@@ -17392,13 +17439,31 @@ function mrShowMethodGuide() {
 }
 
 function mrGeneratePrompt() {
+  // v2.3.3: 필수 필드 검증
+  var _t = (document.getElementById('mrUserTopic')||{}).value||'';
+  var _h = (document.getElementById('mrHypoFinal')||{}).value||'';
+  var _x = (document.getElementById('mrVarXName')||{}).value||'';
+  var _y = (document.getElementById('mrVarYName')||{}).value||'';
+  var missing = [];
+  if(!_t.trim()) missing.push('연구 주제');
+  if(!_h.trim()) missing.push('가설');
+  if(!_x.trim()) missing.push('독립변수');
+  if(!_y.trim()) missing.push('종속변수');
+  if(missing.length > 0) {
+    var toast = document.createElement('div');
+    toast.innerHTML = '📌 다음 필드를 먼저 작성해주세요:<br><strong>' + missing.join(', ') + '</strong>';
+    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);text-align:center;max-width:90%;';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 3000);
+    return;
+  }
   var topic = (document.getElementById('mrUserTopic')||{}).value || '(주제 미입력)';
   var hypo = (document.getElementById('mrHypoFinal')||{}).value || '';
   var xName = (document.getElementById('mrVarXName')||{}).value || '독립변수';
   var yName = (document.getElementById('mrVarYName')||{}).value || '종속변수';
   var control = (document.getElementById('mrVarControl')||{}).value || '';
-  var xDef = (document.getElementById('mrVarXDef')||{}).value || '';
-  var yDef = (document.getElementById('mrVarYDef')||{}).value || '';
+  var xDef = (document.getElementById('mrVarXDetail')||{}).value || ''; // v2.3.3: mrVarXDef→mrVarXDetail 수정
+  var yDef = (document.getElementById('mrVarYDetail')||{}).value || ''; // v2.3.3: mrVarYDef→mrVarYDetail 수정
   var xScale = (document.getElementById('mrVarXScale')||{}).value || 'likert5';
   var yScale = (document.getElementById('mrVarYScale')||{}).value || 'likert5';
   var sampleWho = (document.getElementById('mrSampleWho')||{}).value || '';
@@ -17407,6 +17472,7 @@ function mrGeneratePrompt() {
   var methodType = (document.querySelector('input[name="mrMethodType"]:checked')||{}).value || 'survey';
   var methodPlan = (document.getElementById('mrMyMethodPlan')||{}).value || '';
   var myQuestions = (document.getElementById('mrMyQuestions')||{}).value || '';
+  var myWorries = (document.getElementById('mrMyWorries')||{}).value || ''; // v2.3.3: 예상 한계 추가
   var type = (document.querySelector('input[name="mrPromptType"]:checked')||{}).value || 'survey';
 
   var scaleNames = {likert5:'5점 리커트 척도',likert7:'7점 리커트 척도',frequency:'빈도/수치 측정',semantic:'의미분별 척도',category:'범주형 선택',yesno:'예/아니오',ranking:'순위형',open:'주관식'};
@@ -17436,6 +17502,7 @@ function mrGeneratePrompt() {
     }
   });
   if(brainText) base += '\n# 학생의 브레인스토밍 메모\n' + brainText + '\n';
+  if(myWorries) base += '\n# 학생이 예상한 한계 & 걱정\n' + myWorries + '\n'; // v2.3.3
   if(memo) base += '\n# 추가 맥락\n' + memo + '\n';
 
   var prompt = '';
@@ -18136,9 +18203,11 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
   if(bar) bar.style.width = '40%';
   if(status) status.textContent = '🖼️ 페이지 렌더링 중...';
 
+  var wrapRemoved = false; // v2.3.2: 이중 removeChild 방지
   try {
     const canvas = await html2canvas(wrap, { scale: 2, backgroundColor: '#FFFFFF', logging: false, useCORS: true, windowWidth: renderW });
     document.body.removeChild(wrap);
+    wrapRemoved = true;
 
     const imgData = canvas.toDataURL('image/jpeg', 0.92);
     const imgW = contentW;
@@ -18190,7 +18259,7 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
     if(status) status.textContent = '✅ PDF 다운로드 완료!';
     if(btn) { btn.textContent = '✅ 완료!'; setTimeout(() => { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; if(prog) prog.style.display = 'none'; }, 3000); }
   } catch(e) {
-    document.body.removeChild(wrap);
+    if(!wrapRemoved) try { document.body.removeChild(wrap); } catch(ex) {} // v2.3.2
     throw e;
   }
 }
@@ -18269,7 +18338,7 @@ async function azExportPDF() {
     const html = `
       <div style="background:linear-gradient(135deg,#6C5CE7,#4834D4);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
         <div style="font-size:26px;font-weight:900;margin-bottom:8px">${title}</div>
-        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.3.1 &nbsp;|&nbsp; ${dateStr}</div>
+        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.4 &nbsp;|&nbsp; ${dateStr}</div>
       </div>
 
       <div style="${sectionStyle}">
@@ -18304,7 +18373,7 @@ async function azExportPDF() {
 
       <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
         * 상관관계가 인과관계를 의미하지는 않습니다.<br>
-        본 보고서는 Goo's StatPlay v2.3.1 통계 분석 도구를 활용하여 작성되었습니다.<br>
+        본 보고서는 Goo's StatPlay v2.4 통계 분석 도구를 활용하여 작성되었습니다.<br>
         작성일: ${dateStr} ${timeStr}
       </div>
     `;
@@ -18322,8 +18391,10 @@ async function azExportPDF() {
 }
 
 // ━━ 위저드 연구설계서 PDF 내보내기 ━━
-async function mrExportPDF() {
-  const btn = event.target;
+async function mrExportPDF(evt) {
+  // v2.3.2: event.target 대신 안전한 참조 사용
+  const btn = (evt && evt.currentTarget) || (evt && evt.target) || (window.event && window.event.target) || document.querySelector('[onclick*="mrExportPDF"]');
+  if(!btn) { alert('PDF 버튼을 찾을 수 없습니다.'); return; }
   btn.disabled = true;
   btn.textContent = '⏳ 생성 중...';
 
@@ -18416,7 +18487,7 @@ async function mrExportPDF() {
       <div style="background:linear-gradient(135deg,#1B5E20,#2E7D32,#43A047);padding:36px 40px;border-radius:14px;margin-bottom:28px;color:white;text-align:center">
         <div style="font-size:13px;opacity:0.8;margin-bottom:6px;letter-spacing:2px">RESEARCH DESIGN REPORT</div>
         <div style="font-size:26px;font-weight:900;margin-bottom:10px;line-height:1.4">${esc(userTopic || myIdea || '나만의 연구')}</div>
-        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.3.1　|　${dateStr}</div>
+        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.4　|　${dateStr}</div>
       </div>`;
 
     // ── SECTION 1: 영감 받은 연구 ──
@@ -18505,7 +18576,7 @@ async function mrExportPDF() {
 
     // ── 푸터 ──
     html += `<div style="margin-top:36px;padding-top:12px;border-top:1px solid #DDD;font-size:11px;color:#AAA;text-align:center;line-height:1.8">
-      Goo's StatPlay v2.3.1 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
+      Goo's StatPlay v2.4 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
     </div>`;
 
     const topic = userTopic || myIdea || '연구설계';
@@ -19808,6 +19879,19 @@ function exportTeacherLog() {
   var blob = new Blob([csv], {type:'text/csv'});
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'statplay_log.csv'; a.click();
 }
+
+// v2.3.3: 페이지 이탈/새로고침 시 나만의 연구 자동 저장
+window.addEventListener('beforeunload', function() {
+  if(typeof mrAutoSave === 'function' && typeof mrCurrentStep !== 'undefined' && mrCurrentStep > 0) {
+    try { mrAutoSave(); } catch(e) {}
+  }
+});
+// v2.3.3: 탭 비활성화(모바일 화면 전환 등) 시에도 저장
+document.addEventListener('visibilitychange', function() {
+  if(document.visibilityState === 'hidden' && typeof mrAutoSave === 'function' && typeof mrCurrentStep !== 'undefined' && mrCurrentStep > 0) {
+    try { mrAutoSave(); } catch(e) {}
+  }
+});
 
 </script>
 
