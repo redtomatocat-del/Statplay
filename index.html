@@ -12,12 +12,13 @@
                      localStorage 용량초과 안내, 프롬프트 필수필드 검증
   v2.4   (2026-04)  CSV 다운로드 기능 추가 (수행평가 원천데이터 제출용)
   v2.5   (2026-04)  연구DB 723항목(42카테고리, 전부 15건↑), 필드누락 28건·source불완전 39건 수정, 전수검증 통과
+  v2.5.1 (2026-04)  브레인스토밍 복원 순서 버그 수정(step init→DOM생성→값복원), 카톡 인앱 PDF 다운로드 우회, pagehide/pageshow 저장·복원 추가
 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goo's StatPlay v2.5 — 놀면서 배우는 통계</title>
+<title>Goo's StatPlay v2.5.1 — 놀면서 배우는 통계</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -614,7 +615,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 <div class="header">
   <h1>Goo's <span>StatPlay</span></h1>
   <p>놀면서 배우는 통계</p>
-  <div class="ver">고등학생을 위한 교육용 통계 · v2.5</div>
+  <div class="ver">고등학생을 위한 교육용 통계 · v2.5.1</div>
 </div>
 
 <div class="main">
@@ -17071,18 +17072,33 @@ function mrAutoLoad() {
     }
     // v2.3.3: 동기 복원 먼저 (DOM이 이미 존재하는 필드)
     _mrRestoreFields(data);
-    // 동적 필드(브레인스토밍 등)는 지연 복원 + step init 재실행
+    // v2.5.1: 복원 순서 핵심 수정 — step init(DOM 생성) → 필드 복원 → autoSave bind
+    // 기존 버그: _mrRestoreFields 실행 시 브레인스토밍 DOM이 아직 없어서 복원 실패
     setTimeout(function() {
-      _mrRestoreFields(data); // 이중 안전장치 — 누락 방지
-      _mrLoadingInProgress = false;
-      mrAutoSave();
-      // v2.3.3: step init 함수 재실행으로 리마인더/요약 카드 갱신
+      // ① step init 먼저 실행 → 브레인스토밍 textarea DOM 생성됨
       var step = data.step || 1;
       if(step >= 2) mrInitStep2();
       if(step >= 3) mrInitStep3();
-      if(step >= 4) mrInitStep4();
+      if(step >= 4) mrInitStep4();  // → mrShowMethodGuide() → textarea 생성
       if(step >= 5) mrInitStep5();
+      // ② DOM이 생성된 후 전체 필드 복원 (brains 포함)
+      _mrRestoreFields(data);
+      // ③ 브레인스토밍 필드 autoSave 바인딩 (동적 생성이므로 여기서)
+      document.querySelectorAll('[id^="mrBrain_"]').forEach(function(inp) {
+        if(!inp._mrBound) { inp.addEventListener('input', mrAutoSave); inp._mrBound = true; }
+      });
+      _mrLoadingInProgress = false;
+      mrAutoSave();
     }, 350);
+    // v2.5.1: 2차 안전망 — 카톡 인앱 등 느린 환경용
+    setTimeout(function() {
+      if(data.brains) {
+        Object.keys(data.brains).forEach(function(id) {
+          var el = document.getElementById(id);
+          if(el && !el.value) el.value = data.brains[id];
+        });
+      }
+    }, 800);
     return data.step || 1;
   } catch(e) { _mrLoadingInProgress = false; return false; }
 }
@@ -18560,7 +18576,35 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
 
     if(bar) bar.style.width = '95%';
     if(status) status.textContent = '💾 파일 저장 중...';
-    pdf.save(fileName);
+
+    // v2.5.1: 카톡 인앱 브라우저 대응 — pdf.save() 실패 시 blob 우회
+    var _isInApp = /KAKAOTALK|NAVER|Line|Instagram|FB_IAB|FBAN/i.test(navigator.userAgent);
+    if(_isInApp) {
+      try {
+        var blob = pdf.output('blob');
+        var blobUrl = URL.createObjectURL(blob);
+        // 방법1: 새 탭 시도
+        var w = window.open(blobUrl, '_blank');
+        if(!w || w.closed) {
+          // 방법2: a 태그 download 속성
+          var a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = fileName;
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 5000);
+        } else {
+          setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
+        }
+      } catch(inAppErr) {
+        // 최후 수단: data URI
+        var dataUri = pdf.output('datauristring');
+        window.open(dataUri, '_blank');
+      }
+    } else {
+      pdf.save(fileName);
+    }
 
     if(bar) bar.style.width = '100%';
     if(status) status.textContent = '✅ PDF 다운로드 완료!';
@@ -18645,7 +18689,7 @@ async function azExportPDF() {
     const html = `
       <div style="background:linear-gradient(135deg,#6C5CE7,#4834D4);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
         <div style="font-size:26px;font-weight:900;margin-bottom:8px">${title}</div>
-        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.4 &nbsp;|&nbsp; ${dateStr}</div>
+        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.5.1 &nbsp;|&nbsp; ${dateStr}</div>
       </div>
 
       <div style="${sectionStyle}">
@@ -18680,7 +18724,7 @@ async function azExportPDF() {
 
       <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
         * 상관관계가 인과관계를 의미하지는 않습니다.<br>
-        본 보고서는 Goo's StatPlay v2.4 통계 분석 도구를 활용하여 작성되었습니다.<br>
+        본 보고서는 Goo's StatPlay v2.5.1 통계 분석 도구를 활용하여 작성되었습니다.<br>
         작성일: ${dateStr} ${timeStr}
       </div>
     `;
@@ -18794,7 +18838,7 @@ async function mrExportPDF(evt) {
       <div style="background:linear-gradient(135deg,#1B5E20,#2E7D32,#43A047);padding:36px 40px;border-radius:14px;margin-bottom:28px;color:white;text-align:center">
         <div style="font-size:13px;opacity:0.8;margin-bottom:6px;letter-spacing:2px">RESEARCH DESIGN REPORT</div>
         <div style="font-size:26px;font-weight:900;margin-bottom:10px;line-height:1.4">${esc(userTopic || myIdea || '나만의 연구')}</div>
-        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.4　|　${dateStr}</div>
+        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.5.1　|　${dateStr}</div>
       </div>`;
 
     // ── SECTION 1: 영감 받은 연구 ──
@@ -18883,7 +18927,7 @@ async function mrExportPDF(evt) {
 
     // ── 푸터 ──
     html += `<div style="margin-top:36px;padding-top:12px;border-top:1px solid #DDD;font-size:11px;color:#AAA;text-align:center;line-height:1.8">
-      Goo's StatPlay v2.4 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
+      Goo's StatPlay v2.5.1 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
     </div>`;
 
     const topic = userTopic || myIdea || '연구설계';
@@ -20197,6 +20241,32 @@ window.addEventListener('beforeunload', function() {
 document.addEventListener('visibilitychange', function() {
   if(document.visibilityState === 'hidden' && typeof mrAutoSave === 'function' && typeof mrCurrentStep !== 'undefined' && mrCurrentStep > 0) {
     try { mrAutoSave(); } catch(e) {}
+  }
+});
+// v2.5.1: 카톡 인앱 브라우저 대응 — pagehide(카톡이 beforeunload 무시하는 경우 대비)
+window.addEventListener('pagehide', function() {
+  if(typeof mrAutoSave === 'function' && typeof mrCurrentStep !== 'undefined' && mrCurrentStep > 0) {
+    try { mrAutoSave(); } catch(e) {}
+  }
+});
+// v2.5.1: 카톡 bfcache 복원 시 pageshow로 데이터 재복원
+window.addEventListener('pageshow', function(e) {
+  if(e.persisted) {
+    // bfcache에서 복원된 경우 — 이미 DOM은 살아있으므로 필드만 재확인
+    try {
+      if(typeof mrAutoLoad === 'function') {
+        var raw = localStorage.getItem(MR_SAVE_KEY);
+        if(raw) {
+          var data = JSON.parse(raw);
+          if(data && data.brains) {
+            Object.keys(data.brains).forEach(function(id) {
+              var el = document.getElementById(id);
+              if(el && !el.value) el.value = data.brains[id];
+            });
+          }
+        }
+      }
+    } catch(ex) {}
   }
 });
 
