@@ -13,12 +13,15 @@
   v2.4   (2026-04)  CSV 다운로드 기능 추가 (수행평가 원천데이터 제출용)
   v2.5   (2026-04)  연구DB 723항목(42카테고리, 전부 15건↑), 필드누락 28건·source불완전 39건 수정, 전수검증 통과
   v2.5.1 (2026-04)  브레인스토밍 복원 순서 버그 수정(step init→DOM생성→값복원), 카톡 인앱 PDF 다운로드 우회, pagehide/pageshow 저장·복원 추가
+  v2.6   (2026-04)  PDF 내보내기 엔진 전면 개선(html2canvas 실패 시 print 폴백, 카톡/인앱 완전 대응),
+                     카톡 인앱 브라우저 감지→외부 브라우저 열기 유도(데이터 소실 방지),
+                     원본 데이터 복사 버튼 추가, 복잡한 숫자(쉼표 천단위) 파싱 개선
 -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goo's StatPlay v2.5.1 — 놀면서 배우는 통계</title>
+<title>Goo's StatPlay v2.6 — 놀면서 배우는 통계</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -615,7 +618,7 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
 <div class="header">
   <h1>Goo's <span>StatPlay</span></h1>
   <p>놀면서 배우는 통계</p>
-  <div class="ver">고등학생을 위한 교육용 통계 · v2.5.1</div>
+  <div class="ver">고등학생을 위한 교육용 통계 · v2.6</div>
 </div>
 
 <div class="main">
@@ -5059,7 +5062,8 @@ details[open] .learnMoreArrow { transform:rotate(90deg); }
                 📊 데이터 미리보기
                 <span id="azDataStats" style="font-weight:400;font-size:12px;color:var(--text2)"></span>
               </div>
-              <div style="display:flex;gap:6px">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-sm btn-outline" onclick="azCopyRawData()" style="font-size:11px" id="azCopyDataBtn">📋 데이터 복사</button>
                 <button class="btn btn-sm btn-outline" onclick="azDownloadCSV()" style="font-size:11px" id="azCsvBtn">📥 CSV 저장</button>
                 <button class="btn btn-sm btn-outline" onclick="azShowCleanPanel()" style="font-size:11px">🧹 데이터 클리닝</button>
               </div>
@@ -13331,8 +13335,58 @@ function azGoStep(n) {
 function azParseData() {
   const raw = document.getElementById('azDataInput').value.replace(/^\uFEFF/, '').trim();
   if(!raw) return false;
-  const sep = raw.includes('\t') ? '\t' : raw.includes(';') ? ';' : ',';
-  const lines = raw.split('\n').map(l => l.split(sep).map(c => c.trim()));
+
+  // v2.6: 구분자 감지 개선 — 쉼표가 숫자 천단위 구분자인지 필드 구분자인지 판별
+  var sep;
+  if(raw.includes('\t')) {
+    sep = '\t';
+  } else if(raw.includes(';')) {
+    sep = ';';
+  } else {
+    // 쉼표가 있을 때: 천단위 구분자(1,234)인지 필드 구분자인지 판별
+    // 방법: 첫 몇 줄에서 쉼표로 split했을 때 일관된 열 수가 나오는지 확인
+    var testLines = raw.split('\n').slice(0, Math.min(5, raw.split('\n').length));
+    var commaColCounts = testLines.map(function(l) { return l.split(',').length; });
+    var allSame = commaColCounts.every(function(c) { return c === commaColCounts[0]; });
+    // 쉼표로 나눴을 때 열 수가 일관되고 2열 이상이면 쉼표가 구분자
+    // 하지만 "1,234" 같은 천단위가 있으면 false positive 가능
+    // 추가 검증: 쉼표 뒤에 바로 숫자 3자리가 오는 패턴이 많으면 천단위
+    var thousandPattern = /\d,\d{3}(?:[,.\s]|$)/g;
+    var thousandMatches = (raw.match(thousandPattern) || []).length;
+    var totalCommas = (raw.match(/,/g) || []).length;
+    if(totalCommas > 0 && thousandMatches >= totalCommas * 0.5) {
+      // 쉼표의 절반 이상이 천단위 패턴 → 쉼표는 구분자가 아님
+      // 공백이나 다른 구분자 시도
+      sep = '\t'; // 사실상 구분자 없음 — 각 줄이 하나의 값
+    } else if(allSame && commaColCounts[0] >= 2) {
+      sep = ',';
+    } else {
+      sep = ',';
+    }
+  }
+
+  // v2.6: CSV RFC 4180 준수 파싱 — 따옴표로 감싼 필드 내 쉼표 처리
+  function _splitCSVLine(line, delimiter) {
+    if(delimiter === '\t' || delimiter === ';') return line.split(delimiter);
+    // CSV 파싱: "필드1","필드,2","필드3" 처리
+    var result = [], current = '', inQuotes = false;
+    for(var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if(inQuotes) {
+        if(ch === '"' && line[i+1] === '"') { current += '"'; i++; }
+        else if(ch === '"') { inQuotes = false; }
+        else { current += ch; }
+      } else {
+        if(ch === '"') { inQuotes = true; }
+        else if(ch === delimiter) { result.push(current.trim()); current = ''; }
+        else { current += ch; }
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  const lines = raw.split('\n').map(l => _splitCSVLine(l, sep));
   if(lines.length < 2) return false;
   AZ_DATA.headers = lines[0];
   // 행 길이 정규화: 헤더와 다른 길이의 행도 수용 (짧으면 빈 셀 추가, 길면 자름)
@@ -13366,6 +13420,32 @@ function azParseData() {
   const guide = document.getElementById('azFirstTimeGuide');
   if(guide) guide.style.display = 'none';
   return true;
+}
+
+// v2.6: 원본 데이터 클립보드 복사 — TSV 형식으로 깨끗하게 복사
+function azCopyRawData() {
+  if(!AZ_DATA.headers || !AZ_DATA.rows || AZ_DATA.rows.length === 0) {
+    alert('복사할 데이터가 없습니다.'); return;
+  }
+  var tsv = AZ_DATA.headers.join('\t') + '\n';
+  AZ_DATA.rows.forEach(function(row) {
+    tsv += row.join('\t') + '\n';
+  });
+  navigator.clipboard.writeText(tsv).then(function() {
+    var btn = document.getElementById('azCopyDataBtn');
+    if(btn) { btn.textContent = '✓ 복사됨!'; setTimeout(function(){ btn.textContent = '📋 데이터 복사'; }, 2000); }
+  }).catch(function() {
+    // clipboard API 실패 시 (인앱 브라우저 등) — textarea 폴백
+    var ta = document.createElement('textarea');
+    ta.value = tsv;
+    ta.style.cssText = 'position:fixed;left:-9999px;';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    var btn = document.getElementById('azCopyDataBtn');
+    if(btn) { btn.textContent = '✓ 복사됨!'; setTimeout(function(){ btn.textContent = '📋 데이터 복사'; }, 2000); }
+  });
 }
 
 // v2.4: CSV 다운로드 — 학생이 입력/분석한 데이터를 원천 파일로 저장
@@ -18506,10 +18586,54 @@ function azInterpFooter(analysisType) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📄 PDF EXPORT ENGINE
+// 📄 PDF EXPORT ENGINE v2.6
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// v2.6: 인앱 브라우저 감지 유틸
+var _SP_IS_INAPP = /KAKAOTALK|NAVER|Line|Instagram|FB_IAB|FBAN|SamsungBrowser\/.*KAKAOTALK/i.test(navigator.userAgent);
+
+// v2.6: window.print() 기반 PDF 폴백 — html2canvas/jsPDF 실패 시 사용
+function _pdfViaPrint(htmlContent, fileName, btn, prog, bar, status) {
+  if(status) status.textContent = '🖨️ 인쇄 화면 준비 중...';
+  if(bar) bar.style.width = '80%';
+
+  // 새 창에 HTML을 렌더링하고 print() 호출
+  var printWin = window.open('', '_blank');
+  if(!printWin) {
+    // 팝업 차단 — iframe 폴백
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;height:600px;border:none;';
+    document.body.appendChild(iframe);
+    var doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Pretendard,-apple-system,sans-serif;line-height:1.7;color:#222;padding:40px;max-width:800px;margin:0 auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:6px 10px;text-align:left}@media print{body{padding:20px}}</style></head><body>' + htmlContent + '</body></html>');
+    doc.close();
+    setTimeout(function() {
+      try { iframe.contentWindow.print(); } catch(e) {}
+      setTimeout(function() { document.body.removeChild(iframe); }, 3000);
+    }, 500);
+  } else {
+    printWin.document.open();
+    printWin.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (fileName || 'StatPlay') + '</title><style>body{font-family:Pretendard,-apple-system,sans-serif;line-height:1.7;color:#222;padding:40px;max-width:800px;margin:0 auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:6px 10px;text-align:left}@media print{body{padding:20px}}</style></head><body>' + htmlContent + '</body></html>');
+    printWin.document.close();
+    printWin.onload = function() { printWin.print(); };
+    // onload 안 먹히는 브라우저 대비
+    setTimeout(function() { try { printWin.print(); } catch(e) {} }, 1000);
+  }
+
+  if(bar) bar.style.width = '100%';
+  if(status) status.textContent = '✅ 인쇄 화면이 열렸습니다!';
+  if(btn) { btn.textContent = '✅ 완료!'; setTimeout(function() { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; if(prog) prog.style.display = 'none'; }, 3000); }
+}
+
 // ── PDF용 HTML→이미지 변환 유틸 (한글 깨짐 방지) ──
 async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
+  // v2.6: CDN 라이브러리 로드 확인 — 없으면 print 폴백
+  if(typeof html2canvas === 'undefined' || !window.jspdf) {
+    console.warn('PDF libraries not loaded — falling back to print');
+    _pdfViaPrint(htmlContent, fileName, btn, prog, bar, status);
+    return;
+  }
+
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageW = 210, pageH = 297, margin = 10;
@@ -18526,13 +18650,17 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
   if(bar) bar.style.width = '40%';
   if(status) status.textContent = '🖼️ 페이지 렌더링 중...';
 
-  var wrapRemoved = false; // v2.3.2: 이중 removeChild 방지
+  var wrapRemoved = false;
   try {
-    const canvas = await html2canvas(wrap, { scale: 2, backgroundColor: '#FFFFFF', logging: false, useCORS: true, windowWidth: renderW });
+    // v2.6: html2canvas 타임아웃 — 15초 내 완료 못하면 print 폴백
+    var _h2cDone = false;
+    var canvas = await Promise.race([
+      html2canvas(wrap, { scale: 2, backgroundColor: '#FFFFFF', logging: false, useCORS: true, windowWidth: renderW }).then(function(c){ _h2cDone = true; return c; }),
+      new Promise(function(_, reject) { setTimeout(function() { if(!_h2cDone) reject(new Error('html2canvas timeout')); }, 15000); })
+    ]);
     document.body.removeChild(wrap);
     wrapRemoved = true;
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.92);
     const imgW = contentW;
     const imgH = (canvas.height / canvas.width) * imgW;
     const usableH = pageH - margin*2;
@@ -18547,7 +18675,6 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
       if(pageNum > 0) pdf.addPage();
       const sliceH = Math.min(srcPageH, totalSrcH - srcY);
 
-      // 슬라이스 캔버스 생성
       const sliceCanvas = document.createElement('canvas');
       sliceCanvas.width = canvas.width;
       sliceCanvas.height = Math.round(sliceH);
@@ -18577,30 +18704,29 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
     if(bar) bar.style.width = '95%';
     if(status) status.textContent = '💾 파일 저장 중...';
 
-    // v2.5.1: 카톡 인앱 브라우저 대응 — pdf.save() 실패 시 blob 우회
-    var _isInApp = /KAKAOTALK|NAVER|Line|Instagram|FB_IAB|FBAN/i.test(navigator.userAgent);
-    if(_isInApp) {
+    // v2.6: PDF 저장 — 인앱 브라우저 대응 강화
+    if(_SP_IS_INAPP) {
       try {
         var blob = pdf.output('blob');
         var blobUrl = URL.createObjectURL(blob);
-        // 방법1: 새 탭 시도
-        var w = window.open(blobUrl, '_blank');
-        if(!w || w.closed) {
-          // 방법2: a 태그 download 속성
-          var a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = fileName;
-          a.style.display = 'none';
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 5000);
-        } else {
+        // 방법1: a 태그 download (가장 안정적)
+        var a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        // 방법2: 실패 시 새 탭
+        setTimeout(function(){
+          document.body.removeChild(a);
+          // a.click이 실패했을 수 있으므로 새 탭도 시도
+          try { window.open(blobUrl, '_system'); } catch(e2) {}
           setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 60000);
-        }
+        }, 1000);
       } catch(inAppErr) {
-        // 최후 수단: data URI
-        var dataUri = pdf.output('datauristring');
-        window.open(dataUri, '_blank');
+        // 최후 수단: print 폴백
+        _pdfViaPrint(htmlContent, fileName, btn, prog, bar, status);
+        return;
       }
     } else {
       pdf.save(fileName);
@@ -18610,8 +18736,10 @@ async function _pdfFromHtml(htmlContent, fileName, btn, prog, bar, status) {
     if(status) status.textContent = '✅ PDF 다운로드 완료!';
     if(btn) { btn.textContent = '✅ 완료!'; setTimeout(() => { btn.disabled = false; btn.textContent = '📄 PDF 다운로드'; if(prog) prog.style.display = 'none'; }, 3000); }
   } catch(e) {
-    if(!wrapRemoved) try { document.body.removeChild(wrap); } catch(ex) {} // v2.3.2
-    throw e;
+    if(!wrapRemoved) try { document.body.removeChild(wrap); } catch(ex) {}
+    // v2.6: html2canvas 실패 시 print 폴백 (에러를 다시 throw하지 않음)
+    console.warn('html2canvas/jsPDF failed, falling back to print:', e.message);
+    _pdfViaPrint(htmlContent, fileName, btn, prog, bar, status);
   }
 }
 
@@ -18626,6 +18754,10 @@ async function azExportPDF() {
   prog.style.display = 'block';
   bar.style.width = '10%';
   status.textContent = '📝 보고서 구성 중...';
+
+  // v2.6: catch에서 접근 가능하도록 try 바깥에 선언
+  var _azPdfHtml = '';
+  var _azPdfFileName = '';
 
   try {
     const g = id => { const el = document.getElementById(id); return el ? (el.value || el.textContent || '').trim() : ''; };
@@ -18689,7 +18821,7 @@ async function azExportPDF() {
     const html = `
       <div style="background:linear-gradient(135deg,#6C5CE7,#4834D4);padding:32px 40px;border-radius:12px;margin-bottom:24px;color:white;text-align:center">
         <div style="font-size:26px;font-weight:900;margin-bottom:8px">${title}</div>
-        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.5.1 &nbsp;|&nbsp; ${dateStr}</div>
+        <div style="font-size:13px;opacity:0.85">Goo's StatPlay v2.6 &nbsp;|&nbsp; ${dateStr}</div>
       </div>
 
       <div style="${sectionStyle}">
@@ -18724,20 +18856,25 @@ async function azExportPDF() {
 
       <div style="margin-top:32px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#aaa;line-height:1.8">
         * 상관관계가 인과관계를 의미하지는 않습니다.<br>
-        본 보고서는 Goo's StatPlay v2.5.1 통계 분석 도구를 활용하여 작성되었습니다.<br>
+        본 보고서는 Goo's StatPlay v2.6 통계 분석 도구를 활용하여 작성되었습니다.<br>
         작성일: ${dateStr} ${timeStr}
       </div>
     `;
 
     const fileName = (title.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,30) || 'StatPlay_Report') + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+    _azPdfHtml = html; _azPdfFileName = fileName; // v2.6: catch에서 접근용
     await _pdfFromHtml(html, fileName, btn, prog, bar, status);
 
   } catch(err) {
     console.error('PDF export error:', err);
-    status.textContent = '❌ 오류: ' + err.message;
-    btn.disabled = false;
-    btn.textContent = '📄 PDF 다운로드';
-    alert('PDF 생성에 실패했습니다. 인터넷 연결을 확인하세요.\n(jsPDF 라이브러리 로드 필요)\n\n대안: "보고서 전체 복사" 버튼을 사용해주세요.');
+    // v2.6: 에러 시 자동으로 print 폴백 — alert 대신 바로 인쇄
+    status.textContent = '🖨️ 인쇄 방식으로 전환...';
+    try { _pdfViaPrint(_azPdfHtml, _azPdfFileName, btn, prog, bar, status); } catch(e2) {
+      status.textContent = '❌ 오류 발생';
+      btn.disabled = false;
+      btn.textContent = '📄 PDF 다운로드';
+      alert('PDF 생성에 실패했습니다.\n\n대안: "보고서 전체 복사" 버튼을 사용해주세요.');
+    }
   }
 }
 
@@ -18748,6 +18885,10 @@ async function mrExportPDF(evt) {
   if(!btn) { alert('PDF 버튼을 찾을 수 없습니다.'); return; }
   btn.disabled = true;
   btn.textContent = '⏳ 생성 중...';
+
+  // v2.6: catch에서 접근 가능하도록 try 바깥에 선언
+  var _mrPdfHtml = '';
+  var _mrPdfFileName = '';
 
   try {
     // ── 헬퍼 ──
@@ -18838,7 +18979,7 @@ async function mrExportPDF(evt) {
       <div style="background:linear-gradient(135deg,#1B5E20,#2E7D32,#43A047);padding:36px 40px;border-radius:14px;margin-bottom:28px;color:white;text-align:center">
         <div style="font-size:13px;opacity:0.8;margin-bottom:6px;letter-spacing:2px">RESEARCH DESIGN REPORT</div>
         <div style="font-size:26px;font-weight:900;margin-bottom:10px;line-height:1.4">${esc(userTopic || myIdea || '나만의 연구')}</div>
-        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.5.1　|　${dateStr}</div>
+        <div style="font-size:12px;opacity:0.75">Goo's StatPlay v2.6　|　${dateStr}</div>
       </div>`;
 
     // ── SECTION 1: 영감 받은 연구 ──
@@ -18927,11 +19068,12 @@ async function mrExportPDF(evt) {
 
     // ── 푸터 ──
     html += `<div style="margin-top:36px;padding-top:12px;border-top:1px solid #DDD;font-size:11px;color:#AAA;text-align:center;line-height:1.8">
-      Goo's StatPlay v2.5.1 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
+      Goo's StatPlay v2.6 '나만의 연구 만들기' 위저드로 작성된 연구설계서　|　${dateStr}
     </div>`;
 
     const topic = userTopic || myIdea || '연구설계';
     const fileName = '연구설계서_' + topic.replace(/[^a-zA-Z0-9가-힣]/g,'_').substring(0,20) + '_' + new Date().toISOString().slice(0,10) + '.pdf';
+    _mrPdfHtml = html; _mrPdfFileName = fileName; // v2.6: catch에서 접근용
     await _pdfFromHtml(html, fileName, btn, null, null, null);
 
     btn.textContent = '✅ 완료!';
@@ -18939,9 +19081,12 @@ async function mrExportPDF(evt) {
 
   } catch(err) {
     console.error('PDF export error:', err);
-    btn.disabled = false;
-    btn.textContent = '📄 PDF 다운로드';
-    alert('PDF 생성에 실패했습니다. 인터넷 연결을 확인하세요.\n대안: "전체 복사" 버튼을 사용해주세요.');
+    // v2.6: print 폴백
+    try { _pdfViaPrint(_mrPdfHtml, _mrPdfFileName, btn, null, null, null); } catch(e2) {
+      btn.disabled = false;
+      btn.textContent = '📄 PDF 다운로드';
+      alert('PDF 생성에 실패했습니다.\n대안: "전체 복사" 버튼을 사용해주세요.');
+    }
   }
 }
 
@@ -20268,6 +20413,142 @@ window.addEventListener('pageshow', function(e) {
       }
     } catch(ex) {}
   }
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// v2.6: 카톡 인앱 브라우저 감지 → 외부 브라우저 유도 배너
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  if(!_SP_IS_INAPP) return;
+
+  // 배너 생성
+  var banner = document.createElement('div');
+  banner.id = 'spInAppBanner';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#FF6B35,#F7931E);color:white;padding:14px 16px;font-size:13px;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,0.25);display:flex;flex-direction:column;gap:8px;font-family:Pretendard,-apple-system,sans-serif;';
+
+  var msg = document.createElement('div');
+  msg.innerHTML = '<strong>⚠️ 카카오톡 앱 안에서 열렸습니다</strong><br>이 상태에서는 <u>작성한 데이터가 저장되지 않고</u>, PDF 다운로드가 안 될 수 있습니다.';
+
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+
+  // 외부 브라우저 열기 버튼
+  var openBtn = document.createElement('button');
+  openBtn.textContent = '🌐 Chrome/Safari로 열기';
+  openBtn.style.cssText = 'flex:1;padding:10px;border:2px solid white;background:rgba(255,255,255,0.15);color:white;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;min-width:140px;';
+  openBtn.onclick = function() {
+    // 카톡 인앱에서 외부 브라우저로 열기
+    var url = location.href;
+
+    // v2.6: file:// 또는 blob: 프로토콜인 경우 intent scheme 불가
+    // 이 경우 사용자에게 수동 안내
+    if(!/^https?:\/\//i.test(url)) {
+      alert('📱 이 파일을 외부 브라우저에서 여는 방법:\n\n' +
+        '① 오른쪽 위 ⋮ (더보기) 메뉴를 누르세요\n' +
+        '② "다른 브라우저로 열기" 또는\n   "기본 브라우저로 열기"를 선택하세요\n\n' +
+        '💡 또는 카카오톡 대화방에서\n   파일을 길게 눌러 → "다른 앱으로 열기"');
+      return;
+    }
+
+    // 안드로이드 카톡: intent scheme
+    if(/Android/i.test(navigator.userAgent)) {
+      location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+      // fallback: 1초 후에도 여전히 여기면 일반 open
+      setTimeout(function() { window.open(url, '_system'); }, 1000);
+    } else {
+      // iOS: window.open으로 Safari 시도
+      window.open(url, '_blank');
+    }
+  };
+
+  // 닫기 버튼
+  var closeBtn = document.createElement('button');
+  closeBtn.textContent = '✕ 그냥 계속하기';
+  closeBtn.style.cssText = 'padding:10px 16px;background:none;border:1px solid rgba(255,255,255,0.5);color:rgba(255,255,255,0.9);border-radius:8px;font-size:12px;cursor:pointer;';
+  closeBtn.onclick = function() {
+    banner.style.display = 'none';
+    document.body.style.paddingTop = '';
+  };
+
+  btnRow.appendChild(openBtn);
+  btnRow.appendChild(closeBtn);
+  banner.appendChild(msg);
+  banner.appendChild(btnRow);
+
+  document.body.insertBefore(banner, document.body.firstChild);
+  // 배너만큼 body 패딩 추가
+  setTimeout(function() {
+    document.body.style.paddingTop = banner.offsetHeight + 'px';
+  }, 100);
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// v2.6: 데이터 저장 강화 — IndexedDB 폴백
+// 카톡 인앱에서 localStorage가 불안정하므로 IndexedDB를 1차로 시도
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+var _spIDB = null;
+function _spOpenIDB(cb) {
+  if(_spIDB) { cb(_spIDB); return; }
+  try {
+    var req = indexedDB.open('StatPlayDB', 1);
+    req.onupgradeneeded = function(e) { e.target.result.createObjectStore('kv'); };
+    req.onsuccess = function(e) { _spIDB = e.target.result; cb(_spIDB); };
+    req.onerror = function() { cb(null); };
+  } catch(e) { cb(null); }
+}
+function _spIDBSet(key, val) {
+  _spOpenIDB(function(db) {
+    if(!db) return;
+    try {
+      var tx = db.transaction('kv','readwrite');
+      tx.objectStore('kv').put(val, key);
+    } catch(e) {}
+  });
+}
+function _spIDBGet(key, cb) {
+  _spOpenIDB(function(db) {
+    if(!db) { cb(null); return; }
+    try {
+      var tx = db.transaction('kv','readonly');
+      var req = tx.objectStore('kv').get(key);
+      req.onsuccess = function() { cb(req.result || null); };
+      req.onerror = function() { cb(null); };
+    } catch(e) { cb(null); }
+  });
+}
+
+// mrAutoSave를 IDB에도 동시 저장하도록 래핑
+var _origMrAutoSave = typeof mrAutoSave === 'function' ? mrAutoSave : null;
+if(_origMrAutoSave) {
+  var _wrappedMrAutoSave = mrAutoSave;
+  mrAutoSave = function() {
+    _wrappedMrAutoSave();
+    // localStorage에 저장된 것을 IDB에도 복제
+    try {
+      var raw = localStorage.getItem(MR_SAVE_KEY);
+      if(raw) _spIDBSet(MR_SAVE_KEY, raw);
+    } catch(e) {}
+  };
+}
+
+// 페이지 로드 시 localStorage가 비어있으면 IDB에서 복원
+window.addEventListener('DOMContentLoaded', function() {
+  try {
+    var lsData = localStorage.getItem(typeof MR_SAVE_KEY !== 'undefined' ? MR_SAVE_KEY : 'statplay_mr');
+    if(!lsData) {
+      _spIDBGet(typeof MR_SAVE_KEY !== 'undefined' ? MR_SAVE_KEY : 'statplay_mr', function(val) {
+        if(val) {
+          try {
+            localStorage.setItem(MR_SAVE_KEY, val);
+            // 복원 후 현재 모드가 myresearch면 다시 로드
+            if(typeof mrAutoLoad === 'function' && typeof _currentMode !== 'undefined' && _currentMode === 'myresearch') {
+              mrAutoLoad();
+            }
+          } catch(e) {}
+        }
+      });
+    }
+  } catch(e) {}
 });
 
 </script>
